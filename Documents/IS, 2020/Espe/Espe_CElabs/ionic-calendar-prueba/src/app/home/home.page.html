@@ -1,0 +1,46 @@
+
+<ion-header>
+  <ion-toolbar color="primary">
+      <ion-title>{{viewTitle}}</ion-title>
+      <ion-buttons end>
+          <button ion-button [disabled]="isToday" (click)="today()">Today</button>
+          <button ion-button (click)="changeMode('month')">M</button>
+          <button ion-button (click)="changeMode('week')">W</button>
+          <button ion-button (click)="loadEvents()">Load Events</button>
+      </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ng-template #template let-day="day" let-eventTemplate="eventTemplate">
+  <div [ngClass]="{'calendar-event-wrap': day.events}" *ngIf="day.events"
+       [ngStyle]="{height: 25*day.events.length+'px'}">
+      <div *ngFor="let displayEvent of day.events" class="calendar-event" tappable
+           (click)="onEventSelected(displayEvent.event)"
+           [ngStyle]="{top: 25*displayEvent.position+'px', width: 100*(displayEvent.endIndex-displayEvent.startIndex)+'%', height: '25px'}">
+          <ng-template [ngTemplateOutlet]="eventTemplate"
+                       [ngTemplateOutletContext]="{displayEvent:displayEvent}">
+          </ng-template>
+      </div>
+  </div>
+</ng-template>
+
+<ion-content class="has-header" >
+  <calendar class="calendar-hour-column"
+            [eventSource]="eventSource"
+            [calendarMode]="calendar.mode"
+            [currentDate]="calendar.currentDate"
+            [lockSwipeToPrev] = "lockSwipeToPrev"
+            (onCurrentDateChanged)="onCurrentDateChanged($event)"
+            (onEventSelected)="onEventSelected($event)"
+            (onTitleChanged)="onViewTitleChanged($event)"
+            (onTimeSelected)="onTimeSelected($event)"
+            startHour="7"
+            endHour="22"
+            [timeInterval] = "30"
+            [startingDayMonth]=1
+            [startingDayWeek]=1
+            [allDayLabel]=Time
+            [autoSelect]= false
+            [weekviewAllDayEventSectionTemplate]="template">
+  </calendar>
+</ion-content>
