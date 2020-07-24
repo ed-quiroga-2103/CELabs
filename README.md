@@ -9,7 +9,7 @@ Proyecto del curso Especificación y Diseño de Software CE4101
 The HTTP Basic Auth **must** use a POST method to sent the request. Values of `username` and `password`
 must be included in the `auth` parameters of the request.
 
-Example with Axio library for Vue:
+Example with Axios library for Vue:
 
 ```
 axios.post(`http://webservice:port/login`, {
