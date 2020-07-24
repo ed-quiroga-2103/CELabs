@@ -3,8 +3,6 @@ import requests
 from flask import jsonify
 from requests.auth import HTTPBasicAuth
 
-requests.get('https://api.github.com/user', auth=HTTPBasicAuth('user', 'pass'))
-
 class TestStringMethods(unittest.TestCase):
 
     def test_good_login(self):
