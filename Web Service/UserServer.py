@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS, cross_origin
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -8,11 +9,12 @@ from functools import wraps
 
 
 app = Flask(__name__)
+cors = CORS(app)
 
-
-app.config['SECRET_KEY'] = str(uuid.uuid4().hex)
+app.config['SECRET_KEY'] = "CELabs"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Python\\Flask User Server\\userdb.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 db = SQLAlchemy(app)
 
@@ -70,15 +72,16 @@ def create_user():
     return jsonify({'message' : 'New user created!'})
 
 
-@app.route('/login')
-def login(utest = False, authjson = None):
+@app.route('/login', methods = ['POST'])
+@cross_origin()
+def login():
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     user = User.query.filter_by(name=auth.username).first()
-
+    print(auth.username)
     if not user:
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
