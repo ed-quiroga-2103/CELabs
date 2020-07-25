@@ -63,13 +63,13 @@ class FaultReport(db.Model):
     id_report= db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
     date_time = db.Column(db.Text(50), nullable = False)
-    id_fault_part = db.Column(db.Integer, unique = True)
+    id_fault_part = db.Column(db.String, nullable = False)
     description = db.Column(db.String(80), nullable = False)
     id_status = db.Column(db.Integer, db.ForeignKey('faultstatus.id_status'), nullable = False)
 
 class FaultStatus(db.Model):
     id_status= db.Column(db.Integer, primary_key = True)
-    status = db.Column(db.Text(50), nullable = False)
+    status = db.Column(db.String(50), nullable = False)
 
 class User_FaultReport(db.Model):
     id_report = db.Column(db.Integer, db.ForeignKey('faultreport.id_report'), nullable = False)
@@ -143,7 +143,7 @@ class Course(db.Model):
     id_course = db.Column(db.Integer, primary_key = True)
     code = db.Column(db.Text, nullable = False)
     name = db.Column(db.String(50), nullable = False)
-    group = db.Column(db.Text, nullable = False)
+    group = db.Column(db.Integer, nullable = False)
 
 class Event(db.Model):
     id_event = db.Column(db.Integer, primary_key = True)
