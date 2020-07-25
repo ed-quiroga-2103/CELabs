@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text
 
 
-engine = create_engine('sqlite:///D:\\Documents\\Python\\Flask User Server\\userdb.db')
+engine = create_engine('sqlite:///C:\\CELabs\\userdb.db')
 meta = MetaData()
 
 User = Table(
