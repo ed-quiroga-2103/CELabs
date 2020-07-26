@@ -42,24 +42,28 @@ def token_required(f):
 
 @app.route('/user', methods=['POST'])
 def create_user():
-
+    
     data = request.get_json()
+
+    print(data)
 
     hashed_password = generate_password_hash(data['password'], method='md5')
 
     new_user = User(
         public_id_user = str(uuid.uuid4()), 
         name = data["name"],
-        last_name1 = data["lastname1"],
-        last_name2 = data["lastname2"],
+        lastname1 = data["lastname1"],
+        lastname2 = data["lastname2"],
         id_number = data["id_number"],
         password = hashed_password,
         email = data["email"],
         phone_number = data["phone_number"],
         active = 1,
         university_id = data["university_id"],
-        user_type = data["user_type"]
+        user_type = int(data["user_type"])
     )
+
+    print(new_user)
 
     db.session.add(new_user)
     db.session.commit()
@@ -68,7 +72,6 @@ def create_user():
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
-
 
 @app.route('/login', methods = ['POST'])
 @cross_origin()

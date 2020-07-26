@@ -11,7 +11,7 @@ from ce_labs_api import app
 db = SQLAlchemy(app)
 
 class User_Type(db.Model):
-    __tablename__= "User_Type"
+    __tablename__ = 'user_type'
     id_user_type = db.Column(db.Integer, primary_key = True)
     user_type = db.Column(db.String(15), nullable = False)
     children = relationship("User")
@@ -28,9 +28,8 @@ class User(db.Model):
     phone_number = db.Column(db.Text(50), nullable = False)
     active = db.Column(db.Boolean, nullable = False)
     university_id = db.Column(db.String, nullable = False)
-    user_type = db.Column(db.Integer, db.ForeignKey('User_Type.id_user_type'), nullable = False)
+    user_type = db.Column(db.Integer, db.ForeignKey('user_type.id_user_type'), nullable = False)
 
-    
 
 class Reservation(db.Model):
     id_reservation = db.Column(db.Integer, primary_key = True)
