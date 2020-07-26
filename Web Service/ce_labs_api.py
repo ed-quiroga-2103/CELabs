@@ -16,8 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\CELabs\\Web Service\\CELa
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-db = SQLAlchemy(app)
-
+from db_classes import *
 
 def token_required(f):
     @wraps(f)
