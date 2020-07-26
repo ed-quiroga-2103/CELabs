@@ -44,9 +44,6 @@ def token_required(f):
 def create_user():
     
     data = request.get_json()
-
-    print(data)
-
     hashed_password = generate_password_hash(data['password'], method='md5')
 
     new_user = User(
