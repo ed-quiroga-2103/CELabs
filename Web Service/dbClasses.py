@@ -6,15 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from functools import wraps
-
-
-app = Flask(__name__)
-cors = CORS(app)
-
-app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Python\\Flask User Server\\userdb.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['CORS_HEADERS'] = 'Content-Type'
+from UserServer import app
 
 db = SQLAlchemy(app)
 
