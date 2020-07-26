@@ -26,3 +26,4 @@ axios.post(`http://webservice:port/login`, {
 );
 ```
 
+## Registration
