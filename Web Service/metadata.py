@@ -8,12 +8,17 @@ meta = MetaData()
 User = Table(
    'User', meta, 
    Column('id_user', Integer, primary_key = True), 
-   Column('public_id', String(50), unique = True), 
-   Column('name', String(50)),
-   Column('password', String(50)),
-   Column('admin', Boolean),
-)
+   Column('public_id_user', String(50), unique = True), 
+   Column('name', String(50), nullable = False),
+   Column('lastname1', String(50), nullable = False),
+   Column('lastname2', Boolean, nullable = False),
+   Column('password', String(50), nullable = False),
+   Column('email', String(50), nullable = False),
+   Column('phone_number', String(50), nullable = False),
+   Column('active', Boolean, nullable = False),
 
+)
+    
 Reservation = Table(
     'Reservation', meta,
     Column('id_reservation', Integer, primary_key = True),

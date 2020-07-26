@@ -19,6 +19,7 @@ class User(db.Model):
     password = db.Column(db.String(80), nullable = False)
     email = db.Column(db.String(50), nullable = False)
     phone_number = db.Column(db.Text(50), nullable = False)
+    active = db.Column(db.Boolean, nullable = False)
     
 
 class Reservation(db.Model):
