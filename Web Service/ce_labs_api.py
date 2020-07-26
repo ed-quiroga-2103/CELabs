@@ -12,7 +12,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\Feature Register\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///.\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -44,9 +44,6 @@ def token_required(f):
 def create_user():
     
     data = request.get_json()
-
-    print(data)
-
     hashed_password = generate_password_hash(data['password'], method='md5')
 
     new_user = User(
