@@ -18,22 +18,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 db = SQLAlchemy(app)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    public_id = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(50))
-    password = db.Column(db.String(80))
-    admin = db.Column(db.Boolean)
-
-class Reservation(db.Model):
-
-    id = db.Column(db.Integer, primary_key = True)
-    public_id = db.Column(db.String(50), unique = True)
-    lab_id = db.Column(db.Integer, nullable = False)
-    date_time = db.Column(db.Text(50), nullable = False)
-    duration_minutes = db.Column(db.Integer, nullable = False)
-    
-
 
 
 def token_required(f):
