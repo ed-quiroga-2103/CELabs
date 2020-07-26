@@ -1,4 +1,4 @@
-from UserServer import *
+from ce_labs_api import *
 
 if __name__ == '__main__':
     app.debug = True

@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 file = open('CELabs.db', 'w+')
 file.close()
 
-engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
+engine = create_engine('sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\Feature Register\\CELabs\\Web Service\\CELabs.db')
 meta = MetaData()
 
 
@@ -21,7 +21,7 @@ User = Table(
    Column('public_id_user', String(50), unique = True), 
    Column('name', String(50), nullable = False),
    Column('lastname1', String(50), nullable = False),
-   Column('lastname2', Boolean, nullable = False),
+   Column('lastname2',String(50), nullable = False),
    Column('id_number', String(50), nullable = False),
    Column('password', String(50), nullable = False),
    Column('email', String(50), nullable = False),
