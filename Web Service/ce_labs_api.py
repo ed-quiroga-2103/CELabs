@@ -12,12 +12,11 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Python\\Flask User Server\\userdb.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 db = SQLAlchemy(app)
-
 
 
 def token_required(f):
