@@ -1,9 +1,19 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text
 from sqlalchemy import ForeignKey
 
+file = open('CELabs.db', 'w+')
+file.close()
 
 engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
 meta = MetaData()
+
+
+
+User_Type = Table(
+    'User_Type', meta,
+    Column('id_user_type', Integer, primary_key = True),
+    Column('user_type', String(15), nullable = False)
+)
 
 User = Table(
    'User', meta, 
@@ -12,10 +22,13 @@ User = Table(
    Column('name', String(50), nullable = False),
    Column('lastname1', String(50), nullable = False),
    Column('lastname2', Boolean, nullable = False),
+   Column('id_number', String(50), nullable = False),
    Column('password', String(50), nullable = False),
    Column('email', String(50), nullable = False),
    Column('phone_number', String(50), nullable = False),
    Column('active', Boolean, nullable = False),
+   Column('university_id', String, nullable = False),
+   Column('user_type', Integer, ForeignKey('User_Type.id_user_type'), nullable = False)
 
 )
     
@@ -135,27 +148,6 @@ Reservation_Lab = Table(
     Column('id_lab', Integer, ForeignKey('Lab.id_lab'), nullable = False)
 )
 
-User_Lab_Admin = Table(
-    'User_Lab_Admin', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
-
-User_Prof = Table(
-    'User_Prof', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
-User_Admin = Table(
-    'User_Admin', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
-User_Asist_Admin = Table(
-    'User_Asist_Admin', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
 User_Operator = Table(
     'User_Operator', meta,
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
@@ -205,3 +197,18 @@ User_InventoryReport = Table(
 )
 
 meta.create_all(engine)
+
+conn = engine.connect()
+
+conn.execute(User_Type.insert(),
+    [
+   {'id_user_type':'1','user_type':'Administrator'},
+   {'id_user_type':'2','user_type':'Admin. Assistant'},
+   {'id_user_type':'3','user_type':'Operator'},
+   {'id_user_type':'4','user_type':'Professor'},
+   {'id_user_type':'5','user_type':'Administrative'}
+   ])
+
+conn.close()
+
+print("The database was successfully created")
