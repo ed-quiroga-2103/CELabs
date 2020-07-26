@@ -11,15 +11,17 @@ from ce_labs_api import app
 db = SQLAlchemy(app)
 
 class User_Type(db.Model):
+    __tablename__= "User_Type"
     id_user_type = db.Column(db.Integer, primary_key = True)
     user_type = db.Column(db.String(15), nullable = False)
+    children = relationship("User")
 
 class User(db.Model):
     id_user = db.Column(db.Integer, primary_key=True)
     public_id_user = db.Column(db.String(50), unique=True)
     name = db.Column(db.String(50), nullable = False)
-    last_name1 = db.Column(db.String(50), nullable = False)
-    last_name2 = db.Column(db.String(50), nullable = False)
+    lastname1 = db.Column(db.String(50), nullable = False)
+    lastname2 = db.Column(db.String(50), nullable = False)
     id_number = db.Column(db.String(50), nullable = False)
     password = db.Column(db.String(80), nullable = False)
     email = db.Column(db.String(50), nullable = False)

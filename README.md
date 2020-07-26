@@ -46,7 +46,7 @@ data:{
 }
 ```
 
-The codes for the user types are the following:
+The codes for the user types are shown in the the following table:
 | User Type | Code |
 | ----------- | ----------- |
 | Administrator | 1 |

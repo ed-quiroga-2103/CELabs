@@ -12,7 +12,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///.\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -69,20 +69,6 @@ def create_user():
 
     return response
 
-class User(db.Model):
-    id_user = db.Column(db.Integer, primary_key=True)
-    public_id_user = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(50), nullable = False)
-    last_name1 = db.Column(db.String(50), nullable = False)
-    last_name2 = db.Column(db.String(50), nullable = False)
-    id_number = db.Column(db.String(50), nullable = False)
-    password = db.Column(db.String(80), nullable = False)
-    email = db.Column(db.String(50), nullable = False)
-    phone_number = db.Column(db.Text(50), nullable = False)
-    active = db.Column(db.Boolean, nullable = False)
-    user_type = db.Column(db.Integer, db.ForeignKey('User_Type.id_user_type'), nullable = False)
-
-
 
 @app.route('/login', methods = ['POST'])
 @cross_origin()
@@ -92,12 +78,12 @@ def login():
     if not auth or not auth.username or not auth.password:
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    user = User.query.filter_by(name=auth.username).first()
+    user = User.query.filter_by(email=auth.username).first()
     if not user:
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'public_id' : user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'public_id' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
 
         return jsonify({'token' : token.decode('UTF-8')})
 
