@@ -14,7 +14,7 @@ class User_Type(db.Model):
     __tablename__ = 'user_type'
     id_user_type = db.Column(db.Integer, primary_key = True)
     user_type = db.Column(db.String(15), nullable = False)
-    children = relationship("User")
+    children = db.relationship("User")
 
 class User(db.Model):
     id_user = db.Column(db.Integer, primary_key=True)
