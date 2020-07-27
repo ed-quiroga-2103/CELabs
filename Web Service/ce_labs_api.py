@@ -6,6 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from functools import wraps
+from datetime import datetime
+
 
 
 app = Flask(__name__)
@@ -32,7 +34,7 @@ def token_required(f):
 
         try: 
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(public_id=data['public_id']).first()
+            current_user = User.query.filter_by(public_id_user=data['public_id_user']).first()
         except:
             return jsonify({'message' : 'Token is invalid!'}), 401
 
@@ -134,18 +136,32 @@ def promote_user(current_user, public_id):
 
 @app.route('/reservation', methods=['POST'])
 @token_required
+@cross_origin()
 def create_reservation(current_user):
+
+    now = datetime.now() # current date and time
 
     data = request.get_json()
 
-    date = data['reserverd_date']
+    date = data['reserved_date']
     
     reservations = Reservation.query.filter(Reservation.reserved_date.like(date)).all()
 
     if not reservations:
 
 
-        new_reservation = Reservation(public_id = str(uuid.uuid4()), lab_id = data['lab_id'], date_time = data['date_time'], duration_minutes = data['duration_minutes'])
+        new_reservation = Reservation(
+            public_id_reservation = str(uuid.uuid4()),
+            request_date = data['requested_date'],
+            reserved_date = data['reserved_date'],
+            init_time = data['init_time'],
+            final_time = data['final_time'],
+            last_mod_id = current_user.public_id_user,
+            last_mod_date = now.strftime("%m/%d/%Y, %H:%M:%S"),
+            subject = data['subject'],
+            description = data['description'],
+            operator = data['operator']  
+            )
 
         db.session.add(new_reservation)
         db.session.commit()
