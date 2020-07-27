@@ -138,8 +138,7 @@ def promote_user(current_user, public_id):
 @cross_origin()
 def create_reservation(current_user):
 
-    now = datetime.now() # current date and time
-
+    now = datetime.now()
     data = request.get_json()
 
     date = data['reserved_date']

@@ -27,7 +27,7 @@ User = Table(
    Column('email', String(50), nullable = False),
    Column('phone_number', String(50), nullable = False),
    Column('active', Boolean, nullable = False),
-   Column('university_id', String, nullable = False),
+   Column('university_id', String(50), nullable = False),
    Column('user_type', Integer, ForeignKey('User_Type.id_user_type'), nullable = False)
 
 )
