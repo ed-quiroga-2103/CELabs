@@ -44,7 +44,6 @@ def token_required(f):
 def create_user():
     
     data = request.get_json()
-    hashed_password = generate_password_hash(data['password'], method='md5')
 
     new_user = User(
         public_id_user = str(uuid.uuid4()), 
@@ -52,7 +51,7 @@ def create_user():
         lastname1 = data["lastname1"],
         lastname2 = data["lastname2"],
         id_number = data["id_number"],
-        password = hashed_password,
+        password = data["password"],
         email = data["email"],
         phone_number = data["phone_number"],
         active = 1,
@@ -82,7 +81,7 @@ def login():
     if not user:
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    if check_password_hash(user.password, auth.password):
+    if user.password == auth.password:
         token = jwt.encode({'public_id' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
 
         return jsonify({'token' : token.decode('UTF-8')})

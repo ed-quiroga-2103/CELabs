@@ -42,7 +42,7 @@ class Reservation(db.Model):
     last_mod_date = db.Column(db.Text, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
-    operator = db.Column(db.String(50), nullable = False)
+    operator = db.Column(db.String(50), nullable = True)
 
 class User_Reservation(db.Model):
     id_user_reservation = db.Column(db.Integer, primary_key=True)

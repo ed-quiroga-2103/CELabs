@@ -1,6 +1,22 @@
 # CELabs
 Proyecto del curso Especificación y Diseño de Software CE4101
 
+# Table of Contents
+
+- [API](#api)
+  * [Development Details](#development-details)
+- [HTTP Methods for API](#http-methods-for-api)
+  * [HTTP Basic Auth](#http-basic-auth)
+  * [Registration](#-post--registration)
+
+
+# API
+
+This section details the usage and development details of the API for CELabs.
+
+## Development Details
+
+To get the proper enviorment for developing, the file **metadata.py** must be executed before the usage of the **ce_labs_api.py** to initialize the CELabs database.
 
 # HTTP Methods for API
 
@@ -26,9 +42,9 @@ axios.post(`http://webservice:port/login`, {
 );
 ```
 
-## [POST] Registration 
+## Registration 
 
-The inputed JSON has the following format:
+Registrarion is a POST method. The inputed JSON has the following format:
 
 ```
 data:{
