@@ -14,7 +14,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///.\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\Feature Register\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -24,11 +24,14 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
+        print(str(request.get_json()))
 
         if 'x-access-token' in request.headers:
             token = request.headers['x-access-token']
+            print(token)
 
         if not token:
+            print('Not Token')
             return jsonify({'message' : 'Token is missing!'}), 401
 
         try: 
@@ -133,9 +136,8 @@ def promote_user(current_user, public_id):
 
 
 
-@app.route('/reservation', methods=['POST'])
-@token_required
-@cross_origin()
+@app.route('/reservation', methods=['POST','OPTIONS'])
+@cross_origin(headers=['Content-Type'])
 def create_reservation(current_user):
 
     now = datetime.now()
