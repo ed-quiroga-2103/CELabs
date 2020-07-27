@@ -137,9 +137,9 @@ def create_reservation(current_user):
 
     data = request.get_json()
 
-    date = data['date_time']
+    date = data['reserverd_date']
     
-    reservations = Reservation.query.filter(Reservation.date_time.like(date)).all()
+    reservations = Reservation.query.filter(Reservation.reserved_date.like(date)).all()
 
     if not reservations:
 
