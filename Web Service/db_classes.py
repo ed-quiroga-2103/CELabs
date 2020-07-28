@@ -24,7 +24,7 @@ class User(db.Model):
     lastname2 = db.Column(db.String(50), nullable = False)
     id_number = db.Column(db.String(50), nullable = False)
     password = db.Column(db.String(80), nullable = False)
-    email = db.Column(db.String(50), nullable = False)
+    email = db.Column(db.String(50), nullable = False, unique = True)
     phone_number = db.Column(db.Text(50), nullable = False)
     active = db.Column(db.Boolean, nullable = False)
     university_id = db.Column(db.String, nullable = False)

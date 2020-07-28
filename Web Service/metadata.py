@@ -24,7 +24,7 @@ User = Table(
    Column('lastname2', String(50), nullable = False),
    Column('id_number', String(50), nullable = False),
    Column('password', String(50), nullable = False),
-   Column('email', String(50), nullable = False),
+   Column('email', String(50), nullable = False, unique = True),
    Column('phone_number', String(50), nullable = False),
    Column('active', Boolean, nullable = False),
    Column('university_id', String(50), nullable = False),
