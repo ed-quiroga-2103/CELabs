@@ -14,9 +14,10 @@ class User_Type(db.Model):
     __tablename__ = 'user_type'
     id_user_type = db.Column(db.Integer, primary_key = True)
     user_type = db.Column(db.String(15), nullable = False)
-    children = relationship("User")
+    children = db.relationship("User")
 
 class User(db.Model):
+    __tablename__ = 'user'
     id_user = db.Column(db.Integer, primary_key=True)
     public_id_user = db.Column(db.String(50), unique=True)
     name = db.Column(db.String(50), nullable = False)
@@ -24,7 +25,7 @@ class User(db.Model):
     lastname2 = db.Column(db.String(50), nullable = False)
     id_number = db.Column(db.String(50), nullable = False)
     password = db.Column(db.String(80), nullable = False)
-    email = db.Column(db.String(50), nullable = False)
+    email = db.Column(db.String(50), nullable = False, unique = True)
     phone_number = db.Column(db.Text(50), nullable = False)
     active = db.Column(db.Boolean, nullable = False)
     university_id = db.Column(db.String, nullable = False)
@@ -35,22 +36,24 @@ class Reservation(db.Model):
     id_reservation = db.Column(db.Integer, primary_key = True)
     public_id_reservation = db.Column(db.String(50), unique = True)
     request_date = db.Column(db.Text, nullable = False)
-    reserved_date = db.Column(db.Text, nullable = False)
+    requested_date = db.Column(db.Text, nullable = False)
     init_time = db.Column(db.Text, nullable = False)
     final_time = db.Column(db.Text, nullable = False)
     last_mod_id = db.Column(db.Integer, nullable = False)
     last_mod_date = db.Column(db.Text, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
-    operator = db.Column(db.String(50), nullable = True)
+    operator = db.Column(db.String(50), db.ForeignKey('user.id_user'), nullable = True)
 
 class User_Reservation(db.Model):
+    __tablename__="user_reservation"
     id_user_reservation = db.Column(db.Integer, primary_key=True)
     id_reservation = db.Column(db.Integer, db.ForeignKey('reservation.id_reservation'), nullable = False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)
 
 
 class Reservation_Lab(db.Model):
+    __tablename__ = "reservation_lab"
     id_reservation_lab = db.Column(db.Integer, primary_key=True)
     id_reservation = db.Column(db.Integer, db.ForeignKey('reservation.id_reservation'), nullable = False)
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
@@ -136,6 +139,7 @@ class User_AllNighter(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)
 
 class User_Operator(db.Model):
+    __tablename__ = "user_operator"
     id_user_operator = db.Column(db.Integer, primary_key = True)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)
     pending_hours = db.Column(db.Integer, nullable = False)

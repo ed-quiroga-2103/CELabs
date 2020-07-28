@@ -1,10 +1,12 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text
 from sqlalchemy import ForeignKey
+import uuid
 
-file = open('CELabs.db', 'w+')
+
+file = open('D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db', 'w+')
 file.close()
 
-engine = create_engine('sqlite:///.\\Web Service\\CELabs.db')
+engine = create_engine('sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db')
 meta = MetaData()
 
 
@@ -24,12 +26,11 @@ User = Table(
    Column('lastname2', String(50), nullable = False),
    Column('id_number', String(50), nullable = False),
    Column('password', String(50), nullable = False),
-   Column('email', String(50), nullable = False),
+   Column('email', String(50), nullable = False, unique = True),
    Column('phone_number', String(50), nullable = False),
    Column('active', Boolean, nullable = False),
-   Column('university_id', String, nullable = False),
+   Column('university_id', String(50), nullable = False),
    Column('user_type', Integer, ForeignKey('User_Type.id_user_type'), nullable = False)
-
 )
     
 Reservation = Table(
@@ -44,8 +45,7 @@ Reservation = Table(
     Column('last_mod_date', Text(50), nullable = False),
     Column('subject', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
-    Column('operator', String(50), nullable = True),
-    
+    Column('operator', Integer, ForeignKey('User.id_user'), nullable = False),
 )
 
 AllNighter = Table(
@@ -151,7 +151,8 @@ Reservation_Lab = Table(
 User_Operator = Table(
     'User_Operator', meta,
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
-    Column('approved_hours', Integer, nullable = False)
+    Column('approved_hours', Integer, nullable = False),
+    Column('pending_hours', Integer, nullable = False)
 )
 
 FaultReport_Lab = Table(
@@ -202,12 +203,34 @@ conn = engine.connect()
 
 conn.execute(User_Type.insert(),
     [
-   {'id_user_type':'1','user_type':'Administrator'},
-   {'id_user_type':'2','user_type':'Admin. Assistant'},
-   {'id_user_type':'3','user_type':'Operator'},
-   {'id_user_type':'4','user_type':'Professor'},
-   {'id_user_type':'5','user_type':'Administrative'}
-   ])
+        {'id_user_type':'1','user_type':'Administrator'},
+        {'id_user_type':'2','user_type':'Admin. Assistant'},
+        {'id_user_type':'3','user_type':'Operator'},
+        {'id_user_type':'4','user_type':'Professor'},
+        {'id_user_type':'5','user_type':'Administrative'}
+    ]
+)
+
+
+conn.execute(Lab.insert(),
+    [
+        {
+            'id_lab': '1', 'public_id_lab': str(uuid.uuid4()), 'name': 'F2-09', 'capacity': 25
+        },
+        {
+            'id_lab': '2', 'public_id_lab': str(uuid.uuid4()), 'name': 'F2-10', 'capacity': 25
+        }
+    ]
+)
+
+conn.execute(User.insert(),
+    [
+        {'id_user': 1, 'public_id_user': str(uuid.uuid4()), 'name': 'Op', 'lastname1': 'Op', 'lastname2':'Op', 'id_number':'Op',
+        'password':'Op', 'email':'Op', 'phone_number':'Op', 'active': 1, 'university_id':'Op', 'user_type':3},
+        {'id_user': 2, 'public_id_user': str(uuid.uuid4()), 'name': 'Prof', 'lastname1': 'Prof', 'lastname2':'Prof', 'id_number':'Prof',
+        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':4}
+    ]
+)
 
 conn.close()
 

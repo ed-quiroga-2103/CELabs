@@ -8,30 +8,40 @@ import datetime
 from functools import wraps
 
 
+
 app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///.\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
+app.config['CORS_SUPPORTS_CREDENTIALS'] = True
+app.config['CORS_EXPOSE_HEADERS'] = True
+
 
 from db_classes import *
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  response.headers.add('Access-Control-Allow-Credentials', 'true')
+  return response
 
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-
         if 'x-access-token' in request.headers:
             token = request.headers['x-access-token']
-
         if not token:
             return jsonify({'message' : 'Token is missing!'}), 401
 
         try: 
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(public_id=data['public_id']).first()
+            current_user = User.query.filter_by(public_id_user=data['public_id_user']).first()
         except:
             return jsonify({'message' : 'Token is invalid!'}), 401
 
@@ -57,20 +67,32 @@ def create_user():
         active = 1,
         university_id = data["university_id"],
         user_type = int(data["user_type"])
-    )
+    ) 
 
-    print(new_user)
 
     db.session.add(new_user)
     db.session.commit()
 
+    if int(data["user_type"]) == 3:
+
+        identifier = User.query.filter_by(email = data["email"]).first()
+
+        new_operator = User_Operator(
+            id_user = identifier.id_user,
+            approved_hours = 0,
+            pending_hours = 0
+        )
+
+        db.session.add(new_operator)
+        db.session.commit()
+        
+    print()
+
     response = jsonify({'message' : 'New user created!'})
-    response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
 
 @app.route('/login', methods = ['POST'])
-@cross_origin()
 def login():
     auth = request.authorization
 
@@ -82,7 +104,11 @@ def login():
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     if user.password == auth.password:
-        token = jwt.encode({'public_id' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        if user.name == 'Op':
+            token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, app.config['SECRET_KEY'])
+        else:
+            token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+
 
         return jsonify({'token' : token.decode('UTF-8')})
 
@@ -90,109 +116,69 @@ def login():
 
 
 
-@app.route('/user', methods=['GET'])
-@token_required
-def get_all_users(current_user):
-
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    users = User.query.all()
-
-    output = []
-
-    for user in users:
-        user_data = {}
-        user_data['public_id'] = user.public_id
-        user_data['name'] = user.name
-        user_data['password'] = user.password
-        user_data['admin'] = user.admin
-        output.append(user_data)
-
-    return jsonify({'users' : output})
-
-    
-@app.route('/user/<public_id>', methods=['PUT'])
-@token_required
-def promote_user(current_user, public_id):
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    user = User.query.filter_by(public_id=public_id).first()
-
-    if not user:
-        return jsonify({'message' : 'No user found!'})
-
-    user.admin = True
-    db.session.commit()
-
-    return jsonify({'message' : 'The user has been promoted!'})
-
-
-
-
 @app.route('/reservation', methods=['POST'])
 @token_required
 def create_reservation(current_user):
-
-    data = request.get_json()
-
-    date = data['date_time']
+    now = datetime.datetime.now()
     
-    reservations = Reservation.query.filter(Reservation.date_time.like(date)).all()
+    data = request.get_json()
+    
+    date = data['requested_date']
+    time = data['init_time']
+    
+    reservations = Reservation.query.filter(Reservation.requested_date.like(date) & Reservation.init_time.like(time)).first()
 
     if not reservations:
 
+        current_id_reservation = str(uuid.uuid4())
 
-        new_reservation = Reservation(public_id = str(uuid.uuid4()), lab_id = data['lab_id'], date_time = data['date_time'], duration_minutes = data['duration_minutes'])
+        operator = User.query.filter(User.email.like(data['operator'])).first()
+
+        new_reservation = Reservation(
+            public_id_reservation = current_id_reservation,
+            request_date = data['request_date'],
+            requested_date = data['requested_date'],
+            init_time = data['init_time'],
+            final_time = data['final_time'],
+            last_mod_id = current_user.public_id_user,
+            last_mod_date = now.strftime("%m/%d/%Y, %H:%M:%S"),
+            subject = data['subject'],
+            description = data['description'],
+            operator = operator.id_user
+            )
 
         db.session.add(new_reservation)
         db.session.commit()
 
-        return jsonify({'message' : 'New reservation created!'})
+        current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
+        current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+
+
+        user_relation = User_Reservation(
+            id_reservation = current_reservation.id_reservation,
+            id_user = current_user.id_user    
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+        lab_relation = Reservation_Lab(
+            id_reservation = current_reservation.id_reservation,
+            id_lab = lab.id_lab
+        )
+
+        db.session.add(lab_relation)
+        db.session.commit()
+
+
+        response = jsonify({'message' : 'New reservation created!'})
+        
+        return response
 
     return jsonify({'message':'Theres already a reservation with that date and time'})
 
-
-
-@app.route('/reservation', methods=['GET'])
-@token_required
-def get_all_reservations(current_user):
-
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    reservations = Reservation.query.all()
-
-    output = []
-
-    for reserv in reservations:
-        reserv_data = {}
-        reserv_data['public_id'] = reserv.public_id
-        reserv_data['lab_id'] = reserv.lab_id
-        reserv_data['date_time'] = reserv.date_time
-        reserv_data['duration_minutes'] = reserv.duration_minutes
-        output.append(reserv_data)
-
-    return jsonify({'reservations' : output})
-
-
-@app.route('/reservation', methods=['DELETE'])
-@token_required
-def delete_reservation(current_user):
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    public_id = request.get_json()['public_id']
-
-    reservation = Reservation.query.filter_by(public_id=public_id).first()
-
-    if not reservation:
-        return jsonify({'message' : 'No reservation found!'})
-
-
-
-    db.session.delete(reservation)
-    db.session.commit()
-
-    return jsonify({'message' : 'The reservation has been deleted!'})
+@app.route('/reservation', methods=['OPTIONS'])
+def preflight_reservation():
+    return jsonify({'message' : 'preflight confirmed'}), 200
