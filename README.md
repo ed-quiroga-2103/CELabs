@@ -66,10 +66,9 @@ The codes for the user types are shown in the the following table:
 | User Type | Code |
 | ----------- | ----------- |
 | Administrator | 1 |
-| Admin. Assistant | 2 |
-| Operator | 3 |
-| Professor | 4 |
-| Administrative | 5 |
+| Operator | 2 |
+| Professor | 3 |
+| Administrative | 4 |
 
 Example with Axios library for Vue:
 

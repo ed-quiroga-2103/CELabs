@@ -17,6 +17,7 @@ class User_Type(db.Model):
     children = db.relationship("User")
 
 class User(db.Model):
+    __tablename__ = 'user'
     id_user = db.Column(db.Integer, primary_key=True)
     public_id_user = db.Column(db.String(50), unique=True)
     name = db.Column(db.String(50), nullable = False)
@@ -42,15 +43,17 @@ class Reservation(db.Model):
     last_mod_date = db.Column(db.Text, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
-    operator = db.Column(db.String(50), nullable = True)
+    operator = db.Column(db.String(50), db.ForeignKey('user.id_user'), nullable = True)
 
 class User_Reservation(db.Model):
+    __tablename__="user_reservation"
     id_user_reservation = db.Column(db.Integer, primary_key=True)
     id_reservation = db.Column(db.Integer, db.ForeignKey('reservation.id_reservation'), nullable = False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)
 
 
 class Reservation_Lab(db.Model):
+    __tablename__ = "reservation_lab"
     id_reservation_lab = db.Column(db.Integer, primary_key=True)
     id_reservation = db.Column(db.Integer, db.ForeignKey('reservation.id_reservation'), nullable = False)
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
