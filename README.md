@@ -8,6 +8,7 @@ Proyecto del curso Especificación y Diseño de Software CE4101
 - [HTTP Methods for API](#http-methods-for-api)
   * [HTTP Basic Auth](#http-basic-auth)
   * [Registration](#-post--registration)
+  * [Reservation](#-post--reservation)
 
 
 # API
@@ -104,7 +105,7 @@ The request sends a confirmation message with the following format:
 ## Reservation
 Reservation is a POST method. The inputed JSON has the following format:
 
-´´´
+```
     data: {
           {"request_date":this.request_date,
           "requested_date":this.requested_date,
@@ -114,7 +115,7 @@ Reservation is a POST method. The inputed JSON has the following format:
           "description": this.description,
           "operator": this.operator
           }
-´´´        
+```       
 
 Example with Axios library for Vue:
 
