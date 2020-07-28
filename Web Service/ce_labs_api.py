@@ -76,7 +76,6 @@ def create_user():
     db.session.commit()
 
     response = jsonify({'message' : 'New user created!'})
-    response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
 
