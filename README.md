@@ -7,8 +7,8 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [Development Details](#development-details)
 - [HTTP Methods for API](#http-methods-for-api)
   * [HTTP Basic Auth](#http-basic-auth)
-  * [Registration](#-post--registration)
-  * [Reservation](#-post--reservation)
+  * [Registration](#registration)
+  * [Reservation](#reservation)
 
 
 # API
@@ -106,43 +106,56 @@ Reservation is a POST method. The inputed JSON has the following format:
 
 ```
     data: {
-          {"request_date":this.request_date,
-          "requested_date":this.requested_date,
-          "init_time": this.init_time,
-          "final_time": this.final_time,
-          "subject": this.subject,
-          "description": this.description,
-          "operator": this.operator
+          "request_date": "Date of the request",
+          "requested_date": "Requested Date",
+          "requesting_user": "requesting_user@email.com",
+          "init_time": "HH:MM:SS",
+          "final_time": "HH:MM:SS",
+          "subject": "University Subject",
+          "description": "Description of the reservation",
+          "lab": "Lab name (E.g. F2-09)",
+          "operator": "operator@email.com"
           }
 ```       
+
+If there is no operator, then operator can be null or blank.
 
 Example with Axios library for Vue:
 
 ```
 var data = JSON.stringify(
 
-          {"request_date":this.request_date,
-          "requested_date":this.requested_date,
-          "init_time": this.init_time,
-          "final_time": this.final_time,
-          "subject": this.subject,
-          "description": this.description,
-          "operator": this.operator
-          }
-        
-          );
-        var config = {
-        method: 'post',
-        url: 'http://127.0.0.1:5001/reservation',
-        headers: { 
-            'x-access-token': this.token, 
-            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
-            'Content-Type': 'application/json'
-        },
-            data: data
-        };
+    {"request_date":this.request_date,
+    "requested_date":this.requested_date,
+    "requesting_user":this.requesting_user,
+    "init_time": this.init_time,
+    "final_time": this.final_time,
+    "subject": this.subject,
+    "description": this.description,
+    "lab": this.lab,
+    "operator": this.operator
+    }
 
-        axios(config) 
+);
+var config = {
+    method: 'post',
+    url: 'http://127.0.0.1:5001/reservation',
+    headers: { 
+    'x-access-token': this.token, 
+    'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+    'Content-Type': 'application/json'
+    },
+    data: data
+};
+
+axios(config) 
+    .then(response => {
+    this.posts = response.data;
+    console.log(this.posts['message']);
+    }
+    ).catch(error =>{
+    console.log(error.data['message'])
+});
 ```
 
 The request sends a confirmation message with the following format:
