@@ -99,3 +99,54 @@ The request sends a confirmation message with the following format:
 ```
 {'message' : 'New user created!'}
 ```
+
+
+## Reservation
+Reservation is a POST method. The inputed JSON has the following format:
+
+´´´
+    data: {
+          {"request_date":this.request_date,
+          "requested_date":this.requested_date,
+          "init_time": this.init_time,
+          "final_time": this.final_time,
+          "subject": this.subject,
+          "description": this.description,
+          "operator": this.operator
+          }
+´´´        
+
+Example with Axios library for Vue:
+
+```
+var data = JSON.stringify(
+
+          {"request_date":this.request_date,
+          "requested_date":this.requested_date,
+          "init_time": this.init_time,
+          "final_time": this.final_time,
+          "subject": this.subject,
+          "description": this.description,
+          "operator": this.operator
+          }
+        
+          );
+        var config = {
+        method: 'post',
+        url: 'http://127.0.0.1:5001/reservation',
+        headers: { 
+            'x-access-token': this.token, 
+            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+            'Content-Type': 'application/json'
+        },
+            data: data
+        };
+
+        axios(config) 
+```
+
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'New reservation created!'}
+```
