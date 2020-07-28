@@ -6,7 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from functools import wraps
-from datetime import datetime
 
 
 
@@ -42,7 +41,7 @@ def token_required(f):
 
         try: 
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(public_id_user=data['public_id']).first()
+            current_user = User.query.filter_by(public_id_user=data['public_id_user']).first()
         except:
             return jsonify({'message' : 'Token is invalid!'}), 401
 
@@ -70,7 +69,6 @@ def create_user():
         user_type = int(data["user_type"])
     )
 
-    print(new_user)
 
     db.session.add(new_user)
     db.session.commit()
@@ -91,7 +89,11 @@ def login():
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     if user.password == auth.password:
-        token = jwt.encode({'public_id' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        if user.name == 'Op':
+            token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, app.config['SECRET_KEY'])
+        else:
+            token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+
 
         return jsonify({'token' : token.decode('UTF-8')})
 
@@ -103,19 +105,22 @@ def login():
 @token_required
 def create_reservation(current_user):
     now = datetime.datetime.now()
-    data = request.get_json()
-
-    print(data)
-
-    date = data['request_date']
     
-    reservations = Reservation.query.filter(Reservation.request_date.like(date)).all()
+    data = request.get_json()
+    
+    date = data['requested_date']
+    time = data['init_time']
+    
+    reservations = Reservation.query.filter(Reservation.requested_date.like(date) & Reservation.init_time.like(time)).first()
 
     if not reservations:
 
+        current_id_reservation = str(uuid.uuid4())
+
+        operator = User.query.filter(User.email.like(data['operator'])).first()
 
         new_reservation = Reservation(
-            public_id_reservation = str(uuid.uuid4()),
+            public_id_reservation = current_id_reservation,
             request_date = data['request_date'],
             requested_date = data['requested_date'],
             init_time = data['init_time'],
@@ -124,13 +129,37 @@ def create_reservation(current_user):
             last_mod_date = now.strftime("%m/%d/%Y, %H:%M:%S"),
             subject = data['subject'],
             description = data['description'],
-            operator = data['operator']  
+            operator = operator.id_user
             )
 
         db.session.add(new_reservation)
         db.session.commit()
 
+        current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
+        current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+
+
+        user_relation = User_Reservation(
+            id_reservation = current_reservation.id_reservation,
+            id_user = current_user.id_user    
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+        lab_relation = Reservation_Lab(
+            id_reservation = current_reservation.id_reservation,
+            id_lab = lab.id_lab
+        )
+
+        db.session.add(lab_relation)
+        db.session.commit()
+
+
         response = jsonify({'message' : 'New reservation created!'})
+        
         return response
 
     return jsonify({'message':'Theres already a reservation with that date and time'})
