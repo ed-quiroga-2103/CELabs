@@ -35,7 +35,7 @@ class Reservation(db.Model):
     id_reservation = db.Column(db.Integer, primary_key = True)
     public_id_reservation = db.Column(db.String(50), unique = True)
     request_date = db.Column(db.Text, nullable = False)
-    reserved_date = db.Column(db.Text, nullable = False)
+    requested_date = db.Column(db.Text, nullable = False)
     init_time = db.Column(db.Text, nullable = False)
     final_time = db.Column(db.Text, nullable = False)
     last_mod_id = db.Column(db.Integer, nullable = False)

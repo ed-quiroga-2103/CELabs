@@ -14,29 +14,35 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\Feature Register\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
+app.config['CORS_SUPPORTS_CREDENTIALS'] = True
+app.config['CORS_EXPOSE_HEADERS'] = True
+
 
 from db_classes import *
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-access-token')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  response.headers.add('Access-Control-Allow-Credentials', 'true')
+  return response
 
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        print(str(request.get_json()))
-
         if 'x-access-token' in request.headers:
             token = request.headers['x-access-token']
-            print(token)
-
         if not token:
-            print('Not Token')
             return jsonify({'message' : 'Token is missing!'}), 401
 
         try: 
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(public_id_user=data['public_id_user']).first()
+            current_user = User.query.filter_by(public_id_user=data['public_id']).first()
         except:
             return jsonify({'message' : 'Token is invalid!'}), 401
 
@@ -75,7 +81,6 @@ def create_user():
     return response
 
 @app.route('/login', methods = ['POST'])
-@cross_origin()
 def login():
     auth = request.authorization
 
@@ -95,65 +100,25 @@ def login():
 
 
 
-@app.route('/user', methods=['GET'])
+@app.route('/reservation', methods=['POST'])
 @token_required
-def get_all_users(current_user):
-
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    users = User.query.all()
-
-    output = []
-
-    for user in users:
-        user_data = {}
-        user_data['public_id'] = user.public_id
-        user_data['name'] = user.name
-        user_data['password'] = user.password
-        user_data['admin'] = user.admin
-        output.append(user_data)
-
-    return jsonify({'users' : output})
-
-    
-@app.route('/user/<public_id>', methods=['PUT'])
-@token_required
-def promote_user(current_user, public_id):
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    user = User.query.filter_by(public_id=public_id).first()
-
-    if not user:
-        return jsonify({'message' : 'No user found!'})
-
-    user.admin = True
-    db.session.commit()
-
-    return jsonify({'message' : 'The user has been promoted!'})
-
-
-
-
-@app.route('/reservation', methods=['POST','OPTIONS'])
-@cross_origin(headers=['Content-Type'])
 def create_reservation(current_user):
-
-    now = datetime.now()
+    now = datetime.datetime.now()
     data = request.get_json()
 
-    date = data['reserved_date']
+    print(data)
+
+    date = data['request_date']
     
-    reservations = Reservation.query.filter(Reservation.reserved_date.like(date)).all()
+    reservations = Reservation.query.filter(Reservation.request_date.like(date)).all()
 
     if not reservations:
 
 
         new_reservation = Reservation(
             public_id_reservation = str(uuid.uuid4()),
-            request_date = data['requested_date'],
-            reserved_date = data['reserved_date'],
+            request_date = data['request_date'],
+            requested_date = data['requested_date'],
             init_time = data['init_time'],
             final_time = data['final_time'],
             last_mod_id = current_user.public_id_user,
@@ -166,50 +131,11 @@ def create_reservation(current_user):
         db.session.add(new_reservation)
         db.session.commit()
 
-        return jsonify({'message' : 'New reservation created!'})
+        response = jsonify({'message' : 'New reservation created!'})
+        return response
 
     return jsonify({'message':'Theres already a reservation with that date and time'})
 
-
-
-@app.route('/reservation', methods=['GET'])
-@token_required
-def get_all_reservations(current_user):
-
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    reservations = Reservation.query.all()
-
-    output = []
-
-    for reserv in reservations:
-        reserv_data = {}
-        reserv_data['public_id'] = reserv.public_id
-        reserv_data['lab_id'] = reserv.lab_id
-        reserv_data['date_time'] = reserv.date_time
-        reserv_data['duration_minutes'] = reserv.duration_minutes
-        output.append(reserv_data)
-
-    return jsonify({'reservations' : output})
-
-
-@app.route('/reservation', methods=['DELETE'])
-@token_required
-def delete_reservation(current_user):
-    if not current_user.admin:
-        return jsonify({'message' : 'Cannot perform that function!'})
-
-    public_id = request.get_json()['public_id']
-
-    reservation = Reservation.query.filter_by(public_id=public_id).first()
-
-    if not reservation:
-        return jsonify({'message' : 'No reservation found!'})
-
-
-
-    db.session.delete(reservation)
-    db.session.commit()
-
-    return jsonify({'message' : 'The reservation has been deleted!'})
+@app.route('/reservation', methods=['OPTIONS'])
+def preflight_reservation():
+    return jsonify({'message' : 'preflight confirmed'}), 200
