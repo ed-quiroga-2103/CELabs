@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 file = open('CELabs.db', 'w+')
 file.close()
 
-engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
+engine = create_engine('sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db')
 meta = MetaData()
 
 
@@ -151,7 +151,8 @@ Reservation_Lab = Table(
 User_Operator = Table(
     'User_Operator', meta,
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
-    Column('approved_hours', Integer, nullable = False)
+    Column('approved_hours', Integer, nullable = False),
+    Column('pending_hours', Integer, nullable = False)
 )
 
 FaultReport_Lab = Table(

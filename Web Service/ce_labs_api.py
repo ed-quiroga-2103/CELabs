@@ -14,7 +14,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -68,12 +68,25 @@ def create_user():
         active = 1,
         university_id = data["university_id"],
         user_type = int(data["user_type"])
-    )
-
-    print(new_user)
+    ) 
 
     db.session.add(new_user)
     db.session.commit()
+
+    if int(data["user_type"]) == 3:
+
+        identifier = User.query.filter_by(email = data["email"]).first()
+
+        new_operator = User_Operator(
+            id_user = identifier.id_user,
+            approved_hours = 0,
+            pending_hours = 0
+        )
+
+        db.session.add(new_operator)
+        db.session.commit()
+        
+    print()
 
     response = jsonify({'message' : 'New user created!'})
 
