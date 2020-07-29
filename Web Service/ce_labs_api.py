@@ -191,6 +191,7 @@ def create_worklog(current_user):
 
     worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
 
+
     if not worklogs:
 
         current_id_worklog = str(uuid.uuid4())
@@ -224,10 +225,76 @@ def create_worklog(current_user):
     return jsonify({'message':'Theres already a worklog with that date and time'})
 
 
+@app.route('/inventary', methods=['POST'])
+@token_required
+def create_inventary_report(current_user):
+    
+    data = request.get_json()
+    
+    date_json = data['date']
+
+    #date_time CAMBIAR
+
+    inventary = InventoryReport.query.filter_by(date=date_json).first() #CAMBIAR
+
+    if not inventary:
+
+        current_id_report = str(uuid.uuid4())
+
+        new_inventoryreport = InventoryReport(
+            public_id_report = current_id_report,
+            date = data['date'],
+            complete_computers = int(data['complete_computers']),
+            incomplete_computers = int(data['incomplete_computers']),
+            number_projectors = int(data['number_projectors']),
+            number_chairs = int(data['number_chairs']),
+            number_fire_extinguishers = int(data['number_fire_extinguishers'])
+            )
+
+        db.session.add(new_inventoryreport)
+        db.session.commit()
+
+        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
+
+        user_relation = User_InventoryReport(
+            id_report = current_report.id_report,
+            id_user = current_user.id_user   
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
+
+        lab_relation = InventoryReport_Lab(
+            id_report = current_report.id_report,
+            id_lab = lab.id_lab
+        )
+
+        db.session.add(lab_relation)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New inventory report created!'})
+        
+        return response
+
+    return jsonify({'message':'Theres already a inventory report with that date and time'})
+
+
+
+
+
+
+
 @app.route('/reservation', methods=['OPTIONS'])
 def preflight_reservation():
     return jsonify({'message' : 'preflight confirmed'}), 200
 
 @app.route('/worklog', methods=['OPTIONS'])
 def preflight_worklog():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+@app.route('/inventary', methods=['OPTIONS'])
+def preflight_inventary_report():
     return jsonify({'message' : 'preflight confirmed'}), 200

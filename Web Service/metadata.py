@@ -68,7 +68,6 @@ InventoryReport = Table(
     Column('incomplete_computers', Integer, nullable = False),
     Column('number_projectors', Integer, nullable = False),
     Column('number_chairs', Integer, nullable = False),
-    Column('number_projectors', Integer, nullable = False),
     Column('number_fire_extinguishers', Integer, nullable = False),
 
 )
