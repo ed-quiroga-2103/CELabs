@@ -179,6 +179,55 @@ def create_reservation(current_user):
 
     return jsonify({'message':'Theres already a reservation with that date and time'})
 
+
+@app.route('/worklog', methods=['POST'])
+@token_required
+def create_worklog(current_user):
+    
+    data = request.get_json()
+    
+    date = data['date_time']
+    time = data['init_time']
+
+    worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
+
+    if not worklogs:
+
+        current_id_worklog = str(uuid.uuid4())
+
+        new_worklog = Worklog(
+            public_id_worklog = current_id_worklog,
+            date_time = data['date_time'],
+            init_time = data['init_time'],
+            final_time = data['final_time'],
+            description = data['description'],
+            )
+
+        db.session.add(new_worklog)
+        db.session.commit()
+
+        current_worklog = Worklog.query.filter(Worklog.public_id_worklog.like(current_id_worklog)).first()
+        #current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+
+        user_relation = User_Worklog(
+            id_worklog = current_worklog.id_worklog,
+            id_user = current_user.id_user   
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New worklog created!'})
+        
+        return response
+
+    return jsonify({'message':'Theres already a worklog with that date and time'})
+
+
 @app.route('/reservation', methods=['OPTIONS'])
 def preflight_reservation():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+@app.route('/worklog', methods=['OPTIONS'])
+def preflight_worklog():
     return jsonify({'message' : 'preflight confirmed'}), 200

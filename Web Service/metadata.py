@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey
 import uuid
 
 
-file = open('D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db', 'w+')
+file = open('C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db', 'w+')
 file.close()
 
 engine = create_engine('sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db')
