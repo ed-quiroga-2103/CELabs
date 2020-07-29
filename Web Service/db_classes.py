@@ -104,7 +104,8 @@ class InventoryReport_Lab(db.Model):
     id_report = db.Column(db.Integer, db.ForeignKey('inventaryreport.id_report'), nullable = False)
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
 
-class InventaryReport(db.Model):
+class InventoryReport(db.Model):
+    __tablename__="inventoryreport"
     id_report = db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
     date = db.Column(db.Text(50), nullable = False)
@@ -114,7 +115,7 @@ class InventaryReport(db.Model):
     number_chairs = db.Column(db.Integer, nullable = False)
     number_fire_extinguishers = db.Column(db.Integer, nullable = False)
 
-class User_InventaryReport(db.Model):
+class User_InventoryReport(db.Model):
     id_user_inventaryreport = db.Column(db.Integer, primary_key = True)
     id_report = db.Column(db.Integer, db.ForeignKey('inventaryreport.id_report'), nullable = False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)

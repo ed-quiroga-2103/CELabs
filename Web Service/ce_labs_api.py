@@ -13,7 +13,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -182,3 +182,22 @@ def create_reservation(current_user):
 @app.route('/reservation', methods=['OPTIONS'])
 def preflight_reservation():
     return jsonify({'message' : 'preflight confirmed'}), 200
+
+
+@app.route('/reservation', methods=['GET'])
+@token_required
+def get_all_reservations(current_user):
+
+    reservations = Reservation.query.join(User_Reservation).join(User).with_entities(
+        Reservation.request_date, 
+        Reservation.requested_date,
+        Reservation.subject,
+        Reservation.description,
+        User.email
+        )
+
+# Filter example:    
+# reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
+
+    return jsonify(reservations.all()), 200
+

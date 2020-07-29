@@ -11,6 +11,7 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [Reservation](#reservation)
 
 
+
 # API
 
 This section details the usage and development details of the API for CELabs.
@@ -102,7 +103,10 @@ The request sends a confirmation message with the following format:
 
 
 ## Reservation
-Reservation is a POST method. The inputed JSON has the following format:
+
+### POST
+
+The inputed JSON has the following format:
 
 ```
     data: {
