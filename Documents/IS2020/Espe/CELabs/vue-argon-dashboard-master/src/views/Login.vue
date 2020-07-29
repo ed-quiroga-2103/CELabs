@@ -10,28 +10,18 @@
                         <FormulateForm v-model="formValues" @submit="handleSubmit()">
                                 <FormulateInput 
                                 class="input-group-alternative mb-3"
-                                addon-left-icon="ni ni-email-83"
                                 type="email" 
-                                name="email" 
+                                name="username" 
                                 label="Email" 
                                 validation="required|email"/>
                                 <FormulateInput 
                                 class="input-group-alternative"
-                                addon-left-icon="ni ni-lock-circle-open"
-                                
                                 type ="password" 
                                 name="password1" 
                                 label="Password" 
                                 v-model = "pass" 
                                 @input="encriptar" 
-                                validation="required|max:16|min:8"/>
-                                <FormulateInput
-                                type="select"
-                                name="type"
-                                label="Type"
-                                :options="{operador: 'Operator', profesor: 'Professor', administrativo: 'Administrative'}"
-                                />
-                                
+                                validation="required|max:16|min:8"/>                                
                                 <div class="text-center">
                                     <FormulateInput type="submit" class="my-4" label="Sign in"/>
                                 </div>
@@ -55,37 +45,41 @@
 
 <script>
 import axios from "axios";
-const API = "https://jsonplaceholder.typicode.com";
 export default {
-      created() {
-    
-  },
   data: () => ({
     pass: '',
-    formValues: {      
+    formValues: {     
+        username : '' ,
+        password1:'',
+        password: ''
+
     }
   }),
   methods: {
     encriptar(){
        this.formValues.password = this.$md5(this.pass)
-       
-
     },
     handleSubmit(){
-        console.log(this.get())
-        delete this.formValues.password1
-        console.log(this.formValues)
-        
-      //axios.get('https://jsonplaceholder.typicode.com/todos/1').then((result) => {
-      //console.log(result.data);
-    //})
-  },
-    get() {
-        return axios.get(API+'/todos');
-    },
-    create(todo) {
-        return axios.post(API+'/todos', todo);
+    this.login()
+    this.formValues = {     
+        username : '' ,
+        password1:'',
+        password: ''
+
     }
+        
+  },
+  login(){
+     axios.post(`http://127.0.0.1:5001/login`, {
+        headers: {}
+    }, 
+    {
+        auth: this.formValues
+    }).then(response => {
+        alert(response.data['token']);
+    }
+);
+  }    
   }
 
 };

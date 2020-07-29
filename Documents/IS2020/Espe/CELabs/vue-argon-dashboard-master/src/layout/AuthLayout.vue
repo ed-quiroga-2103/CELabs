@@ -115,21 +115,69 @@
         </footer>
     </div>
 </template>
-<script>
-  import { SlideYUpTransition } from 'vue2-transitions'
 
-  export default {
-    name: 'auth-layout',
-    components: {
-      SlideYUpTransition
-    },
-    data() {
-      return {
-        year: new Date().getFullYear(),
-        showMenu: false
-      }
+
+
+<script>
+import axios from "axios";
+export default {
+  created() {},
+  data: () => ({
+    pass: '',
+    formValues: {     
+                name: '',
+                lastname1: '',
+                lastname2: '',
+                id_number: '',
+                password: '',
+                email: '',
+                phone_number: '',
+                university_id: '',
+                user_type: ''
     }
+  }),
+  methods: {
+    encriptar(){
+       this.formValues.password = this.$md5(this.pass)
+       
+
+    },
+    handleSubmit(){
+        
+        delete this.formValues.password1
+        console.log(this.formValues)
+        console.log(this.register())
+  },
+  register(){
+      axios.post(`http://127.0.0.1:5001/user`, 
+           {
+                name: this.name,
+                lastname1: this.lastname1,
+                lastname2: this.lastname2,
+                id_number: this.id_number,
+                password: this.password,
+                email: this.email,
+                phone_number: this.phone_number,
+                university_id: this.university_id,
+                user_type: this.user_type
+            }
+        ) 
+        .then(response => {
+        this.posts = response.data;
+        alert(this.posts['message']);
+      }
+      );
+
+  }    
   }
+
+};
+
+
+    
+    
+
 </script>
+
 <style>
 </style>
