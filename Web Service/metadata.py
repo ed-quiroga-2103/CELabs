@@ -83,7 +83,7 @@ FaultReport = Table(
     Column('id_report', Integer, primary_key = True),
     Column('public_id_report', String(50), unique = True),
     Column('date_time', Text(50), nullable = False),
-    Column('id_faulty_part', String(50), nullable = False),
+    Column('id_fault_part', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
     Column('id_status', Integer, ForeignKey('FaultStatus.id_status'), nullable = False),
     

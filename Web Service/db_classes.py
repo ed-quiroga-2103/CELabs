@@ -70,18 +70,21 @@ class FaultReport_Lab(db.Model):
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
 
 class FaultReport(db.Model):
+    __tablename__ = "faultreport"
     id_report= db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
     date_time = db.Column(db.Text(50), nullable = False)
-    id_fault_part = db.Column(db.String, nullable = False)
+    id_fault_part = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
     id_status = db.Column(db.Integer, db.ForeignKey('faultstatus.id_status'), nullable = False)
 
 class FaultStatus(db.Model):
+    __tablename__ = "faultstatus"
     id_status= db.Column(db.Integer, primary_key = True)
     status = db.Column(db.String(50), nullable = False)
 
 class User_FaultReport(db.Model):
+    __tablename__ = "user_faultreport"
     id_user_faultreport = db.Column(db.Integer, primary_key = True)
     id_report = db.Column(db.Integer, db.ForeignKey('faultreport.id_report'), nullable = False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)

@@ -283,6 +283,51 @@ def create_inventary_report(current_user):
 
 
 
+@app.route('/avery', methods=['POST'])
+@token_required
+def create_avery_report(current_user):
+    
+    data = request.get_json()
+
+    print(data)
+    
+    date_time_json = data['date_time']
+
+    avery = FaultReport.query.filter_by(date_time =date_time_json).first() 
+
+    if not avery:
+
+        current_id_avery = str(uuid.uuid4())
+
+        current_id_status= FaultStatus.query.filter_by(status= "Pending").first() 
+
+        new_fault_report = FaultReport(
+            public_id_report = current_id_avery,
+            date_time = data['date_time'],
+            id_fault_part = data['id_fault_part'],
+            description = data['description'],
+            id_status = current_id_status.id_status
+            )
+
+        db.session.add(new_fault_report)
+        db.session.commit()
+
+        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_avery)).first()
+
+        user_relation = User_FaultReport(
+            id_report = current_report.id_report,
+            id_user = current_user.id_user  
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New inventory report created!'})
+        
+        return response
+
+    return jsonify({'message':'Theres already a inventory report with that date and time'})
+
 
 
 
@@ -297,4 +342,8 @@ def preflight_worklog():
 
 @app.route('/inventary', methods=['OPTIONS'])
 def preflight_inventary_report():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+@app.route('/avery', methods=['OPTIONS'])
+def preflight_inventary_avery():
     return jsonify({'message' : 'preflight confirmed'}), 200
