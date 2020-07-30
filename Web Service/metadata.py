@@ -6,7 +6,7 @@ import uuid
 file = open('D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db', 'w+')
 file.close()
 
-engine = create_engine('sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db')
+engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
 meta = MetaData()
 
 
@@ -53,10 +53,11 @@ AllNighter = Table(
     Column('id_allnighter', Integer, primary_key = True),
     Column('public_id_allnighter', String(50), unique = True),
     Column('request_date', Text(50), nullable = False),
-    Column('reserved_date', Text(50), nullable = False),
+    Column('requested_date', Text(50), nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
     Column('last_mod_date', Text(50), nullable = False),
     Column('subject', String(50), nullable = False),
+    Column('state', Integer, nullable = False)
 )
 
 InventoryReport = Table(

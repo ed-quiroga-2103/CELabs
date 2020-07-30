@@ -73,7 +73,7 @@ class FaultReport(db.Model):
     id_report= db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
     date_time = db.Column(db.Text(50), nullable = False)
-    id_fault_part = db.Column(db.String, nullable = False)
+    id_fault_part = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
     id_status = db.Column(db.Integer, db.ForeignKey('faultstatus.id_status'), nullable = False)
 
@@ -104,7 +104,8 @@ class InventoryReport_Lab(db.Model):
     id_report = db.Column(db.Integer, db.ForeignKey('inventaryreport.id_report'), nullable = False)
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
 
-class InventaryReport(db.Model):
+class InventoryReport(db.Model):
+    __tablename__="inventoryreport"
     id_report = db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
     date = db.Column(db.Text(50), nullable = False)
@@ -114,26 +115,30 @@ class InventaryReport(db.Model):
     number_chairs = db.Column(db.Integer, nullable = False)
     number_fire_extinguishers = db.Column(db.Integer, nullable = False)
 
-class User_InventaryReport(db.Model):
+class User_InventoryReport(db.Model):
     id_user_inventaryreport = db.Column(db.Integer, primary_key = True)
     id_report = db.Column(db.Integer, db.ForeignKey('inventaryreport.id_report'), nullable = False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)
 
 class AllNighter(db.Model):
+    __tablename__ = 'allnighter'
     id_allnighter = db.Column(db.Integer, primary_key = True)
     public_id_allnighter = db.Column(db.String(50), unique = True)
     request_date = db.Column(db.Text(50), nullable = False)
-    reserved_date = db.Column(db.Text(50), nullable = False)
+    requested_date = db.Column(db.Text(50), nullable = False)
     last_mod_id = db.Column(db.Integer, nullable = False)
     last_mod_date = db.Column(db.Text, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
+    state = db.Column(db.Integer, nullable = False)
 
 class AllNighter_Lab(db.Model):
+    __tablename__ = 'allnighter_lab'
     id_allnighter_lab = db.Column(db.Integer, primary_key = True)
     id_allnighter = db.Column(db.Integer, db.ForeignKey('allnighter.id_allnighter'), nullable = False)
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
     
 class User_AllNighter(db.Model):
+    __tablename__ = 'user_allnighter'
     id_user_allnighter = db.Column(db.Integer, primary_key = True)
     id_allnighter = db.Column(db.Integer, db.ForeignKey('allnighter.id_allnighter'), nullable = False)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable = False)

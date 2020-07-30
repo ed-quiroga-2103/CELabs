@@ -9,6 +9,8 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [HTTP Basic Auth](#http-basic-auth)
   * [Registration](#registration)
   * [Reservation](#reservation)
+  * [All-Nighters](#all-nighters)
+
 
 
 # API
@@ -29,7 +31,7 @@ must be included in the `auth` parameters of the request.
 Example with Axios library for Vue:
 
 ```
-axios.post(`http://webservice:port/login`, {
+axios.post(`http://localhost:port/login`, {
         headers: {}
     }, 
     {
@@ -102,7 +104,10 @@ The request sends a confirmation message with the following format:
 
 
 ## Reservation
-Reservation is a POST method. The inputed JSON has the following format:
+
+### POST
+
+The inputed JSON has the following format:
 
 ```
     data: {
@@ -163,3 +168,134 @@ The request sends a confirmation message with the following format:
 ```
 {'message' : 'New reservation created!'}
 ```
+
+### GET
+
+The request in Axios has the following format:
+```
+var data = '';
+        var config = {
+        method: 'get',
+        url: 'http://127.0.0.1:5001/reservation',
+        headers: { 
+            'x-access-token': this.token, 
+            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+            'Content-Type': 'application/json'
+        },
+            data: data
+        };
+
+        axios(config).then(response=>{
+            this.info = JSON.stringify(response.data)
+        })
+```
+
+The request returns a JSONArray with all the current reservations in the database with the following format:
+```
+[
+    ["12/12/2020","12/12/2020","Espe","Revision de proyectos","Prof"],
+    ["13/12/2020","13/12/2020","Espe","Revision de proyectos","Prof"],
+    ["13/12/2020","13/12/2020","Espe","Revision de proyectos","Prof"]
+]
+```
+The order of the data in the array is:
+```
+    ['Request Data', 'Requested Date', 'Subject', 'Description', 'User that Requested']
+```
+
+## All-Nighters
+
+### POST
+
+The inputed JSON has the following format:
+
+```
+    data: {
+          "request_date": "Date of the request",
+          "requested_date": "Requested Date",
+          "description": "Description of the reservation",
+          "lab": "Lab name (E.g. F2-09)",
+          }
+```       
+
+
+Example with Axios library for Vue:
+
+```
+{
+        var data = JSON.stringify(
+
+          {"request_date":this.request_date,
+          "requested_date":this.requested_date,
+          "description": this.description,
+          "lab": this.lab,
+          }
+
+          );
+        var config = {
+        method: 'post',
+        url: 'http://127.0.0.1:5001/allnighter',
+        headers: { 
+            'x-access-token': this.token, 
+            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+            'Content-Type': 'application/json'
+        },
+            data: data
+        };
+
+        axios(config) 
+        .then(response => {
+        this.posts = response.data;
+        console.log(this.posts['message']);
+      }
+      ).catch(error =>{
+        console.log(error.data['message'])
+      });
+```
+
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'New All-Nighter created!'}
+```
+### GET
+
+The request in Axios has the following format:
+
+```
+var data = '';
+        var config = {
+        method: 'get',
+        url: 'http://127.0.0.1:5001/allnighter',
+        headers: { 
+            'x-access-token': this.token, 
+            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+            'Content-Type': 'application/json'
+        },
+            data: data
+        };
+
+        axios(config).then(response=>{
+            this.info = JSON.stringify(response.data)
+        })
+```
+The request returns a JSONArray with all the current reservations in the database with the following format:
+```
+[
+    ["12/12/2020", "12/12/2020", "Desarrollo de proyecto", 0, "Op"],
+    ["13/12/2020", "13/12/2020", "Desarrollo de proyecto", 1, "Op"],
+    ["14/12/2020", "14/12/2020", "Desarrollo de proyecto", 2, "Op"]
+]
+```
+The order of the data in the array is:
+```
+    ['Request Data', 'Requested Date', 'Description', 'State of the Request', 'User that Requested']
+```
+
+The state of the requests is described in the following table:
+
+| State| Code |
+| ----------- | ----------- |
+| Pending | 0 |
+| Approved | 1 |
+| Denied | 2 |
