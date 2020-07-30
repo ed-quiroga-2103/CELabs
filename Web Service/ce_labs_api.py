@@ -201,3 +201,82 @@ def get_all_reservations(current_user):
 
     return jsonify(reservations.all()), 200
 
+
+@app.route('/allnighter', methods=['POST'])
+@token_required
+def create_allnighter(current_user):
+    now = datetime.datetime.now()
+
+    data = request.get_json()
+    
+    date = data['requested_date']
+    
+    reservations = AllNighter.query.filter(AllNighter.requested_date.like(date)).first()
+
+    if not reservations:
+        
+        current_id_allnighter = str(uuid.uuid4())
+
+        new_allnighter = AllNighter(
+            public_id_allnighter = current_id_allnighter,
+            request_date = data['request_date'],
+            requested_date = data['requested_date'],
+            last_mod_id = current_user.public_id_user,
+            last_mod_date = now.strftime("%m/%d/%Y, %H:%M:%S"),
+            subject = data['description'],
+            state = 0
+        )
+
+        db.session.add(new_allnighter)
+        db.session.commit()
+
+        current_allnighter = AllNighter.query.filter(AllNighter.public_id_allnighter.like(current_id_allnighter)).first()
+
+        
+        user_relation = User_AllNighter(
+            id_allnighter = current_allnighter.id_allnighter,
+            id_user = current_user.id_user
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+        
+        
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+        allnighter_lab = AllNighter_Lab(
+
+            id_allnighter = current_allnighter.id_allnighter,
+            id_lab = lab.id_lab
+
+        )
+
+        db.session.add(allnighter_lab)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New All-Nighter created!'})
+
+        return response, 200
+
+    return jsonify({'message' : 'Theres already an All-Nighter with the selected date'})
+
+@app.route('/allnighter', methods=['OPTIONS'])
+def preflight_allnighter():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+@app.route('/allnighter', methods=['GET'])
+@token_required
+def get_all_allnighters(current_user):
+
+    allnighters = AllNighter.query.join(User_AllNighter).join(User).with_entities(
+        AllNighter.request_date, 
+        AllNighter.requested_date,
+        AllNighter.subject,
+        AllNighter.state,
+        User.email
+        )
+
+# Filter example:    
+# reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
+
+    return jsonify(allnighters.all()), 200

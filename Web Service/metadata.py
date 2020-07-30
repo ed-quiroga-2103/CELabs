@@ -53,10 +53,11 @@ AllNighter = Table(
     Column('id_allnighter', Integer, primary_key = True),
     Column('public_id_allnighter', String(50), unique = True),
     Column('request_date', Text(50), nullable = False),
-    Column('reserved_date', Text(50), nullable = False),
+    Column('requested_date', Text(50), nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
     Column('last_mod_date', Text(50), nullable = False),
     Column('subject', String(50), nullable = False),
+    Column('state', Integer, nullable = False)
 )
 
 InventoryReport = Table(
