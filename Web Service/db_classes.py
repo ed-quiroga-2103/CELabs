@@ -73,7 +73,7 @@ class FaultReport(db.Model):
     id_report= db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
     date_time = db.Column(db.Text(50), nullable = False)
-    id_fault_part = db.Column(db.String, nullable = False)
+    id_fault_part = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
     id_status = db.Column(db.Integer, db.ForeignKey('faultstatus.id_status'), nullable = False)
 
