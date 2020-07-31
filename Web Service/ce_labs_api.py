@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from functools import wraps
+from utilities import *
 
 
 
@@ -123,8 +124,8 @@ def create_reservation(current_user):
     
     data = request.get_json()
     
-    date = data['requested_date']
-    time = data['init_time']
+    date = get_date_in_seconds(data['requested_date'])
+    time = get_time_in_seconds(data['init_time'])
     
     reservations = Reservation.query.filter(Reservation.requested_date.like(date) & Reservation.init_time.like(time)).first()
 
@@ -136,12 +137,12 @@ def create_reservation(current_user):
 
         new_reservation = Reservation(
             public_id_reservation = current_id_reservation,
-            request_date = data['request_date'],
-            requested_date = data['requested_date'],
-            init_time = data['init_time'],
-            final_time = data['final_time'],
+            request_date = get_date_in_seconds(data['request_date']),
+            requested_date = get_date_in_seconds(data['requested_date']),
+            init_time = get_time_in_seconds(data['init_time']),
+            final_time = get_time_in_seconds(data['final_time']),
             last_mod_id = current_user.public_id_user,
-            last_mod_date = now.strftime("%m/%d/%Y, %H:%M:%S"),
+            last_mod_date = get_datetime_in_seconds(now.strftime("%m/%d/%Y %H:%M:%S")),
             subject = data['subject'],
             description = data['description'],
             operator = operator.id_user
@@ -195,6 +196,8 @@ def get_all_reservations(current_user):
         Reservation.description,
         User.email
         )
+
+    print(reservations)
 
 # Filter example:    
 # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
