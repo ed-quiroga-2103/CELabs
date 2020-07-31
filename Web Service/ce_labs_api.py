@@ -180,10 +180,174 @@ def create_reservation(current_user):
 
     return jsonify({'message':'Theres already a reservation with that date and time'})
 
+
+@app.route('/worklog', methods=['POST'])
+@token_required
+def create_worklog(current_user):
+    
+    data = request.get_json()
+    
+    date = data['date_time']
+    time = data['init_time']
+
+    worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
+
+
+    if not worklogs:
+
+        current_id_worklog = str(uuid.uuid4())
+
+        new_worklog = Worklog(
+            public_id_worklog = current_id_worklog,
+            date_time = data['date_time'],
+            init_time = data['init_time'],
+            final_time = data['final_time'],
+            description = data['description'],
+            )
+
+        db.session.add(new_worklog)
+        db.session.commit()
+
+        current_worklog = Worklog.query.filter(Worklog.public_id_worklog.like(current_id_worklog)).first()
+        #current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+
+        user_relation = User_Worklog(
+            id_worklog = current_worklog.id_worklog,
+            id_user = current_user.id_user   
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New worklog created!'})
+        
+        return response
+
+    return jsonify({'message':'Theres already a worklog with that date and time'})
+
+
+@app.route('/inventary', methods=['POST'])
+@token_required
+def create_inventary_report(current_user):
+    
+    data = request.get_json()
+    
+    date_json = data['date']
+
+    #date_time CAMBIAR
+
+    inventary = InventoryReport.query.filter_by(date=date_json).first() #CAMBIAR
+
+    if not inventary:
+
+        current_id_report = str(uuid.uuid4())
+
+        new_inventoryreport = InventoryReport(
+            public_id_report = current_id_report,
+            date = data['date'],
+            complete_computers = int(data['complete_computers']),
+            incomplete_computers = int(data['incomplete_computers']),
+            number_projectors = int(data['number_projectors']),
+            number_chairs = int(data['number_chairs']),
+            number_fire_extinguishers = int(data['number_fire_extinguishers'])
+            )
+
+        db.session.add(new_inventoryreport)
+        db.session.commit()
+
+        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
+
+        user_relation = User_InventoryReport(
+            id_report = current_report.id_report,
+            id_user = current_user.id_user   
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
+
+        lab_relation = InventoryReport_Lab(
+            id_report = current_report.id_report,
+            id_lab = lab.id_lab
+        )
+
+        db.session.add(lab_relation)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New inventory report created!'})
+        
+        return response
+
+    return jsonify({'message':'Theres already a inventory report with that date and time'})
+
+
+
+@app.route('/avery', methods=['POST'])
+@token_required
+def create_avery_report(current_user):
+    
+    data = request.get_json()
+
+    print(data)
+    
+    date_time_json = data['date_time']
+
+    avery = FaultReport.query.filter_by(date_time =date_time_json).first() 
+
+    if not avery:
+
+        current_id_avery = str(uuid.uuid4())
+
+        current_id_status= FaultStatus.query.filter_by(status= "Pending").first() 
+
+        new_fault_report = FaultReport(
+            public_id_report = current_id_avery,
+            date_time = data['date_time'],
+            id_fault_part = data['id_fault_part'],
+            description = data['description'],
+            id_status = current_id_status.id_status
+            )
+
+        db.session.add(new_fault_report)
+        db.session.commit()
+
+        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_avery)).first()
+
+        user_relation = User_FaultReport(
+            id_report = current_report.id_report,
+            id_user = current_user.id_user  
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New inventory report created!'})
+        
+        return response
+
+    return jsonify({'message':'Theres already a inventory report with that date and time'})
+
+
+
+
+
 @app.route('/reservation', methods=['OPTIONS'])
 def preflight_reservation():
     return jsonify({'message' : 'preflight confirmed'}), 200
 
+@app.route('/worklog', methods=['OPTIONS'])
+def preflight_worklog():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+@app.route('/inventary', methods=['OPTIONS'])
+def preflight_inventary_report():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+@app.route('/avery', methods=['OPTIONS'])
+def preflight_inventary_avery():
+    return jsonify({'message' : 'preflight confirmed'}), 200
 
 @app.route('/reservation', methods=['GET'])
 @token_required
@@ -204,3 +368,82 @@ def get_all_reservations(current_user):
 
     return jsonify(reservations.all()), 200
 
+
+@app.route('/allnighter', methods=['POST'])
+@token_required
+def create_allnighter(current_user):
+    now = datetime.datetime.now()
+
+    data = request.get_json()
+    
+    date = data['requested_date']
+    
+    reservations = AllNighter.query.filter(AllNighter.requested_date.like(date)).first()
+
+    if not reservations:
+        
+        current_id_allnighter = str(uuid.uuid4())
+
+        new_allnighter = AllNighter(
+            public_id_allnighter = current_id_allnighter,
+            request_date = data['request_date'],
+            requested_date = data['requested_date'],
+            last_mod_id = current_user.public_id_user,
+            last_mod_date = now.strftime("%m/%d/%Y, %H:%M:%S"),
+            subject = data['description'],
+            state = 0
+        )
+
+        db.session.add(new_allnighter)
+        db.session.commit()
+
+        current_allnighter = AllNighter.query.filter(AllNighter.public_id_allnighter.like(current_id_allnighter)).first()
+
+        
+        user_relation = User_AllNighter(
+            id_allnighter = current_allnighter.id_allnighter,
+            id_user = current_user.id_user
+        )
+
+        db.session.add(user_relation)
+        db.session.commit()
+        
+        
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+        allnighter_lab = AllNighter_Lab(
+
+            id_allnighter = current_allnighter.id_allnighter,
+            id_lab = lab.id_lab
+
+        )
+
+        db.session.add(allnighter_lab)
+        db.session.commit()
+
+        response = jsonify({'message' : 'New All-Nighter created!'})
+
+        return response, 200
+
+    return jsonify({'message' : 'Theres already an All-Nighter with the selected date'})
+
+@app.route('/allnighter', methods=['OPTIONS'])
+def preflight_allnighter():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+@app.route('/allnighter', methods=['GET'])
+@token_required
+def get_all_allnighters(current_user):
+
+    allnighters = AllNighter.query.join(User_AllNighter).join(User).with_entities(
+        AllNighter.request_date, 
+        AllNighter.requested_date,
+        AllNighter.subject,
+        AllNighter.state,
+        User.email
+        )
+
+# Filter example:    
+# reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
+
+    return jsonify(allnighters.all()), 200

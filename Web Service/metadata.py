@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey
 import uuid
 
 
-file = open('D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db', 'w+')
+file = open('C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db', 'w+')
 file.close()
 
 engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
@@ -53,10 +53,11 @@ AllNighter = Table(
     Column('id_allnighter', Integer, primary_key = True),
     Column('public_id_allnighter', String(50), unique = True),
     Column('request_date', Text(50), nullable = False),
-    Column('reserved_date', Text(50), nullable = False),
+    Column('requested_date', Text(50), nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
     Column('last_mod_date', Text(50), nullable = False),
     Column('subject', String(50), nullable = False),
+    Column('state', Integer, nullable = False)
 )
 
 InventoryReport = Table(
@@ -68,7 +69,6 @@ InventoryReport = Table(
     Column('incomplete_computers', Integer, nullable = False),
     Column('number_projectors', Integer, nullable = False),
     Column('number_chairs', Integer, nullable = False),
-    Column('number_projectors', Integer, nullable = False),
     Column('number_fire_extinguishers', Integer, nullable = False),
 
 )
@@ -84,7 +84,7 @@ FaultReport = Table(
     Column('id_report', Integer, primary_key = True),
     Column('public_id_report', String(50), unique = True),
     Column('date_time', Text(50), nullable = False),
-    Column('id_faulty_part', String(50), nullable = False),
+    Column('id_fault_part', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
     Column('id_status', Integer, ForeignKey('FaultStatus.id_status'), nullable = False),
     
