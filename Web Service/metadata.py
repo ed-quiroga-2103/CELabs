@@ -1,9 +1,9 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text, BigInteger
 from sqlalchemy import ForeignKey
 import uuid
 
 
-file = open('C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db', 'w+')
+file = open('D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db', 'w+')
 file.close()
 
 engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
@@ -37,12 +37,12 @@ Reservation = Table(
     'Reservation', meta,
     Column('id_reservation', Integer, primary_key = True),
     Column('public_id_reservation', String(50), unique = True),
-    Column('request_date', Text(50), nullable = False),
-    Column('requested_date', Text(50), nullable = False),
-    Column('init_time', Text(50), nullable = False),
-    Column('final_time', Text(50), nullable = False),
+    Column('request_date', BigInteger, nullable = False),
+    Column('requested_date', BigInteger, nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
-    Column('last_mod_date', Text(50), nullable = False),
+    Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
     Column('operator', Integer, ForeignKey('User.id_user'), nullable = False),
@@ -52,10 +52,10 @@ AllNighter = Table(
     'AllNighter', meta,
     Column('id_allnighter', Integer, primary_key = True),
     Column('public_id_allnighter', String(50), unique = True),
-    Column('request_date', Text(50), nullable = False),
-    Column('requested_date', Text(50), nullable = False),
+    Column('request_date', BigInteger, nullable = False),
+    Column('requested_date', BigInteger, nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
-    Column('last_mod_date', Text(50), nullable = False),
+    Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
     Column('state', Integer, nullable = False)
 )
@@ -64,7 +64,7 @@ InventoryReport = Table(
     'InventoryReport', meta,
     Column('id_report', Integer, primary_key = True),
     Column('public_id_report', String(50), unique = True),
-    Column('date', Text(50), nullable = False),
+    Column('date', BigInteger, nullable = False),
     Column('complete_computers', Integer, nullable = False),
     Column('incomplete_computers', Integer, nullable = False),
     Column('number_projectors', Integer, nullable = False),
@@ -83,7 +83,7 @@ FaultReport = Table(
     'FaultReport', meta,
     Column('id_report', Integer, primary_key = True),
     Column('public_id_report', String(50), unique = True),
-    Column('date_time', Text(50), nullable = False),
+    Column('date_time', BigInteger, nullable = False),
     Column('id_fault_part', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
     Column('id_status', Integer, ForeignKey('FaultStatus.id_status'), nullable = False),
@@ -94,9 +94,9 @@ Worklog = Table(
     'Worklog', meta,
     Column('id_worklog', Integer, primary_key = True),
     Column('public_id_worklog', String(50), unique = True),
-    Column('date_time', String(50), nullable = False),
-    Column('init_time', String(50), nullable = False),
-    Column('final_time', String(50), nullable = False),
+    Column('date_time', BigInteger, nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('description', Text(50), nullable = False),
  
 )
@@ -122,8 +122,8 @@ Event = Table(
     'Event', meta,
     Column('id_event', Integer, primary_key = True),
     Column('description', Text(50), nullable = False),
-    Column('init_time', String(50), nullable = False),
-    Column('final_time', String(50), nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('week_day', String(10), nullable = False),
     Column('is_repeatable', Boolean, nullable = False),
 )

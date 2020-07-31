@@ -35,12 +35,12 @@ class User(db.Model):
 class Reservation(db.Model):
     id_reservation = db.Column(db.Integer, primary_key = True)
     public_id_reservation = db.Column(db.String(50), unique = True)
-    request_date = db.Column(db.Text, nullable = False)
-    requested_date = db.Column(db.Text, nullable = False)
-    init_time = db.Column(db.Text, nullable = False)
-    final_time = db.Column(db.Text, nullable = False)
+    request_date = db.Column(db.BigInteger, nullable = False)
+    requested_date = db.Column(db.BigInteger, nullable = False)
+    init_time = db.Column(db.BigInteger, nullable = False)
+    final_time = db.Column(db.BigInteger, nullable = False)
     last_mod_id = db.Column(db.Integer, nullable = False)
-    last_mod_date = db.Column(db.Text, nullable = False)
+    last_mod_date = db.Column(db.BigInteger, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
     operator = db.Column(db.String(50), db.ForeignKey('user.id_user'), nullable = True)
@@ -73,7 +73,7 @@ class FaultReport(db.Model):
     __tablename__ = "faultreport"
     id_report= db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
-    date_time = db.Column(db.Text(50), nullable = False)
+    date_time = db.Column(db.BigInteger, nullable = False)
     id_fault_part = db.Column(db.String(50), nullable = False)
     description = db.Column(db.String(80), nullable = False)
     id_status = db.Column(db.Integer, db.ForeignKey('faultstatus.id_status'), nullable = False)
@@ -98,9 +98,9 @@ class User_Worklog(db.Model):
 class Worklog(db.Model):
     id_worklog = db.Column(db.Integer, primary_key = True)
     public_id_worklog = db.Column(db.String(50), unique = True)
-    date_time = db.Column(db.Text(50), nullable = False)
-    init_time = db.Column(db.Text, nullable = False)
-    final_time = db.Column(db.Text, nullable = False)
+    date_time = db.Column(db.BigInteger, nullable = False)
+    init_time = db.Column(db.BigInteger, nullable = False)
+    final_time = db.Column(db.BigInteger, nullable = False)
     description = db.Column(db.String(80), nullable = False)
 
 class InventoryReport_Lab(db.Model):
@@ -113,7 +113,7 @@ class InventoryReport(db.Model):
     __tablename__="inventoryreport"
     id_report = db.Column(db.Integer, primary_key = True)
     public_id_report = db.Column(db.String(50), unique = True)
-    date = db.Column(db.Text(50), nullable = False)
+    date = db.Column(db.BigInteger, nullable = False)
     complete_computers = db.Column(db.Integer, nullable = False)
     incomplete_computers = db.Column(db.Integer, nullable = False)
     number_projectors = db.Column(db.Integer, nullable = False)
@@ -130,10 +130,10 @@ class AllNighter(db.Model):
     __tablename__ = 'allnighter'
     id_allnighter = db.Column(db.Integer, primary_key = True)
     public_id_allnighter = db.Column(db.String(50), unique = True)
-    request_date = db.Column(db.Text(50), nullable = False)
-    requested_date = db.Column(db.Text(50), nullable = False)
+    request_date = db.Column(db.BigInteger, nullable = False)
+    requested_date = db.Column(db.BigInteger, nullable = False)
     last_mod_id = db.Column(db.Integer, nullable = False)
-    last_mod_date = db.Column(db.Text, nullable = False)
+    last_mod_date = db.Column(db.BigInteger, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
     state = db.Column(db.Integer, nullable = False)
 
@@ -181,8 +181,8 @@ class Course(db.Model):
 class Event(db.Model):
     id_event = db.Column(db.Integer, primary_key = True)
     description = db.Column(db.String(50), nullable = False)
-    init_time = db.Column(db.Text, nullable = False)
-    final_time = db.Column(db.Text, nullable = False)
+    init_time = db.Column(db.BigInteger, nullable = False)
+    final_time = db.Column(db.BigInteger, nullable = False)
     week_day = db.Column(db.String, nullable = False)
     is_repeatable = db.Column(db.Boolean)
 
