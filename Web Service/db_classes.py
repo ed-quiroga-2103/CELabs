@@ -187,9 +187,11 @@ class Event(db.Model):
     is_repeatable = db.Column(db.Boolean)
 
 class Evaluation(db.Model):
+    __tablename__ = 'evaluation'
     id_evaluation = db.Column(db.Integer, primary_key = True)
-    date = db.Column(db.Text, nullable = False)
-    score = db.Column(db.Integer, nullable = False)
+    public_id_evaluation = db.Column(db.String(50), unique = True)
+    date_time = db.Column(db.Text, nullable = False)
+    score = db.Column(db.BigInteger, nullable = False)
     comment = db.Column(db.String(50), nullable = False)
 
 print("The database classes were successfully loaded")

@@ -75,6 +75,11 @@ def preflight_inventory_fault():
 def preflight_allnighter():
     return jsonify({'message' : 'preflight confirmed'}), 200
 
+@app.route('/evaluation', methods=['OPTIONS'])
+def preflight_evaluation():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+
 
 # ------------------------- User Managment -------------------------
 
@@ -489,5 +494,29 @@ def get_all_allnighters(current_user):
 
     return jsonify(result), 200
 
+# ------------------------- Evaluations -------------------------
 
+@app.route('/evaluation', methods=['POST'])
+def create_evaluation():
+    now = datetime.datetime.now()
+
+    data = request.get_json()
+
+    print(data)
+       
+    current_id_eval = str(uuid.uuid4())
+
+    new_evaluation = Evaluation(
+        public_id_evaluation = current_id_eval,
+        date_time = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
+        comment = data['comment'],
+        score = int(data['score'])
+    )
+
+    db.session.add(new_evaluation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New Evaluation created!'})
+
+    return response, 200
 
