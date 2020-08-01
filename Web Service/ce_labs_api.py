@@ -520,3 +520,25 @@ def create_evaluation():
 
     return response, 200
 
+
+@app.route('/evaluation', methods = ['GET'])
+def get_all_evaluations():
+
+    evaluations = Evaluation.query.with_entities(Evaluation.date_time, Evaluation.comment, Evaluation.score).all()
+
+    result = []
+
+    for evaluation in evaluations:
+        new_evaluation = []
+        
+        new_evaluation.append(get_datetime_from_seconds(evaluation[0]))
+
+        for data in evaluation[1:]:
+            new_evaluation.append(data)
+
+        result.append(new_evaluation)
+
+
+    return jsonify(result), 200
+
+# ------------------------- Events -------------------------

@@ -10,6 +10,7 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [Registration](#registration)
   * [Reservation](#reservation)
   * [All-Nighters](#all-nighters)
+  * [Evaluations](#evaluations)
 
 
 
@@ -23,12 +24,80 @@ To get the proper enviorment for developing, the file **metadata.py** must be ex
 
 # HTTP Methods for API
 
+
+## Axios Managment
+
+All Axios requests are done in a similar way. Therefore, the general managment of the HTTP requests will be specified here, while the data that has to be inputed into the requests, and the data outputed by the requests will be specified in their respective sections.
+If theres a case of a specific request that has to be handled differently from the general managment, it will also be specified in its respective section.
+
+### POST
+
+Fields in __ALL CAPS__ has to be replaced with the respective data that the name specifies.
+Example of a POST request with Axios:
+
+```
+    var data = JSON.stringify(
+
+        {
+            Here the data has to be specified as a JSON object. 
+            Check each section for further examples.
+        }
+
+    );
+    var config = {
+        method: 'post',
+        url: 'http://IP_ADDRESS:PORT_NUMBER/ROUTE',
+        headers: { 
+        'x-access-token': TOKEN, 
+        'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+        'Content-Type': 'application/json'
+        },
+        data: data
+    };
+
+    axios(config) 
+        .then(response => {
+        this.posts = response.data;
+        console.log(this.posts['message']);
+        }
+        ).catch(e =>{
+        console.error(e.data['message']);
+    });
+```
+
+
+
+### GET
+
+Fields in __ALL CAPS__ has to be replaced with the respective data that the name specifies.
+Example of a GET request with Axios:
+```
+    var data = '';
+
+    var config = {
+    method: 'get',
+    url: 'http://IP_ADDRESS:PORT_NUMBER/ROUTE',
+    headers: { 
+        'x-access-token': TOKEN, 
+        'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+        'Content-Type': 'application/json'
+    },
+        data: data
+    };
+
+    axios(config).then(response=>{
+        this.info = JSON.stringify(response.data)
+    })
+```
+
+
 ## HTTP Basic Auth
 
 The HTTP Basic Auth **must** use a POST method to sent the request. Values of `username` and `password`
 must be included in the `auth` parameters of the request.
+The route for this request is `/login`
 
-Example with Axios library for Vue:
+Example with Axios library:
 
 ```
 axios.post(`http://localhost:port/login`, {
@@ -45,9 +114,20 @@ axios.post(`http://localhost:port/login`, {
 );
 ```
 
+This request returns the following response:
+```
+{
+  "token": "Token as string",
+  "user_type": 3
+}
+```
+The user types are specified in the __Registration__ section.
+
 ## Registration 
 
-Registrarion is a POST method. The inputed JSON has the following format:
+Registrarion is a POST method. The route for this request is `/user`
+
+The inputed JSON has the following format:
 
 ```
 data:{
@@ -104,6 +184,7 @@ The request sends a confirmation message with the following format:
 
 
 ## Reservation
+The route for this request is `/reservation`
 
 ### POST
 
@@ -125,43 +206,6 @@ The inputed JSON has the following format:
 
 If there is no operator, then operator can be null or blank.
 
-Example with Axios library for Vue:
-
-```
-var data = JSON.stringify(
-
-    {"request_date":this.request_date,
-    "requested_date":this.requested_date,
-    "requesting_user":this.requesting_user,
-    "init_time": this.init_time,
-    "final_time": this.final_time,
-    "subject": this.subject,
-    "description": this.description,
-    "lab": this.lab,
-    "operator": this.operator
-    }
-
-);
-var config = {
-    method: 'post',
-    url: 'http://127.0.0.1:5001/reservation',
-    headers: { 
-    'x-access-token': this.token, 
-    'Authorization': 'Basic QWRtaW46MTIzNDU=', 
-    'Content-Type': 'application/json'
-    },
-    data: data
-};
-
-axios(config) 
-    .then(response => {
-    this.posts = response.data;
-    console.log(this.posts['message']);
-    }
-    ).catch(error =>{
-    console.log(error.data['message'])
-});
-```
 
 The request sends a confirmation message with the following format:
 
@@ -171,24 +215,6 @@ The request sends a confirmation message with the following format:
 
 ### GET
 
-The request in Axios has the following format:
-```
-var data = '';
-        var config = {
-        method: 'get',
-        url: 'http://127.0.0.1:5001/reservation',
-        headers: { 
-            'x-access-token': this.token, 
-            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
-            'Content-Type': 'application/json'
-        },
-            data: data
-        };
-
-        axios(config).then(response=>{
-            this.info = JSON.stringify(response.data)
-        })
-```
 
 The request returns a JSONArray with all the current reservations in the database with the following format:
 ```
@@ -204,6 +230,7 @@ The order of the data in the array is:
 ```
 
 ## All-Nighters
+The route for this request is `/allnighter`
 
 ### POST
 
@@ -219,39 +246,6 @@ The inputed JSON has the following format:
 ```       
 
 
-Example with Axios library for Vue:
-
-```
-{
-        var data = JSON.stringify(
-
-          {"request_date":this.request_date,
-          "requested_date":this.requested_date,
-          "description": this.description,
-          "lab": this.lab,
-          }
-
-          );
-        var config = {
-        method: 'post',
-        url: 'http://127.0.0.1:5001/allnighter',
-        headers: { 
-            'x-access-token': this.token, 
-            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
-            'Content-Type': 'application/json'
-        },
-            data: data
-        };
-
-        axios(config) 
-        .then(response => {
-        this.posts = response.data;
-        console.log(this.posts['message']);
-      }
-      ).catch(error =>{
-        console.log(error.data['message'])
-      });
-```
 
 The request sends a confirmation message with the following format:
 
@@ -260,25 +254,6 @@ The request sends a confirmation message with the following format:
 ```
 ### GET
 
-The request in Axios has the following format:
-
-```
-var data = '';
-        var config = {
-        method: 'get',
-        url: 'http://127.0.0.1:5001/allnighter',
-        headers: { 
-            'x-access-token': this.token, 
-            'Authorization': 'Basic QWRtaW46MTIzNDU=', 
-            'Content-Type': 'application/json'
-        },
-            data: data
-        };
-
-        axios(config).then(response=>{
-            this.info = JSON.stringify(response.data)
-        })
-```
 The request returns a JSONArray with all the current reservations in the database with the following format:
 ```
 [
@@ -299,3 +274,45 @@ The state of the requests is described in the following table:
 | Pending | 0 |
 | Approved | 1 |
 | Denied | 2 |
+
+## Evaluations
+The route for this request is `/evaluation`
+
+## POST 
+
+The POST request for evaluation __does not__ need an access token, therefore, the request `config` parameter can be specified like this:
+
+```
+    var config = {
+        method: 'post',
+        url: 'http://IP_ADDRESS:PORT_NUMBER/ROUTE',
+        headers: { 
+        'Authorization': 'Basic QWRtaW46MTIzNDU=', 
+        'Content-Type': 'application/json'
+        },
+        data: data
+    };
+```
+
+The request returns the following message:
+```
+{"message": "New Evaluation created!"}
+```
+
+## GET
+
+The GET request needs the access token to be executed, therefore, it can be done in the same way that all the other GET requests are done.
+
+The request returns a JSON Array with the following format:
+```
+
+[
+  ["31/07/2020 18:10:33","comment",5],
+  ["01/08/2020 15:05:40","comment",5],
+  ["01/08/2020 15:06:30","comment",10]
+]
+```
+The order of the data in the array is:
+```
+    ['Date Time', 'Comment', 'Score']
+```
