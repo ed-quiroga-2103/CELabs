@@ -75,6 +75,11 @@ def preflight_inventory_fault():
 def preflight_allnighter():
     return jsonify({'message' : 'preflight confirmed'}), 200
 
+@app.route('/evaluation', methods=['OPTIONS'])
+def preflight_evaluation():
+    return jsonify({'message' : 'preflight confirmed'}), 200
+
+
 
 # ------------------------- User Managment -------------------------
 
@@ -489,5 +494,51 @@ def get_all_allnighters(current_user):
 
     return jsonify(result), 200
 
+# ------------------------- Evaluations -------------------------
+
+@app.route('/evaluation', methods=['POST'])
+def create_evaluation():
+    now = datetime.datetime.now()
+
+    data = request.get_json()
+
+    print(data)
+       
+    current_id_eval = str(uuid.uuid4())
+
+    new_evaluation = Evaluation(
+        public_id_evaluation = current_id_eval,
+        date_time = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
+        comment = data['comment'],
+        score = int(data['score'])
+    )
+
+    db.session.add(new_evaluation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New Evaluation created!'})
+
+    return response, 200
 
 
+@app.route('/evaluation', methods = ['GET'])
+def get_all_evaluations():
+
+    evaluations = Evaluation.query.with_entities(Evaluation.date_time, Evaluation.comment, Evaluation.score).all()
+
+    result = []
+
+    for evaluation in evaluations:
+        new_evaluation = []
+        
+        new_evaluation.append(get_datetime_from_seconds(evaluation[0]))
+
+        for data in evaluation[1:]:
+            new_evaluation.append(data)
+
+        result.append(new_evaluation)
+
+
+    return jsonify(result), 200
+
+# ------------------------- Events -------------------------

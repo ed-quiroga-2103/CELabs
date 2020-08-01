@@ -112,7 +112,8 @@ Lab = Table(
 Evaluation = Table(
     'Evaluation', meta,
     Column('id_evaluation', Integer, primary_key = True),
-    Column('date', String(50), nullable = False),
+    Column('public_id_evaluation', String(50), unique = True),
+    Column('date_time', BigInteger, nullable = False),
     Column('score', Integer, nullable = False),
     Column('comment', String(50), nullable = False),
 
