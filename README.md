@@ -294,6 +294,14 @@ The POST request for evaluation __does not__ need an access token, therefore, th
     };
 ```
 
+The data that has to be sent has the following format:
+```
+data: {
+          "comment": "Comment",
+          "score": "1"
+          }
+```
+
 The request returns the following message:
 ```
 {"message": "New Evaluation created!"}
