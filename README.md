@@ -11,6 +11,9 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [Reservation](#reservation)
   * [All-Nighters](#all-nighters)
   * [Evaluations](#evaluations)
+  * [Worklog](#worklog)
+  * [Fault Report](#fault_report)
+  * [Inventary](#inventary)
 
 
 
@@ -323,4 +326,72 @@ The request returns a JSON Array with the following format:
 The order of the data in the array is:
 ```
     ['Date Time', 'Comment', 'Score']
+```
+
+## Worklog
+The route for this request is `/worklog`
+
+### POST
+
+The inputed JSON has the following format:
+
+``` 
+    data:   {
+            "date_time":this.date_time,
+            "init_time": this.init_time,
+            "final_time": this.final_time,
+            "description": this.description,
+            }
+```  
+
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'New worklog created!'}
+```
+
+## Fault Report
+The route for this request is `/fault`
+
+### POST
+
+The inputed JSON has the following format:
+
+``` 
+    data:   {
+            "date_time":this.date_time,
+            "id_fault_part": this.id_fault_part,
+            "description": this.description,
+            }
+```  
+
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'New fault report created!'}
+```
+
+## Inventary Report
+The route for this request is `/inventory`
+
+### POST
+
+The inputed JSON has the following format:
+
+``` 
+    data:   {
+            "date":this.date,
+            "complete_computers": this.complete_computers,
+            "incomplete_computers": this.incomplete_computers,
+            "number_projectors": this.number_projectors,
+            "number_chairs": this.number_chairs,
+            "number_fire_extinguishers": this.number_fire_extinguishers,
+            "lab": this.lab
+            }
+```  
+
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'New inventory report created!'}
 ```
