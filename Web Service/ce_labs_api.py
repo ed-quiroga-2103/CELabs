@@ -487,7 +487,7 @@ def create_fault_report(current_user):
 @token_required
 def get_all_fault(current_user):
 
-    faults = FaultReport.query.join(User_FaultReport).join(FaultReport_Lab).with_entities(
+    faults = FaultReport.query.join(User_FaultReport).join(User).join(FaultReport_Lab).join(Lab).with_entities(
         FaultReport.date_time,
         FaultReport.id_fault_part,
         FaultReport.description,
@@ -500,7 +500,6 @@ def get_all_fault(current_user):
     for fault in faults:
         new_fault = []
 
-        print(fault[0])
         new_fault.append(get_datetime_from_seconds(fault[0]))
 
         for data in fault[1:]:
