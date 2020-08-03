@@ -401,7 +401,7 @@ def create_inventory_report(current_user):
 @token_required
 def get_all_inventory(current_user):
 
-    inventories = InventoryReport.query.join(User_InventoryReport).join(InventoryReport_Lab).with_entities(
+    inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
         InventoryReport.date,
         InventoryReport.complete_computers,
         InventoryReport.incomplete_computers,
@@ -415,6 +415,7 @@ def get_all_inventory(current_user):
     result = []
 
     for inventory in inventories:
+        print(len(result))
         new_inventory = []
         new_inventory.append(get_date_from_seconds(inventory[0]))
 
@@ -422,8 +423,6 @@ def get_all_inventory(current_user):
             new_inventory.append(data)
 
         result.append(new_inventory)
-
-    # Añadir la relacion de usuario al operador
 
     # Filter example:  
     # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
