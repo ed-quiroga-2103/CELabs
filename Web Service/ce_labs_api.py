@@ -14,7 +14,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Oscar Gonzalez A\\Desktop\\ESTTTTEEEEEE\\CELabs\\Web Service\\CELabs.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -257,13 +257,19 @@ def create_worklog(current_user):
     date = get_datetime_in_seconds(data['date_time'])
     time = get_time_in_seconds(data['init_time'])
 
+    print(date)
+    print(time)
+
     #Hay que validar que el reporte tambien corresponda al usuario que esta loggeado
     worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
-
+    #Arreglar verificacion
+    print(worklogs) 
 
     if not worklogs:
 
         current_id_worklog = str(uuid.uuid4())
+
+        current_id_status= WorklogStatus.query.filter_by(status= "Pending").first() 
 
         new_worklog = Worklog(
             public_id_worklog = current_id_worklog,
@@ -271,6 +277,7 @@ def create_worklog(current_user):
             init_time = time,
             final_time = get_time_in_seconds(data['final_time']),
             description = data['description'],
+            id_status = current_id_status.id_status
             )
 
         db.session.add(new_worklog)
@@ -292,6 +299,45 @@ def create_worklog(current_user):
 
     return jsonify({'message':'Theres already a worklog with that date and time'})
 
+
+@app.route('/worklog', methods=['GET'])
+@token_required
+def get_all_worklog(current_user):
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).join(User_Operator).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.final_time,
+        Worklog.description,
+        Worklog.id_status,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        User.university_id,
+        User_Operator.pending_hours,
+        User_Operator.approved_hours
+    )
+
+    result = []
+
+    for worklog in worklogs:
+        new_worklog = []
+
+        new_worklog.append(get_datetime_from_seconds(worklog[0]))
+        new_worklog.append(get_time_from_seconds(worklog[1]))
+        new_worklog.append(get_time_from_seconds(worklog[2]))
+
+        for data in worklog[4:]:
+            new_worklog.append(data)
+
+        result.append(new_worklog)
+
+    # Añadir la relacion de usuario al operador
+
+    # Filter example:  
+    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
+
+    return jsonify(result), 200
 
 # ------------------------- Inventory -------------------------
 
@@ -318,7 +364,7 @@ def create_inventory_report(current_user):
 
         new_inventoryreport = InventoryReport(
             public_id_report = current_id_report,
-            date = get_datetime_in_seconds(data['date']),
+            date = get_date_in_seconds(data['date']),
             complete_computers = int(data['complete_computers']),
             incomplete_computers = int(data['incomplete_computers']),
             number_projectors = int(data['number_projectors']),
@@ -357,6 +403,40 @@ def create_inventory_report(current_user):
     return jsonify({'message':'Theres already a inventory report with that date and time'})
 
 
+@app.route('/inventory', methods=['GET'])
+@token_required
+def get_all_inventory(current_user):
+
+    inventories = InventoryReport.query.join(User_InventoryReport).join(InventoryReport_Lab).with_entities(
+        InventoryReport.date,
+        InventoryReport.complete_computers,
+        InventoryReport.incomplete_computers,
+        InventoryReport.number_projectors,
+        InventoryReport.number_chairs,
+        InventoryReport.number_fire_extinguishers,
+        Lab.id_lab,
+        User.id_user
+    )
+
+    result = []
+
+    for inventory in inventories:
+        new_inventory = []
+
+        new_inventory.append(get_date_from_seconds(inventory[0]))
+
+        for data in inventory[1:]:
+            new_inventory.append(data)
+
+        result.append(new_inventory)
+
+    # Añadir la relacion de usuario al operador
+
+    # Filter example:  
+    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
+
+    return jsonify(result), 200
+
 # ------------------------- Faults -------------------------
 
 @app.route('/fault', methods=['POST'])
@@ -365,7 +445,6 @@ def create_fault_report(current_user):
     
     data = request.get_json()
 
-    
     date_time_json = get_datetime_in_seconds(data['date_time'])
 
     fault = FaultReport.query.filter_by(date_time = date_time_json).first() 
@@ -381,7 +460,7 @@ def create_fault_report(current_user):
             date_time = get_datetime_in_seconds(data['date_time']),
             id_fault_part = data['id_fault_part'],
             description = data['description'],
-            id_status = current_id_status.id_status
+            id_status = current_id_status.id_status,
             )
 
         db.session.add(new_fault_report)
@@ -391,10 +470,21 @@ def create_fault_report(current_user):
 
         user_relation = User_FaultReport(
             id_report = current_report.id_report,
-            id_user = current_user.id_user  
+            id_user = current_user.id_user,
         )
 
         db.session.add(user_relation)
+        db.session.commit()
+
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
+
+        lab_relation = FaultReport_Lab(
+            id_report = current_report.id_report,
+            id_lab = lab.id_lab
+        )
+
+        db.session.add(lab_relation)
         db.session.commit()
 
         response = jsonify({'message' : 'New fault report created!'})
@@ -402,6 +492,39 @@ def create_fault_report(current_user):
         return response
 
     return jsonify({'message':'Theres already a fault report with that date and time'})
+
+
+@app.route('/fault', methods=['GET'])
+@token_required
+def get_all_fault(current_user):
+
+    faults = FaultReport.query.join(User_FaultReport).join(FaultReport_Lab).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_fault_part,
+        FaultReport.description,
+        FaultReport.id_status,
+        Lab.id_lab,
+    )
+
+    result = []
+
+    for fault in faults:
+        new_fault = []
+
+        print(fault[0])
+        new_fault.append(get_datetime_from_seconds(fault[0]))
+
+        for data in fault[1:]:
+            new_fault.append(data)
+
+        result.append(new_fault)
+
+    # Añadir la relacion de usuario al operador
+
+    # Filter example:  
+    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
+
+    return jsonify(result), 200
 
 
 # ------------------------- All-Nighters -------------------------
