@@ -8,18 +8,18 @@
 
 --SELECT * FROM Lab;
 
-SELECT * FROM FaultReport;
+-- SELECT * FROM FaultReport;
 
-SELECT * FROM User_FaultReport;
+-- SELECT * FROM User_FaultReport;
 
-SELECT * FROM FaultReport_Lab;
+-- SELECT * FROM FaultReport_Lab;
 
-SELECT * FROM Lab;
+--SELECT * FROM Lab;
 
--- SELECT * FROM InventoryReport;
+ SELECT * FROM InventoryReport;
 
--- SELECT * FROM User_InventoryReport;
+ SELECT * FROM User_InventoryReport;
 
--- SELECT * FROM InventoryReport_Lab;
+ SELECT * FROM InventoryReport_Lab;
 
 -- INSERT INTO  FaultStatus (id_status, status) VALUES (1,"Pending");

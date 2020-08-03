@@ -347,18 +347,12 @@ def create_inventory_report(current_user):
     
     data = request.get_json()
 
-    '''  
-        Este bloque de codigo se va a utilizar mas adelante para realizar una validacion.
-        Sin embargo, en este momento no se utiliza por lo que se mantendra comentado.
+    date = get_date_in_seconds(data['date'])
 
-        Se debe cambiar la fecha por fecha y hora
+    inventories = InventoryReport.query.filter_by(date = date).first()
+    #Arreglar verificacion
 
-        date_json = data['date']
-
-        inventory = InventoryReport.query.filter_by(date=date_json).first() 
-    '''
-    #Ese 0 es un crimen, hay que cambiarlo pero por el momento es un placeholder
-    if not 0:
+    if not inventories:
 
         current_id_report = str(uuid.uuid4())
 
@@ -422,7 +416,6 @@ def get_all_inventory(current_user):
 
     for inventory in inventories:
         new_inventory = []
-
         new_inventory.append(get_date_from_seconds(inventory[0]))
 
         for data in inventory[1:]:
