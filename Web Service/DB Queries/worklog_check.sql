@@ -2,8 +2,6 @@
 
  -- SELECT * FROM User_Worklog;
 
--- INSERT INTO  WorklogStatus (id_status, status) VALUES (1,"Pending");
-
 -- SELECT * FROM WorklogStatus;
 
 --SELECT * FROM Lab;
@@ -16,10 +14,18 @@
 
 --SELECT * FROM Lab;
 
- SELECT * FROM InventoryReport;
+--------------------------Inventory Report Check----------------------
 
- SELECT * FROM User_InventoryReport;
+ -- SELECT * FROM InventoryReport;
 
- SELECT * FROM InventoryReport_Lab;
+ -- SELECT * FROM User_InventoryReport;
 
--- INSERT INTO  FaultStatus (id_status, status) VALUES (1,"Pending");
+ -- SELECT * FROM InventoryReport_Lab;
+
+------------------------------- Worklog Check--------------------------
+
+SELECT * FROM Worklog;
+
+SELECT * FROM User_Worklog;
+
+SELECT * FROM WorklogStatus;

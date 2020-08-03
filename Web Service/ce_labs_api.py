@@ -257,9 +257,6 @@ def create_worklog(current_user):
     date = get_datetime_in_seconds(data['date_time'])
     time = get_time_in_seconds(data['init_time'])
 
-    print(date)
-    print(time)
-
     #Hay que validar que el reporte tambien corresponda al usuario que esta loggeado
     worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
     #Arreglar verificacion
