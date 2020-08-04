@@ -371,6 +371,8 @@ The request returns a JSON Array with the following format:
 The order of the data in the array is:
 ```
     ['Date Time', 'Comment', 'Score']
+```
+
 ## Worklog
 The route for this request is `/worklog`
 
@@ -437,5 +439,4 @@ The request sends a confirmation message with the following format:
 
 ```
 {'message' : 'New inventory report created!'}
-
 ```
