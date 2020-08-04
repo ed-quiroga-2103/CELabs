@@ -146,6 +146,8 @@ data:{
 ```
 
 The codes for the user types are shown in the the following table:
+
+
 | User Type | Code |
 | ----------- | ----------- |
 | Administrator | 1 |
@@ -294,9 +296,60 @@ The POST request for evaluation __does not__ need an access token, therefore, th
     };
 ```
 
+The data that has to be sent has the following format:
+```
+data: {
+          "comment": "Comment",
+          "score": "1"
+          }
+```
+
 The request returns the following message:
 ```
 {"message": "New Evaluation created!"}
+```
+
+## GET
+
+The GET request needs the access token to be executed, therefore, it can be done in the same way that all the other GET requests are done.
+
+The request returns a JSON Array with the following format:
+```
+
+[
+  ["31/07/2020 18:10:33","comment",5],
+  ["01/08/2020 15:05:40","comment",5],
+  ["01/08/2020 15:06:30","comment",10]
+]
+```
+The order of the data in the array is:
+```
+    ['Date Time', 'Comment', 'Score']
+```
+
+
+## Events
+The route for this request is `/event`
+
+## POST 
+
+The data that has to be sent has the following format:
+```
+data: {
+          "description": "Description",
+          "init_time": "00:00:00",
+          "final_time": "01:00:00",
+          "week_day": "L,K,M,J,V,S,U",
+          "is_repeatable": 0,
+          "date":""
+          }
+```
+
+For events, repeatable events __must__ include week days, while non-repeatable events __must__ include a date.
+
+The request returns the following message:
+```
+{"message": "New Event created!"}
 ```
 
 ## GET
