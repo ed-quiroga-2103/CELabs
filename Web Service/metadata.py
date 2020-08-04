@@ -122,11 +122,14 @@ Evaluation = Table(
 Event = Table(
     'Event', meta,
     Column('id_event', Integer, primary_key = True),
+    Column('public_id_event', String(50), unique = True),
     Column('description', Text(50), nullable = False),
     Column('init_time', BigInteger, nullable = False),
     Column('final_time', BigInteger, nullable = False),
-    Column('week_day', String(10), nullable = False),
+    Column('week_day', String(10), nullable = True),
+    Column('date', BigInteger, nullable = True),
     Column('is_repeatable', Boolean, nullable = False),
+    Column('id_lab', Integer, ForeignKey('Lab.id_lab'), nullable = False)
 )
 
 Course = Table(
@@ -135,6 +138,7 @@ Course = Table(
     Column('code', String(50), nullable = False),
     Column('name', String(50), nullable = False),
     Column('group', String(50), nullable = False),
+    Column('lab', Integer, ForeignKey('Lab.id_lab'), nullable = False)
 )
 
 User_Reservation = Table(
@@ -227,9 +231,9 @@ conn.execute(Lab.insert(),
 conn.execute(User.insert(),
     [
         {'id_user': 1, 'public_id_user': str(uuid.uuid4()), 'name': 'Op', 'lastname1': 'Op', 'lastname2':'Op', 'id_number':'Op',
-        'password':'Op', 'email':'Op', 'phone_number':'Op', 'active': 1, 'university_id':'Op', 'user_type':3},
+        'password':'Op', 'email':'Op', 'phone_number':'Op', 'active': 1, 'university_id':'Op', 'user_type':2},
         {'id_user': 2, 'public_id_user': str(uuid.uuid4()), 'name': 'Prof', 'lastname1': 'Prof', 'lastname2':'Prof', 'id_number':'Prof',
-        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':4}
+        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':3}
     ]
 )
 

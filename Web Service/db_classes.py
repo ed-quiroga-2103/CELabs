@@ -179,12 +179,16 @@ class Course(db.Model):
     group = db.Column(db.Integer, nullable = False)
 
 class Event(db.Model):
+    __tablename__ = 'event'
     id_event = db.Column(db.Integer, primary_key = True)
+    public_id_event = db.Column(db.String(50), unique = True)
     description = db.Column(db.String(50), nullable = False)
     init_time = db.Column(db.BigInteger, nullable = False)
     final_time = db.Column(db.BigInteger, nullable = False)
-    week_day = db.Column(db.String, nullable = False)
-    is_repeatable = db.Column(db.Boolean)
+    week_day = db.Column(db.String, nullable = True)
+    date = db.Column(db.String, nullable = True)
+    is_repeatable = db.Column(db.Boolean, nullable = False)
+    id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'))
 
 class Evaluation(db.Model):
     __tablename__ = 'evaluation'

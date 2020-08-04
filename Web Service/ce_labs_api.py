@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect
 from flask_cors import CORS, cross_origin
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -79,6 +80,9 @@ def preflight_allnighter():
 def preflight_evaluation():
     return jsonify({'message' : 'preflight confirmed'}), 200
 
+@app.route('/event', methods=['OPTIONS'])
+def preflight_event():
+    return jsonify({'message' : 'preflight confirmed'}), 200
 
 
 # ------------------------- User Managment -------------------------
@@ -106,7 +110,7 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
 
-    if int(data["user_type"]) == 3:
+    if int(data["user_type"]) == 2:
 
         identifier = User.query.filter_by(email = data["email"]).first()
 
@@ -158,7 +162,6 @@ def create_reservation(current_user):
     now = datetime.datetime.now()
     
     data = request.get_json()
-    
     date = get_date_in_seconds(data['requested_date'])
     time = get_time_in_seconds(data['init_time'])
     
@@ -501,8 +504,6 @@ def create_evaluation():
     now = datetime.datetime.now()
 
     data = request.get_json()
-
-    print(data)
        
     current_id_eval = str(uuid.uuid4())
 
@@ -522,7 +523,8 @@ def create_evaluation():
 
 
 @app.route('/evaluation', methods = ['GET'])
-def get_all_evaluations():
+@token_required
+def get_all_evaluations(current_user):
 
     evaluations = Evaluation.query.with_entities(Evaluation.date_time, Evaluation.comment, Evaluation.score).all()
 
@@ -542,3 +544,136 @@ def get_all_evaluations():
     return jsonify(result), 200
 
 # ------------------------- Events -------------------------
+
+@app.route('/event', methods = ['POST'])
+@token_required
+def create_event(current_user):
+
+    data = request.get_json()
+
+
+    no_date = data['date'] is None or data['date'] == ""
+    no_days = data['week_day'] is None or data['week_day'] == ""
+
+    is_repeatable = data['is_repeatable']
+
+    if no_date and is_repeatable == '0':
+        return jsonify({'message': 'Non-repeatable events must include a date!'}), 401
+
+    if no_days and is_repeatable == '1':
+        return jsonify({'message': 'Repeatable events must include a week days!'}), 401
+    
+
+
+    current_id_event = str(uuid.uuid4())
+
+
+    current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+    if no_date:
+
+        new_event = Event(
+            public_id_event = current_id_event,
+            description = data['description'],
+            init_time = get_time_in_seconds(data['init_time']),
+            final_time = get_time_in_seconds(data['final_time']),
+            week_day = data['week_day'],
+            is_repeatable = True,
+            id_lab = current_lab.id_lab,
+            date = None
+        )
+
+    else:
+        new_event = Event(
+            public_id_event = current_id_event,
+            description = data['description'],
+            init_time = get_time_in_seconds(data['init_time']),
+            final_time = get_time_in_seconds(data['final_time']),
+            week_day = None,
+            is_repeatable = False,
+            id_lab = current_lab.id_lab,
+            date = get_date_in_seconds(data['date'])
+        )
+
+    db.session.add(new_event)
+    db.session.commit()
+
+
+    response = jsonify({'message' : 'New Event created!'})
+
+    return response, 200
+
+@app.route('/event', methods = ['GET'])
+@token_required
+def get_all_events(current_user):
+
+    events = Event.query.join(Lab)
+
+    events = Event.query\
+    .join(Lab, Lab.id_lab==Event.id_lab)\
+    .with_entities(Event.init_time,
+    Event.final_time,
+    Event.date,
+    Event.week_day,
+    Event.description,
+    Event.is_repeatable, Lab.name).all()
+
+    res = []
+
+    for event in events:
+        current_event = []
+
+        if event[2] is None:
+
+            current_event.append(get_time_from_seconds(event[0]))
+            current_event.append(get_time_from_seconds(event[1]))
+            current_event.append("")
+
+            for data in event[3:]:
+                current_event.append(data)
+        else:
+
+            current_event.append(get_time_from_seconds(event[0]))
+            current_event.append(get_time_from_seconds(event[1]))
+            
+            current_event.append(get_date_from_seconds(event[2]))
+            current_event.append("")
+            for data in event[4:]:
+                current_event.append(data)
+        
+        res.append(current_event)
+
+
+    return jsonify(res), 200
+
+
+# ------------------------- Course -------------------------
+
+@app.route('/course', methods = ['POST'])
+@token_required
+def create_course(current_user):
+    data = request.get_json()
+
+
+
+    course = Course(
+        code = data['code'],
+        name = data['name'],
+        group = data['group']
+    )
+
+    db.session.add(course)
+    db.session.commit()
+
+
+    response = jsonify({'message' : 'New course created!'})
+
+    return response, 200
+
+@app.route('/course', methods = ['GET'])
+@token_required
+def get_all_courses(current_user):
+
+    courses = Course.query.with_entities(Course.code, Course.group, Course.name).all()
+
+    return jsonify(courses), 200
