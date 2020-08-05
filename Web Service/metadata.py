@@ -1,56 +1,77 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text, BigInteger
 from sqlalchemy import ForeignKey
+import uuid
+from constants import *
 
 
-engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
+file = open(QUIROGA_DB, 'w+')
+file.close()
+
+engine = create_engine('sqlite:///' + QUIROGA_DB)
 meta = MetaData()
+
+
+
+User_Type = Table(
+    'User_Type', meta,
+    Column('id_user_type', Integer, primary_key = True),
+    Column('user_type', String(15), nullable = False)
+)
 
 User = Table(
    'User', meta, 
    Column('id_user', Integer, primary_key = True), 
-   Column('public_id', String(50), unique = True), 
-   Column('name', String(50)),
-   Column('password', String(50)),
-   Column('admin', Boolean),
+   Column('public_id_user', String(50), unique = True), 
+   Column('name', String(50), nullable = False),
+   Column('lastname1', String(50), nullable = False),
+   Column('lastname2', String(50), nullable = False),
+   Column('id_number', String(50), nullable = False),
+   Column('password', String(50), nullable = False),
+   Column('email', String(50), nullable = False, unique = True),
+   Column('phone_number', String(50), nullable = False),
+   Column('active', Boolean, nullable = False),
+   Column('university_id', String(50), nullable = False),
+   Column('user_type', Integer, ForeignKey('User_Type.id_user_type'), nullable = False)
 )
-
+    
 Reservation = Table(
     'Reservation', meta,
     Column('id_reservation', Integer, primary_key = True),
     Column('public_id_reservation', String(50), unique = True),
-    Column('request_date', Text(50), nullable = False),
-    Column('requested_date', Text(50), nullable = False),
-    Column('init_time', Text(50), nullable = False),
-    Column('final_time', Text(50), nullable = False),
+    Column('request_date', BigInteger, nullable = False),
+    Column('requested_date', BigInteger, nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
-    Column('last_mod_date', Text(50), nullable = False),
+    Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
-    Column('operator', String(50), nullable = True),
-    
+    Column('operator', Integer, ForeignKey('User.id_user'), nullable = False),
 )
 
 AllNighter = Table(
     'AllNighter', meta,
     Column('id_allnighter', Integer, primary_key = True),
     Column('public_id_allnighter', String(50), unique = True),
-    Column('request_date', Text(50), nullable = False),
-    Column('reserved_date', Text(50), nullable = False),
+    Column('request_date', BigInteger, nullable = False),
+    Column('requested_date', BigInteger, nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
-    Column('last_mod_date', Text(50), nullable = False),
+    Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
+    Column('state', Integer, nullable = False)
 )
 
 InventoryReport = Table(
     'InventoryReport', meta,
     Column('id_report', Integer, primary_key = True),
     Column('public_id_report', String(50), unique = True),
-    Column('date', Text(50), nullable = False),
+    Column('date', BigInteger, nullable = False),
     Column('complete_computers', Integer, nullable = False),
     Column('incomplete_computers', Integer, nullable = False),
     Column('number_projectors', Integer, nullable = False),
     Column('number_chairs', Integer, nullable = False),
-    Column('number_projectors', Integer, nullable = False),
     Column('number_fire_extinguishers', Integer, nullable = False),
 
 )
@@ -65,22 +86,28 @@ FaultReport = Table(
     'FaultReport', meta,
     Column('id_report', Integer, primary_key = True),
     Column('public_id_report', String(50), unique = True),
-    Column('date_time', Text(50), nullable = False),
-    Column('id_faulty_part', String(50), nullable = False),
+    Column('date_time', BigInteger, nullable = False),
+    Column('id_fault_part', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
     Column('id_status', Integer, ForeignKey('FaultStatus.id_status'), nullable = False),
     
+)
+
+WorklogStatus = Table(
+    'WorklogStatus', meta,
+    Column('id_status', Integer, primary_key = True),
+    Column('status', String(50), nullable= False),
 )
 
 Worklog = Table(
     'Worklog', meta,
     Column('id_worklog', Integer, primary_key = True),
     Column('public_id_worklog', String(50), unique = True),
-    Column('date_time', String(50), nullable = False),
-    Column('init_time', String(50), nullable = False),
-    Column('final_time', String(50), nullable = False),
+    Column('date_time', BigInteger, nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('description', Text(50), nullable = False),
- 
+    Column('id_status', Integer, ForeignKey('WorklogStatus.id_status'), nullable = False),
 )
 
 Lab = Table(
@@ -94,7 +121,8 @@ Lab = Table(
 Evaluation = Table(
     'Evaluation', meta,
     Column('id_evaluation', Integer, primary_key = True),
-    Column('date', String(50), nullable = False),
+    Column('public_id_evaluation', String(50), unique = True),
+    Column('date_time', BigInteger, nullable = False),
     Column('score', Integer, nullable = False),
     Column('comment', String(50), nullable = False),
 
@@ -103,11 +131,14 @@ Evaluation = Table(
 Event = Table(
     'Event', meta,
     Column('id_event', Integer, primary_key = True),
+    Column('public_id_event', String(50), unique = True),
     Column('description', Text(50), nullable = False),
-    Column('init_time', String(50), nullable = False),
-    Column('final_time', String(50), nullable = False),
-    Column('week_day', String(10), nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
+    Column('week_day', String(10), nullable = True),
+    Column('date', BigInteger, nullable = True),
     Column('is_repeatable', Boolean, nullable = False),
+    Column('id_lab', Integer, ForeignKey('Lab.id_lab'), nullable = False)
 )
 
 Course = Table(
@@ -116,6 +147,7 @@ Course = Table(
     Column('code', String(50), nullable = False),
     Column('name', String(50), nullable = False),
     Column('group', String(50), nullable = False),
+    Column('lab', Integer, ForeignKey('Lab.id_lab'), nullable = False)
 )
 
 User_Reservation = Table(
@@ -130,31 +162,11 @@ Reservation_Lab = Table(
     Column('id_lab', Integer, ForeignKey('Lab.id_lab'), nullable = False)
 )
 
-User_Lab_Admin = Table(
-    'User_Lab_Admin', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
-
-User_Prof = Table(
-    'User_Prof', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
-User_Admin = Table(
-    'User_Admin', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
-User_Asist_Admin = Table(
-    'User_Asist_Admin', meta,
-    Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False)
-)
-
 User_Operator = Table(
     'User_Operator', meta,
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
-    Column('approved_hours', Integer, nullable = False)
+    Column('approved_hours', Integer, nullable = False),
+    Column('pending_hours', Integer, nullable = False)
 )
 
 FaultReport_Lab = Table(
@@ -200,3 +212,40 @@ User_InventoryReport = Table(
 )
 
 meta.create_all(engine)
+
+conn = engine.connect()
+
+conn.execute(User_Type.insert(),
+    [
+        {'id_user_type':'1','user_type':'Administrator'},
+        {'id_user_type':'2','user_type':'Admin. Assistant'},
+        {'id_user_type':'3','user_type':'Operator'},
+        {'id_user_type':'4','user_type':'Professor'},
+        {'id_user_type':'5','user_type':'Administrative'}
+    ]
+)
+
+
+conn.execute(Lab.insert(),
+    [
+        {
+            'id_lab': '1', 'public_id_lab': str(uuid.uuid4()), 'name': 'F2-09', 'capacity': 25
+        },
+        {
+            'id_lab': '2', 'public_id_lab': str(uuid.uuid4()), 'name': 'F2-10', 'capacity': 25
+        }
+    ]
+)
+
+conn.execute(User.insert(),
+    [
+        {'id_user': 1, 'public_id_user': str(uuid.uuid4()), 'name': 'Op', 'lastname1': 'Op', 'lastname2':'Op', 'id_number':'Op',
+        'password':'Op', 'email':'Op', 'phone_number':'Op', 'active': 1, 'university_id':'Op', 'user_type':2},
+        {'id_user': 2, 'public_id_user': str(uuid.uuid4()), 'name': 'Prof', 'lastname1': 'Prof', 'lastname2':'Prof', 'id_number':'Prof',
+        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':3}
+    ]
+)
+
+conn.close()
+
+print("The database was successfully created")
