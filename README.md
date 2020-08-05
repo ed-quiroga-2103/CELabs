@@ -280,7 +280,7 @@ The request returns a JSONArray with all the current reservations in the databas
 ```
 The order of the data in the array is:
 ```
-    ['Request Data', 'Requested Date', 'Description', 'State of the Request', 'User that Requested']
+    ['Request Data', 'Requested Date', 'init_time', 'final_time', 'Description', 'State of the Request', 'User that Requested']
 ```
 
 The state of the requests is described in the following table:
