@@ -1,0 +1,1 @@
+QUIROGA_DB = 'D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db'

@@ -132,6 +132,8 @@ class AllNighter(db.Model):
     public_id_allnighter = db.Column(db.String(50), unique = True)
     request_date = db.Column(db.BigInteger, nullable = False)
     requested_date = db.Column(db.BigInteger, nullable = False)
+    init_time = db.Column(db.BigInteger, nullable = False)
+    final_time = db.Column(db.BigInteger, nullable = False)
     last_mod_id = db.Column(db.Integer, nullable = False)
     last_mod_date = db.Column(db.BigInteger, nullable = False)
     subject = db.Column(db.String(50), nullable = False)

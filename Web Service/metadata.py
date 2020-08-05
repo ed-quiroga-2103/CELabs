@@ -1,12 +1,13 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text, BigInteger
 from sqlalchemy import ForeignKey
 import uuid
+from constants import *
 
 
-file = open('D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db', 'w+')
+file = open(QUIROGA_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
+engine = create_engine('sqlite:///' + QUIROGA_DB)
 meta = MetaData()
 
 
@@ -54,6 +55,8 @@ AllNighter = Table(
     Column('public_id_allnighter', String(50), unique = True),
     Column('request_date', BigInteger, nullable = False),
     Column('requested_date', BigInteger, nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
     Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
