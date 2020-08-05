@@ -11,10 +11,19 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [Reservation](#reservation)
   * [All-Nighters](#all-nighters)
   * [Evaluations](#evaluations)
+  * [Events](#events)
   * [Worklog](#worklog)
   * [Fault Report](#fault_report)
-  * [Inventary](#inventary)
+  * [Inventory](#inventory)
 
+# Node.js
+
+The commands to build the GUI are:
+```
+npm init
+npm install
+npm run serve
+```
 
 
 # API
@@ -149,6 +158,8 @@ data:{
 ```
 
 The codes for the user types are shown in the the following table:
+
+
 | User Type | Code |
 | ----------- | ----------- |
 | Administrator | 1 |
@@ -328,6 +339,48 @@ The order of the data in the array is:
     ['Date Time', 'Comment', 'Score']
 ```
 
+
+## Events
+The route for this request is `/event`
+
+## POST 
+
+The data that has to be sent has the following format:
+```
+data: {
+          "description": "Description",
+          "init_time": "00:00:00",
+          "final_time": "01:00:00",
+          "week_day": "L,K,M,J,V,S,U",
+          "is_repeatable": 0,
+          "date":""
+          }
+```
+
+For events, repeatable events __must__ include week days, while non-repeatable events __must__ include a date.
+
+The request returns the following message:
+```
+{"message": "New Event created!"}
+```
+
+## GET
+
+The GET request needs the access token to be executed, therefore, it can be done in the same way that all the other GET requests are done.
+
+The request returns a JSON Array with the following format:
+```
+[
+  ["08:00:00","10:00:00","","L,K,M","Consejo de Area", true,"F2-09"],
+  ["12:12:12","13:00:00","12/12/2020","","Espe", false,"F2-09"],
+  ["12:12:12","13:00:00","","K,J","Espe", true,"F2-09"]
+]
+```
+The order of the data in the array is:
+```
+    ['init_time', 'final_time', 'date', 'week_day', 'description', 'is_repeatable', 'lab name']
+```
+
 ## Worklog
 The route for this request is `/worklog`
 
@@ -371,7 +424,7 @@ The request sends a confirmation message with the following format:
 {'message' : 'New fault report created!'}
 ```
 
-## Inventary Report
+## Inventory Report
 The route for this request is `/inventory`
 
 ### POST
