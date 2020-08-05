@@ -65,6 +65,7 @@ class Lab(db.Model):
     capacity = db.Column(db.Integer, nullable = False)
 
 class FaultReport_Lab(db.Model):
+    __tablename__ = "faultreport_lab"
     id_faultreport_lab = db.Column(db.Integer, primary_key = True)
     id_report = db.Column(db.Integer, db.ForeignKey('faultreport.id_report'), nullable = False)
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
@@ -102,6 +103,12 @@ class Worklog(db.Model):
     init_time = db.Column(db.BigInteger, nullable = False)
     final_time = db.Column(db.BigInteger, nullable = False)
     description = db.Column(db.String(80), nullable = False)
+    id_status = db.Column(db.Integer, db.ForeignKey('worklogstatus.id_status'), nullable = False)
+
+class WorklogStatus(db.Model):
+    __tablename__ = "worklogstatus"
+    id_status= db.Column(db.Integer, primary_key = True)
+    status = db.Column(db.String(50), nullable = False)
 
 class InventoryReport_Lab(db.Model):
     __tablename__= "inventoryreport_lab"

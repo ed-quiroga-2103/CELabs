@@ -93,6 +93,12 @@ FaultReport = Table(
     
 )
 
+WorklogStatus = Table(
+    'WorklogStatus', meta,
+    Column('id_status', Integer, primary_key = True),
+    Column('status', String(50), nullable= False),
+)
+
 Worklog = Table(
     'Worklog', meta,
     Column('id_worklog', Integer, primary_key = True),
@@ -101,7 +107,7 @@ Worklog = Table(
     Column('init_time', BigInteger, nullable = False),
     Column('final_time', BigInteger, nullable = False),
     Column('description', Text(50), nullable = False),
- 
+    Column('id_status', Integer, ForeignKey('WorklogStatus.id_status'), nullable = False),
 )
 
 Lab = Table(
