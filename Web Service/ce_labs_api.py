@@ -240,9 +240,6 @@ def get_all_reservations(current_user):
 
         result.append(new_reserv)
 
-    # Filter example:    
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
-
     return jsonify(result), 200
 
 
@@ -257,11 +254,9 @@ def create_worklog(current_user):
     date = get_datetime_in_seconds(data['date_time'])
     time = get_time_in_seconds(data['init_time'])
 
-    #Hay que validar que el reporte tambien corresponda al usuario que esta loggeado
     worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
-    #Arreglar verificacion
-    print(worklogs) 
-
+    
+    
     if not worklogs:
 
         current_id_worklog = str(uuid.uuid4())
@@ -328,11 +323,6 @@ def get_all_worklog(current_user):
             new_worklog.append(data)
 
         result.append(new_worklog)
-
-    # Añadir la relacion de usuario al operador
-
-    # Filter example:  
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
 
     return jsonify(result), 200
 
@@ -421,9 +411,6 @@ def get_all_inventory(current_user):
 
         result.append(new_inventory)
 
-    # Filter example:  
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
-
     return jsonify(result), 200
 
 # ------------------------- Faults -------------------------
@@ -506,11 +493,6 @@ def get_all_fault(current_user):
             new_fault.append(data)
 
         result.append(new_fault)
-
-    # Añadir la relacion de usuario al operador
-
-    # Filter example:  
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
 
     return jsonify(result), 200
 
