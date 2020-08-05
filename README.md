@@ -256,6 +256,8 @@ The inputed JSON has the following format:
           "requested_date": "Requested Date",
           "description": "Description of the reservation",
           "lab": "Lab name (E.g. F2-09)",
+          "init_time": "00:00:00",
+          "final_time": "01:00:00"
           }
 ```       
 
@@ -271,9 +273,9 @@ The request sends a confirmation message with the following format:
 The request returns a JSONArray with all the current reservations in the database with the following format:
 ```
 [
-    ["12/12/2020", "12/12/2020", "Desarrollo de proyecto", 0, "Op"],
-    ["13/12/2020", "13/12/2020", "Desarrollo de proyecto", 1, "Op"],
-    ["14/12/2020", "14/12/2020", "Desarrollo de proyecto", 2, "Op"]
+    ["12/12/2020", "12/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 0, "Op"],
+    ["13/12/2020", "13/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 1, "Op"],
+    ["14/12/2020", "14/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 2, "Op"]
 ]
 ```
 The order of the data in the array is:

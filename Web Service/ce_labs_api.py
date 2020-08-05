@@ -521,6 +521,8 @@ def create_allnighter(current_user):
             public_id_allnighter = current_id_allnighter,
             request_date = get_date_in_seconds(data['request_date']),
             requested_date = get_date_in_seconds(data['requested_date']),
+            init_time = get_time_in_seconds(data['init_time']),
+            final_time = get_time_in_seconds(data['final_time']),
             last_mod_id = current_user.public_id_user,
             last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
             subject = data['description'],
@@ -564,12 +566,15 @@ def create_allnighter(current_user):
 @token_required
 def get_all_allnighters(current_user):
 
-    allnighters = AllNighter.query.join(User_AllNighter).join(User).with_entities(
+    allnighters = AllNighter.query.join(User_AllNighter).join(User).join(AllNighter_Lab).join(Lab).with_entities(
         AllNighter.request_date, 
         AllNighter.requested_date,
+        AllNighter.init_time,
+        AllNighter.final_time,
         AllNighter.subject,
         AllNighter.state,
-        User.email
+        User.email,
+        Lab.name
         )
 
     result = []
@@ -579,14 +584,13 @@ def get_all_allnighters(current_user):
         
         new_allnighter.append(get_date_from_seconds(allnighter[0]))
         new_allnighter.append(get_date_from_seconds(allnighter[1]))
+        new_allnighter.append(get_time_from_seconds(allnighter[2]))
+        new_allnighter.append(get_time_from_seconds(allnighter[3]))
 
-        for data in allnighter[2:]:
+        for data in allnighter[4:]:
             new_allnighter.append(data)
 
         result.append(new_allnighter)
-
-    # Filter example:    
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
 
     return jsonify(result), 200
 
