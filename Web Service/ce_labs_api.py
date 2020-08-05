@@ -243,8 +243,6 @@ def get_all_reservations(current_user):
 
         result.append(new_reserv)
 
-    # Filter example:    
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
 
     return jsonify(result), 200
 
