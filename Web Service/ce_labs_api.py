@@ -289,11 +289,14 @@ def edit_this_reservation(current_user):
     
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
     Reservation.init_time, Lab.name, Reservation.id_reservation).all()
-
+    
+    #Primero se busca la Reservation con el metodo que estamos usando actualmente
     for reservation in reservations:
         if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
 
-
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
             current_reservation = db.session.query(Reservation).filter_by(id_reservation = reservation[3]).first()
 
             current_reservation.requested_date = get_date_in_seconds(new_data['requested_date'])
