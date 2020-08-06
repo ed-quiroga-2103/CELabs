@@ -146,6 +146,16 @@ class AllNighter(db.Model):
     subject = db.Column(db.String(50), nullable = False)
     state = db.Column(db.Integer, nullable = False)
 
+class AllNighter_Asistance(db.Model):
+    _tablename_ = 'allnighter_asistance'
+    id_allnighter_asistance = db.Column(db.Integer, primary_key = True)
+    id_allnighter = db.Column(db.Integer, db.ForeignKey('allnighter.id_allnighter'), nullable = False)
+    name = db.Column(db.String(50), nullable = False)
+    lastname1 = db.Column(db.String(50), nullable = False)
+    lastname2 = db.Column(db.String(50), nullable = False)
+    university_id = db.Column(db.String, nullable = False)
+    
+
 class AllNighter_Lab(db.Model):
     __tablename__ = 'allnighter_lab'
     id_allnighter_lab = db.Column(db.Integer, primary_key = True)

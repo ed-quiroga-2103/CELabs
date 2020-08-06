@@ -205,6 +205,16 @@ User_AllNighter = Table(
     Column('id_allnighter', ForeignKey('AllNighter.id_allnighter'), nullable = False) 
 )
 
+AllNighter_Asistance = Table(
+    'AllNighter_Asistance', meta,
+    Column('id_allnighter', Integer, ForeignKey('AllNighter.id_allnighter'), nullable = False),
+    Column('name', String(50), nullable = False),
+    Column('lastname1', String(50), nullable = False),
+    Column('lastname2', String(50), nullable = False),
+    Column('university_id', String(50), nullable = False)
+
+)
+
 User_InventoryReport = Table(
     'User_InventoryReport', meta,
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
