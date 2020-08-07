@@ -26,6 +26,7 @@ import md5 from 'js-md5'
 import './assets/formulate.css'
 import auth from '@/auth'
 import Vuex from 'vuex'
+import Vuetify from 'vuetify/lib'
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
@@ -34,6 +35,7 @@ Vue.prototype.$auth = auth
 
 Vue.use(Vuex)
 Vue.use(VueFormulate)
+Vue.use(Vuetify)
 
 new Vue({
   router,
@@ -42,3 +44,9 @@ new Vue({
   i18n,
   render: h => h(App),
 }).$mount('#app')
+
+export default new Vuetify({
+  icons: {
+    iconfont: 'mdiSvg', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
+  },
+})

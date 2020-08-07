@@ -26,6 +26,7 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
+    "@mdi/js": "^5.4.55",
     "@nuxtjs/vuetify": "^1.11.2",
     "@vue/cli-plugin-babel": "^4.1.2",
     "@vue/cli-plugin-e2e-cypress": "^4.1.2",

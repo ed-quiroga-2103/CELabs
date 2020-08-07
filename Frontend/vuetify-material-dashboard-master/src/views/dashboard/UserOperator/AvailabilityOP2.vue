@@ -7,29 +7,21 @@
           color="white"
         >
           <v-row align="center">
-            <v-col
-              class="ml-8 mr-8"
-              cols="8"
-              sm="6"
-            >
-              <v-btn-toggle
-                v-model="toggle_exclusive"
-                rounded
-              >
-                <v-btn @click="l1 = true">
-                  F2-10
-                </v-btn>
-                <v-btn @click="l1 = false">
-                  F2-09
-                </v-btn>
-              </v-btn-toggle>
+            <v-col cols="6">
+              <v-select
+                class="mt-7 mr-4"
+                :items="items"
+                label="Laboratorio"
+                dense
+                outlined
+                width="3"
+              />
             </v-col>
           </v-row>
-          <v-spacer />
           <v-btn
             fab
             text
-            smalls
+            small
             color="grey darken-2"
             @click="prev"
           >
@@ -52,9 +44,9 @@
             </v-icon>
           </v-btn>
           <v-spacer />
-          <v-spacer />
           <v-btn
             outlined
+            class="mr-4"
             color="grey darken-2"
             @click="dialogo = true"
           >
@@ -125,7 +117,6 @@
       </v-sheet>
       <v-sheet height="600">
         <v-calendar
-          v-show="l1"
           ref="calendar"
           v-model="start"
           color="primary"
@@ -138,25 +129,6 @@
           :max-days="1"
           :start="start"
           :events="events"
-          :type="type"
-          @click:event="showEvent"
-          @click:more="viewDay"
-          @click:date="viewDay"
-        />
-        <v-calendar
-          v-show="!l1"
-          ref="calendar"
-          v-model="start"
-          color="primary"
-          :short-weekdays="shortWeekdays"
-          :interval-count="intervals.count"
-          :first-interval="intervals.first"
-          :interval-minutes="intervals.minutes"
-          :weekdays="weekdays"
-          :min-weeks="1"
-          :max-days="1"
-          :start="start"
-          :events="events2"
           :type="type"
           @click:event="showEvent"
           @click:more="viewDay"
@@ -348,12 +320,6 @@
   const weekdaysDefault = [1, 2, 3, 4, 5, 6]
   export default {
     data: () => ({
-      item: 1,
-      items2: [
-        { text: 'Real-Time', icon: 'mdi-clock' },
-        { text: 'Audience', icon: 'mdi-account' },
-        { text: 'Conversions', icon: 'mdi-flag' },
-      ],
       l1: false,
       calendarmonth: mdiCalendarMonth,
       intervals: {
@@ -386,8 +352,25 @@
       selectedElement: null,
       selectedOpen: false,
       currentlyEditing: null,
-      events: [],
-      events2: [],
+      events: [
+        {
+          name: 'Event',
+          start: '2020-08-07  16:45',
+          end: '2020-08-07  20:15',
+          week_day: '',
+          is_repeatable: 0,
+          date: '2020-08-07',
+          timed: false,
+        }, {
+          name: 'Birthday',
+          start: '2020-08-07  04:30',
+          end: '2020-08-07  05:00',
+          week_day: '',
+          is_repeatable: 0,
+          date: '2020-08-07',
+          timed: true,
+        },
+      ],
     }),
     mounted () {
       this.getEvents()
@@ -480,30 +463,17 @@
         this.events = []
         for (var i = 0; i < temp.length; i++) {
           var dt = temp[i][2].slice(6, 10) + '-' + temp[i][2].slice(3, 5) + '-' + temp[i][2].slice(0, 2)
-          // eslint-disable-next-line eqeqeq
-          if (temp[i][3] == 'F2-09') {
-            this.events.push({
-              name: temp[i][4],
-              start: dt + ' ' + temp[i][0].slice(0, 5),
-              end: dt + ' ' + temp[i][1].slice(0, 5),
-              week_day: temp[i][3],
-              is_repeatable: temp[i][5],
-              lab: temp[i][6],
-              date: dt,
-            })
-          } else {
-            this.events2.push({
-              name: temp[i][4],
-              start: dt + ' ' + temp[i][0].slice(0, 5),
-              end: dt + ' ' + temp[i][1].slice(0, 5),
-              week_day: temp[i][3],
-              is_repeatable: temp[i][5],
-              lab: temp[i][6],
-              date: dt,
-            })
-          }
-          console.log(this.events)
+          this.events.push({
+            name: temp[i][4],
+            start: dt + ' ' + temp[i][0].slice(0, 5),
+            end: dt + ' ' + temp[i][1].slice(0, 5),
+            week_day: temp[i][3],
+            is_repeatable: temp[i][5],
+            lab: temp[i][6],
+            date: dt,
+          })
         }
+        console.log(this.events)
       },
     },
   }
