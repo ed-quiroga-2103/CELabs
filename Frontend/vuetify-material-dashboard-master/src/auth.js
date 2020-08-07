@@ -33,7 +33,7 @@ export default {
    axios(config)
       .then(response => {
       this.posts = response.data
-      console.log(this.posts.message)
+      // console.log(this.posts.message)
       },
       ).catch(e => {
       console.error(e.data.message)
@@ -53,9 +53,8 @@ export default {
         data: data,
     }
 
-    axios(config).then(response => {
-        this.temp = response.data
-        this.sortEvents()
+     return axios(config).then(response => {
+        return response
     })
   },
   // Function to save cookies
@@ -84,24 +83,8 @@ export default {
         },
     }).then(response => {
       this.setUserLogged(response.data.token)
-      console.log(response.data.token)
+     //  console.log(response.data.token)
   },
 )
-  },
-  sortEvents () {
-    this.events = []
-    for (var i = 0; i < this.temp.length; i++) {
-      var dt = this.temp[i][2].slice(6, 10) + '-' + this.temp[i][2].slice(3, 5) + '-' + this.temp[i][2].slice(0, 2)
-      this.events.push({
-        description: this.temp[i][4],
-        init_time: dt + ' ' + this.temp[i][0].slice(0, 5),
-        final_time: dt + ' ' + this.temp[i][1].slice(0, 5),
-        week_day: this.temp[i][3],
-        is_repeatable: this.temp[i][5],
-        lab: this.temp[i][6],
-        date: dt,
-      })
-    }
-    console.log(this.events)
   },
     }

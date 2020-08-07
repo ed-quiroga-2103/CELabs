@@ -357,10 +357,12 @@
       },
       async getEvents () {
         try {
-          await this.$auth.getEvents()
+          await this.$auth.getEvents().then(
+            response => {
+              this.sortEvents(response.data)
+            })
         } catch (error) {
           this.error = true
-          alert('Error charging events')
         }
       },
       async postEvent (description, start, end, day, repeatable, lab, date) {
@@ -370,6 +372,23 @@
           this.error = true
           alert('Error sending events')
         }
+      },
+      sortEvents (temp) {
+        console.log(this.events)
+        this.events = []
+        for (var i = 0; i < temp.length; i++) {
+          var dt = temp[i][2].slice(6, 10) + '-' + temp[i][2].slice(3, 5) + '-' + temp[i][2].slice(0, 2)
+          this.events.push({
+            name: temp[i][4],
+            start: dt + ' ' + temp[i][0].slice(0, 5),
+            end: dt + ' ' + temp[i][1].slice(0, 5),
+            week_day: temp[i][3],
+            is_repeatable: temp[i][5],
+            lab: temp[i][6],
+            date: dt,
+          })
+        }
+        console.log(this.events)
       },
     },
   }
