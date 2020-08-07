@@ -25,10 +25,14 @@ import VueFormulate from '@braid/vue-formulate'
 import md5 from 'js-md5'
 import './assets/formulate.css'
 import auth from '@/auth'
+import Vuex from 'vuex'
+
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 Vue.prototype.$md5 = md5
 Vue.prototype.$auth = auth
+
+Vue.use(Vuex)
 Vue.use(VueFormulate)
 
 new Vue({

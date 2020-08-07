@@ -1,3 +1,4 @@
+/* eslint-disable vue/no-parsing-error */
 <template>
   <v-row class="">
     <v-col>
@@ -44,42 +45,14 @@
             outlined
             class="mr-4"
             color="grey darken-2"
-            @click="dialog = true"
+            @click="dialogo = true"
           >
-            Add
+            New event
           </v-btn>
           <v-menu
             bottom
             right
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                outlined
-                color="grey darken-2"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <span>{{ typeToLabel[type] }}</span>
-                <v-icon right>
-                  mdi-menu-down
-                </v-icon>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          />
         </v-toolbar>
       </v-sheet>
       <v-sheet height="600">
@@ -88,59 +61,131 @@
           v-model="focus"
           color="primary"
           :events="events"
-          :event-color="getEventColor"
           :type="type"
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
-          @change="updateRange"
         />
 
-        <!--------------Add event--------------------->
-        <v-dialog v-model="dialog">
+        <!--------------Add event------------------------------------------------------>
+        <v-dialog v-model="dialogo">
           <v-card>
             <v-container>
-              <v-form>
+              <v-form @submit.prevent="addEvent">
                 <v-text-field
-                  v-model="name"
+                  v-model="description"
                   type="text"
-                  label="Name"
+                  label="Description"
                 >
                   >
                 </v-text-field>
+                <template>
+                  <v-row align="center">
+                    <v-col cols="12">
+                      <v-select
+                        v-model="lab"
+                        :items="items"
+                        :menu-props="{ top: true, offsetY: true }"
+                        label="Laboratorio"
+                      />
+                    </v-col>
+                  </v-row>
+                </template>
+
                 <v-text-field
-                  v-model="details"
-                  type="text"
-                  label="Details"
-                >
-                  >
-                </v-text-field>
-                <v-text-field
-                  v-model="start"
+                  v-model=" date"
                   type="date"
                   label="Start"
                 >
                   >
                 </v-text-field>
-                <v-text-field
-                  v-model="end"
-                  type="date"
-                  label="End"
+                <!-----------------------START---------------------------------------------->
+                <v-dialog
+                  ref="dialog"
+                  v-model="modal"
+                  :return-value.sync="time"
+                  persistent
+                  width="290px"
                 >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="time"
+                      label="Start"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="modal"
+                    v-model="time"
+                    min="7:30"
+                    max="21:59"
+                    full-width
                   >
-                </v-text-field>
-                <v-text-field
-                  v-model="color"
-                  type="color"
-                  label="Color"
+                    <v-spacer />
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="modal = false"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.dialog.save(time)"
+                    >
+                      OK
+                    </v-btn>
+                  </v-time-picker>
+                </v-dialog>
+                <!----------------------END------------------------------------------------->
+                <v-dialog
+                  ref="dialog2"
+                  v-model="modal2"
+                  :return-value.sync="time2"
+                  persistent
+                  width="290px"
                 >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="time2"
+                      label="End"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="modal2"
+                    v-model="time2"
+                    full-width
+                    min="7:30"
+                    max="21:59"
                   >
-                </v-text-field>
+                    <v-spacer />
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="modal2 = false"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.dialog2.save(time2)"
+                    >
+                      OK
+                    </v-btn>
+                  </v-time-picker>
+                </v-dialog>
                 <v-btn
                   type="submit"
                   color="primary"
                   class="mr-4"
-                  @click.stop="dialog= false"
+                  @click.stop="dialogo = false"
                 >
                   Add
                 </v-btn>
@@ -197,38 +242,56 @@
 <script>
   export default {
     data: () => ({
+      items: ['F2-09', 'F2-10'],
+      description: '',
+      lab: '',
+      week_day: ' ',
+      is_repeatable: 0,
+      date: '',
+      time2: null,
+      time: null,
+      modal: false,
+      modal2: false,
       focus: new Date().toISOString().substr(0, 10),
-      type: 'month',
-      typeToLabel: {
-        month: 'Month',
-        week: 'Week',
-        day: 'Day',
-        '4day': '4 Days',
-      },
+      type: 'week',
       start: null,
       end: null,
       name: null,
       details: null,
       color: '#197602',
-      dialog: false,
+      dialogo: false,
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
       currentlyEditing: null,
-      events: [],
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-      names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+      events: [
+        {
+          name: 'Event',
+          start: '2020-08-07  16:45',
+          end: '2020-08-07  20:15',
+          week_day: '',
+          is_repeatable: 0,
+          date: '2020-08-07',
+          timed: false,
+        }, {
+          name: 'Birthday',
+          start: '2020-08-07  04:30',
+          end: '2020-08-07  05:00',
+          week_day: '',
+          is_repeatable: 0,
+          date: '2020-08-07',
+          timed: true,
+        },
+      ],
     }),
     mounted () {
+      this.getEvents()
       this.$refs.calendar.checkChange()
     },
     methods: {
       viewDay ({ date }) {
         this.focus = date
         this.type = 'day'
-      },
-      getEventColor (event) {
-        return event.color
       },
       setToday () {
         this.focus = ''
@@ -248,7 +311,6 @@
             return this.selectedOpen = true
           }, 10)
         }
-
         if (this.selectedOpen) {
           this.selectedOpen = false
           setTimeout(open, 10)
@@ -258,52 +320,34 @@
 
         nativeEvent.stopPropagation()
       },
-      updateRange ({ start, end }) {
-        const events = []
-
-        const min = new Date(`${start.date}T00:00:00`)
-        const max = new Date(`${end.date}T23:59:59`)
-        const days = (max.getTime() - min.getTime()) / 86400000
-        const eventCount = this.rnd(days, days + 20)
-
-        for (let i = 0; i < eventCount; i++) {
-          const allDay = this.rnd(0, 3) === 0
-          const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-          const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-          const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-          const second = new Date(first.getTime() + secondTimestamp)
-
-          events.push({
-            name: this.names[this.rnd(0, this.names.length - 1)],
-            start: first,
-            end: second,
-            color: this.colors[this.rnd(0, this.colors.length - 1)],
-            timed: !allDay,
-          })
-        }
-
-        this.events = events
-      },
-      rnd (a, b) {
-        return Math.floor((b - a + 1) * Math.random()) + a
+      ChangeDate (date) {
+        date = date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3]
+        return date
       },
       addEvent () {
         try {
-          if (this.name && this.start && this.end) {
+          if (this.description && this.time && this.time2) {
             this.events.push(
               {
-                name: this.name,
-                start: this.start,
-                end: this.end,
-                color: this.color,
-                // eslint-disable-next-line no-undef
-                timed: !allDay,
+                name: this.description,
+                start: this.date + ' ' + this.time,
+                end: this.date + ' ' + this.time2,
+                week_day: '',
+                is_repeatable: 0,
+                date: this.date,
+                timed: true,
               })
+            this.date = this.ChangeDate(this.date)
+            this.postEvent(this.description,
+                           this.time + ':00',
+                           this.time2 + ':00',
+                           '',
+                           '0',
+                           this.lab,
+                           this.date)
             this.name = null
-            this.details = null
             this.start = null
             this.end = null
-            this.color = '#197602'
           } else {
             alert('Complete all the fields')
           }
@@ -311,31 +355,22 @@
 
         }
       },
+      async getEvents () {
+        try {
+          await this.$auth.getEvents()
+        } catch (error) {
+          this.error = true
+          alert('Error charging events')
+        }
+      },
+      async postEvent (description, start, end, day, repeatable, lab, date) {
+        try {
+          await this.$auth.postEvent(description, start, end, day, repeatable, lab, date)
+        } catch (error) {
+          this.error = true
+          alert('Error sending events')
+        }
+      },
     },
   }
 </script>
-
-<style scoped>
-.my-event {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  border-radius: 2px;
-  background-color: #1867c0;
-  color: #ffffff;
-  border: 1px solid #1867c0;
-  font-size: 12px;
-  padding: 3px;
-  cursor: pointer;
-  margin-bottom: 1px;
-  left: 4px;
-  margin-right: 8px;
-  position: relative;
-}
-
-.my-event.with-time {
-  position: absolute;
-  right: 4px;
-  margin-right: 0px;
-}
-</style>
