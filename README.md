@@ -11,10 +11,19 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [Reservation](#reservation)
   * [All-Nighters](#all-nighters)
   * [Evaluations](#evaluations)
+  * [Events](#events)
   * [Worklog](#worklog)
   * [Fault Report](#fault_report)
-  * [Inventary](#inventary)
+  * [Inventory](#inventory)
 
+# Node.js
+
+The commands to build the GUI are:
+```
+npm init
+npm install
+npm run serve
+```
 
 
 # API
@@ -247,6 +256,8 @@ The inputed JSON has the following format:
           "requested_date": "Requested Date",
           "description": "Description of the reservation",
           "lab": "Lab name (E.g. F2-09)",
+          "init_time": "00:00:00",
+          "final_time": "01:00:00"
           }
 ```       
 
@@ -262,14 +273,14 @@ The request sends a confirmation message with the following format:
 The request returns a JSONArray with all the current reservations in the database with the following format:
 ```
 [
-    ["12/12/2020", "12/12/2020", "Desarrollo de proyecto", 0, "Op"],
-    ["13/12/2020", "13/12/2020", "Desarrollo de proyecto", 1, "Op"],
-    ["14/12/2020", "14/12/2020", "Desarrollo de proyecto", 2, "Op"]
+    ["12/12/2020", "12/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 0, "Op"],
+    ["13/12/2020", "13/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 1, "Op"],
+    ["14/12/2020", "14/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 2, "Op"]
 ]
 ```
 The order of the data in the array is:
 ```
-    ['Request Data', 'Requested Date', 'Description', 'State of the Request', 'User that Requested']
+    ['Request Data', 'Requested Date', 'init_time', 'final_time', 'Description', 'State of the Request', 'User that Requested']
 ```
 
 The state of the requests is described in the following table:
@@ -361,16 +372,15 @@ The GET request needs the access token to be executed, therefore, it can be done
 
 The request returns a JSON Array with the following format:
 ```
-
 [
-  ["31/07/2020 18:10:33","comment",5],
-  ["01/08/2020 15:05:40","comment",5],
-  ["01/08/2020 15:06:30","comment",10]
+  ["08:00:00","10:00:00","","L,K,M","Consejo de Area", true,"F2-09"],
+  ["12:12:12","13:00:00","12/12/2020","","Espe", false,"F2-09"],
+  ["12:12:12","13:00:00","","K,J","Espe", true,"F2-09"]
 ]
 ```
 The order of the data in the array is:
 ```
-    ['Date Time', 'Comment', 'Score']
+    ['init_time', 'final_time', 'date', 'week_day', 'description', 'is_repeatable', 'lab name']
 ```
 
 ## Worklog
@@ -416,7 +426,7 @@ The request sends a confirmation message with the following format:
 {'message' : 'New fault report created!'}
 ```
 
-## Inventary Report
+## Inventory Report
 The route for this request is `/inventory`
 
 ### POST

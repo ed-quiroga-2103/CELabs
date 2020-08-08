@@ -8,14 +8,14 @@ import jwt
 import datetime
 from functools import wraps
 from utilities import *
-
+from constants import * 
 
 
 app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\\Users\\Franklin\\Desktop\\Proyecto espe\\Web Service\\CELabs.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + QUIROGA_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -165,69 +165,74 @@ def create_reservation(current_user):
     date = get_date_in_seconds(data['requested_date'])
     time = get_time_in_seconds(data['init_time'])
     
-    reservations = Reservation.query.filter(Reservation.requested_date.like(date) & Reservation.init_time.like(time)).first()
+    reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
+    Reservation.init_time, Lab.name).all()
 
-    if not reservations:
+    for reservation in reservations:
+        if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
+            return jsonify({'message':'Theres already a reservation with that date and time'}), 401
 
-        current_id_reservation = str(uuid.uuid4())
+    current_id_reservation = str(uuid.uuid4())
 
-        operator = User.query.filter(User.email.like(data['operator'])).first()
+    operator = User.query.filter(User.email.like(data['operator'])).first()
 
-        new_reservation = Reservation(
-            public_id_reservation = current_id_reservation,
-            request_date = get_date_in_seconds(data['request_date']),
-            requested_date = get_date_in_seconds(data['requested_date']),
-            init_time = get_time_in_seconds(data['init_time']),
-            final_time = get_time_in_seconds(data['final_time']),
-            last_mod_id = current_user.public_id_user,
-            last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
-            subject = data['subject'],
-            description = data['description'],
-            operator = operator.id_user
-            )
-
-        db.session.add(new_reservation)
-        db.session.commit()
-
-        current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
-        current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
-
-
-        user_relation = User_Reservation(
-            id_reservation = current_reservation.id_reservation,
-            id_user = current_user.id_user    
+    new_reservation = Reservation(
+        public_id_reservation = current_id_reservation,
+        request_date = get_date_in_seconds(data['request_date']),
+        requested_date = get_date_in_seconds(data['requested_date']),
+        init_time = get_time_in_seconds(data['init_time']),
+        final_time = get_time_in_seconds(data['final_time']),
+        last_mod_id = current_user.public_id_user,
+        last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
+        subject = data['subject'],
+        description = data['description'],
+        operator = operator.id_user
         )
 
-        db.session.add(user_relation)
-        db.session.commit()
+    db.session.add(new_reservation)
+    db.session.commit()
 
-        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
-
-        lab_relation = Reservation_Lab(
-            id_reservation = current_reservation.id_reservation,
-            id_lab = lab.id_lab
-        )
-
-        db.session.add(lab_relation)
-        db.session.commit()
+    current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
+    current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
 
 
-        response = jsonify({'message' : 'New reservation created!'})
-        
-        return response
+    user_relation = User_Reservation(
+        id_reservation = current_reservation.id_reservation,
+        id_user = current_user.id_user    
+    )
 
-    return jsonify({'message':'Theres already a reservation with that date and time'})
+    db.session.add(user_relation)
+    db.session.commit()
+
+    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+    lab_relation = Reservation_Lab(
+        id_reservation = current_reservation.id_reservation,
+        id_lab = lab.id_lab
+    )
+
+    db.session.add(lab_relation)
+    db.session.commit()
+
+
+    response = jsonify({'message' : 'New reservation created!'})
+    
+    return response, 200
+
 
 @app.route('/reservation', methods=['GET'])
 @token_required
 def get_all_reservations(current_user):
 
-    reservations = Reservation.query.join(User_Reservation).join(User).with_entities(
+    reservations = Reservation.query.join(User_Reservation).join(User).join(Reservation_Lab).join(Lab).with_entities(
         Reservation.request_date, 
         Reservation.requested_date,
+        Reservation.init_time,
+        Reservation.final_time,
         Reservation.subject,
         Reservation.description,
-        User.email
+        User.email,
+        Lab.name
         )
 
     result = []
@@ -237,16 +242,77 @@ def get_all_reservations(current_user):
         
         new_reserv.append(get_date_from_seconds(reserv[0]))
         new_reserv.append(get_date_from_seconds(reserv[1]))
+        new_reserv.append(get_time_from_seconds(reserv[2]))
+        new_reserv.append(get_time_from_seconds(reserv[3]))
 
-        for data in reserv[2:]:
+
+        for data in reserv[4:]:
             new_reserv.append(data)
 
         result.append(new_reserv)
 
-    # Filter example:    
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
-
     return jsonify(result), 200
+
+@app.route('/reservation', methods= ['DELETE'])
+@token_required
+def delete_this_reservation(current_user):
+    data = request.get_json()
+    
+    date = get_date_in_seconds(data['requested_date'])
+    time = get_time_in_seconds(data['init_time'])
+
+    reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
+    Reservation.init_time, Lab.name, Reservation.id_reservation).all()
+
+
+
+    for reservation in reservations:
+        if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
+            Reservation.query.filter_by(id_reservation=reservation[3]).delete()
+            Reservation_Lab.query.filter_by(id_reservation=reservation[3]).delete()
+            User_Reservation.query.filter_by(id_reservation=reservation[3]).delete()
+            db.session.commit()
+            return jsonify({'message':'Reservation deleted'}), 200
+
+    return jsonify({'message':'No reservation'}), 401
+
+@app.route('/reservation', methods= ['PUT'])
+@token_required
+def edit_this_reservation(current_user):
+    now = datetime.datetime.now()
+    
+    raw_data = request.get_json()
+    data = raw_data['old']
+    new_data = raw_data['new']
+    date = get_date_in_seconds(data['requested_date'])
+    time = get_time_in_seconds(data['init_time'])
+    
+    reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
+    Reservation.init_time, Lab.name, Reservation.id_reservation).all()
+    
+    #Primero se busca la Reservation con el metodo que estamos usando actualmente
+    for reservation in reservations:
+        if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
+
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
+            current_reservation = db.session.query(Reservation).filter_by(id_reservation = reservation[3]).first()
+
+            current_reservation.requested_date = get_date_in_seconds(new_data['requested_date'])
+            current_reservation.init_time = get_time_in_seconds(new_data['init_time'])
+            current_reservation.final_time = get_time_in_seconds(new_data['final_time'])
+            current_reservation.subject = new_data['subject']
+            current_reservation.description = new_data['description']
+            current_reservation.last_mod_id = current_user.public_id_user
+            current_reservation.last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S"))
+
+            db.session.commit()
+
+            return jsonify({'message':'Reservation modified'}), 200
+
+    return jsonify({'message':'No Reservation'}), 401
+
 
 
 # ------------------------- Worklog -------------------------
@@ -260,13 +326,14 @@ def create_worklog(current_user):
     date = get_datetime_in_seconds(data['date_time'])
     time = get_time_in_seconds(data['init_time'])
 
-    #Hay que validar que el reporte tambien corresponda al usuario que esta loggeado
     worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
-
-
+    
+    
     if not worklogs:
 
         current_id_worklog = str(uuid.uuid4())
+
+        current_id_status= WorklogStatus.query.filter_by(status= "Pending").first() 
 
         new_worklog = Worklog(
             public_id_worklog = current_id_worklog,
@@ -274,6 +341,7 @@ def create_worklog(current_user):
             init_time = time,
             final_time = get_time_in_seconds(data['final_time']),
             description = data['description'],
+            id_status = current_id_status.id_status
             )
 
         db.session.add(new_worklog)
@@ -296,6 +364,40 @@ def create_worklog(current_user):
     return jsonify({'message':'Theres already a worklog with that date and time'})
 
 
+@app.route('/worklog', methods=['GET'])
+@token_required
+def get_all_worklog(current_user):
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).join(User_Operator).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.final_time,
+        Worklog.description,
+        Worklog.id_status,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        User.university_id,
+        User_Operator.pending_hours,
+        User_Operator.approved_hours
+    )
+
+    result = []
+
+    for worklog in worklogs:
+        new_worklog = []
+
+        new_worklog.append(get_datetime_from_seconds(worklog[0]))
+        new_worklog.append(get_time_from_seconds(worklog[1]))
+        new_worklog.append(get_time_from_seconds(worklog[2]))
+
+        for data in worklog[4:]:
+            new_worklog.append(data)
+
+        result.append(new_worklog)
+
+    return jsonify(result), 200
+
 # ------------------------- Inventory -------------------------
 
 @app.route('/inventory', methods=['POST'])
@@ -304,24 +406,18 @@ def create_inventory_report(current_user):
     
     data = request.get_json()
 
-    '''  
-        Este bloque de codigo se va a utilizar mas adelante para realizar una validacion.
-        Sin embargo, en este momento no se utiliza por lo que se mantendra comentado.
+    date = get_date_in_seconds(data['date'])
 
-        Se debe cambiar la fecha por fecha y hora
+    inventories = InventoryReport.query.filter_by(date = date).first()
+    #Arreglar verificacion
 
-        date_json = data['date']
-
-        inventory = InventoryReport.query.filter_by(date=date_json).first() 
-    '''
-    #Ese 0 es un crimen, hay que cambiarlo pero por el momento es un placeholder
-    if not 0:
+    if not inventories:
 
         current_id_report = str(uuid.uuid4())
 
         new_inventoryreport = InventoryReport(
             public_id_report = current_id_report,
-            date = get_datetime_in_seconds(data['date']),
+            date = get_date_in_seconds(data['date']),
             complete_computers = int(data['complete_computers']),
             incomplete_computers = int(data['incomplete_computers']),
             number_projectors = int(data['number_projectors']),
@@ -360,6 +456,35 @@ def create_inventory_report(current_user):
     return jsonify({'message':'Theres already a inventory report with that date and time'})
 
 
+@app.route('/inventory', methods=['GET'])
+@token_required
+def get_all_inventory(current_user):
+
+    inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
+        InventoryReport.date,
+        InventoryReport.complete_computers,
+        InventoryReport.incomplete_computers,
+        InventoryReport.number_projectors,
+        InventoryReport.number_chairs,
+        InventoryReport.number_fire_extinguishers,
+        Lab.id_lab,
+        User.id_user
+    )
+
+    result = []
+
+    for inventory in inventories:
+        print(len(result))
+        new_inventory = []
+        new_inventory.append(get_date_from_seconds(inventory[0]))
+
+        for data in inventory[1:]:
+            new_inventory.append(data)
+
+        result.append(new_inventory)
+
+    return jsonify(result), 200
+
 # ------------------------- Faults -------------------------
 
 @app.route('/fault', methods=['POST'])
@@ -368,7 +493,6 @@ def create_fault_report(current_user):
     
     data = request.get_json()
 
-    
     date_time_json = get_datetime_in_seconds(data['date_time'])
 
     fault = FaultReport.query.filter_by(date_time = date_time_json).first() 
@@ -384,7 +508,7 @@ def create_fault_report(current_user):
             date_time = get_datetime_in_seconds(data['date_time']),
             id_fault_part = data['id_fault_part'],
             description = data['description'],
-            id_status = current_id_status.id_status
+            id_status = current_id_status.id_status,
             )
 
         db.session.add(new_fault_report)
@@ -394,10 +518,21 @@ def create_fault_report(current_user):
 
         user_relation = User_FaultReport(
             id_report = current_report.id_report,
-            id_user = current_user.id_user  
+            id_user = current_user.id_user,
         )
 
         db.session.add(user_relation)
+        db.session.commit()
+
+        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
+
+        lab_relation = FaultReport_Lab(
+            id_report = current_report.id_report,
+            id_lab = lab.id_lab
+        )
+
+        db.session.add(lab_relation)
         db.session.commit()
 
         response = jsonify({'message' : 'New fault report created!'})
@@ -405,6 +540,33 @@ def create_fault_report(current_user):
         return response
 
     return jsonify({'message':'Theres already a fault report with that date and time'})
+
+
+@app.route('/fault', methods=['GET'])
+@token_required
+def get_all_fault(current_user):
+
+    faults = FaultReport.query.join(User_FaultReport).join(User).join(FaultReport_Lab).join(Lab).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_fault_part,
+        FaultReport.description,
+        FaultReport.id_status,
+        Lab.id_lab,
+    )
+
+    result = []
+
+    for fault in faults:
+        new_fault = []
+
+        new_fault.append(get_datetime_from_seconds(fault[0]))
+
+        for data in fault[1:]:
+            new_fault.append(data)
+
+        result.append(new_fault)
+
+    return jsonify(result), 200
 
 
 # ------------------------- All-Nighters -------------------------
@@ -415,68 +577,78 @@ def create_allnighter(current_user):
     now = datetime.datetime.now()
 
     data = request.get_json()
-    
+
     date = get_date_in_seconds(data['requested_date'])
+    time = get_time_in_seconds(data['init_time'])
     
-    reservations = AllNighter.query.filter(AllNighter.requested_date.like(date)).first()
+    allnighters = AllNighter.query.join(AllNighter_Lab).join(Lab).with_entities(AllNighter.requested_date,
+    AllNighter.init_time, Lab.name).all()
 
-    if not reservations:
-        
-        current_id_allnighter = str(uuid.uuid4())
+    for allnighter in allnighters:
+        if allnighter[0] == date and allnighter[1] == time and allnighter[2] == data['lab']:
+            return jsonify({'message':'Theres already an allnighter with that date and time'}), 401
 
-        new_allnighter = AllNighter(
-            public_id_allnighter = current_id_allnighter,
-            request_date = get_date_in_seconds(data['request_date']),
-            requested_date = get_date_in_seconds(data['requested_date']),
-            last_mod_id = current_user.public_id_user,
-            last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
-            subject = data['description'],
-            state = 0
-        )
 
-        db.session.add(new_allnighter)
-        db.session.commit()
 
-        current_allnighter = AllNighter.query.filter(AllNighter.public_id_allnighter.like(current_id_allnighter)).first()
+    current_id_allnighter = str(uuid.uuid4())
 
-        
-        user_relation = User_AllNighter(
-            id_allnighter = current_allnighter.id_allnighter,
-            id_user = current_user.id_user
-        )
+    new_allnighter = AllNighter(
+        public_id_allnighter = current_id_allnighter,
+        request_date = get_date_in_seconds(data['request_date']),
+        requested_date = get_date_in_seconds(data['requested_date']),
+        init_time = get_time_in_seconds(data['init_time']),
+        final_time = get_time_in_seconds(data['final_time']),
+        last_mod_id = current_user.public_id_user,
+        last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
+        subject = data['description'],
+        state = 0
+    )
 
-        db.session.add(user_relation)
-        db.session.commit()
-        
-        
-        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+    db.session.add(new_allnighter)
+    db.session.commit()
 
-        allnighter_lab = AllNighter_Lab(
+    current_allnighter = AllNighter.query.filter(AllNighter.public_id_allnighter.like(current_id_allnighter)).first()
 
-            id_allnighter = current_allnighter.id_allnighter,
-            id_lab = lab.id_lab
+    
+    user_relation = User_AllNighter(
+        id_allnighter = current_allnighter.id_allnighter,
+        id_user = current_user.id_user
+    )
 
-        )
+    db.session.add(user_relation)
+    db.session.commit()
+    
+    
+    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
 
-        db.session.add(allnighter_lab)
-        db.session.commit()
+    allnighter_lab = AllNighter_Lab(
 
-        response = jsonify({'message' : 'New All-Nighter created!'})
+        id_allnighter = current_allnighter.id_allnighter,
+        id_lab = lab.id_lab
 
-        return response, 200
+    )
 
-    return jsonify({'message' : 'Theres already an All-Nighter with the selected date'})
+    db.session.add(allnighter_lab)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New All-Nighter created!'})
+
+    return response, 200
+
 
 @app.route('/allnighter', methods=['GET'])
 @token_required
 def get_all_allnighters(current_user):
 
-    allnighters = AllNighter.query.join(User_AllNighter).join(User).with_entities(
+    allnighters = AllNighter.query.join(User_AllNighter).join(User).join(AllNighter_Lab).join(Lab).with_entities(
         AllNighter.request_date, 
         AllNighter.requested_date,
+        AllNighter.init_time,
+        AllNighter.final_time,
         AllNighter.subject,
         AllNighter.state,
-        User.email
+        User.email,
+        Lab.name
         )
 
     result = []
@@ -486,16 +658,38 @@ def get_all_allnighters(current_user):
         
         new_allnighter.append(get_date_from_seconds(allnighter[0]))
         new_allnighter.append(get_date_from_seconds(allnighter[1]))
+        new_allnighter.append(get_time_from_seconds(allnighter[2]))
+        new_allnighter.append(get_time_from_seconds(allnighter[3]))
 
-        for data in allnighter[2:]:
+        for data in allnighter[4:]:
             new_allnighter.append(data)
 
         result.append(new_allnighter)
 
-    # Filter example:    
-    # reservations = reservations.filter(Reservation.requested_date.like('12/12/2020'))
-
     return jsonify(result), 200
+
+@app.route('/allnighter', methods= ['DELETE'])
+@token_required
+def delete_this_allnighter(current_user):
+    data = request.get_json()
+    
+    date = get_date_in_seconds(data['requested_date'])
+    time = get_time_in_seconds(data['init_time'])
+
+    allnighters = AllNighter.query.join(AllNighter_Lab).join(Lab).with_entities(AllNighter.requested_date,
+    AllNighter.init_time, Lab.name, AllNighter.id_allnighter).all()
+
+
+
+    for allnighter in allnighters:
+        if allnighter[0] == date and allnighter[1] == time and allnighter[2] == data['lab']:
+            AllNighter.query.filter_by(id_allnighter=allnighter[3]).delete()
+            AllNighter_Lab.query.filter_by(id_allnighter=allnighter[3]).delete()
+            User_AllNighter.query.filter_by(id_allnighter=allnighter[3]).delete()
+            db.session.commit()
+            return jsonify({'message':'All-Nighter deleted'}), 200
+
+    return jsonify({'message':'No All-Nighter'}), 401
 
 # ------------------------- Evaluations -------------------------
 
@@ -645,6 +839,30 @@ def get_all_events(current_user):
 
 
     return jsonify(res), 200
+
+
+@app.route('/event', methods= ['DELETE'])
+@token_required
+def delete_this_event(current_user):
+    data = request.get_json()
+    
+    time = get_time_in_seconds(data['init_time'])
+
+    events = Event.query\
+    .join(Lab, Lab.id_lab==Event.id_lab).with_entities(Event.description,
+    Event.init_time, Lab.name, Event.id_event).all()
+
+
+
+    for event in events:
+        if event[0] == data['description'] and event[1] == time and event[2] == data['lab']:
+            Event.query.filter_by(id_event=event[3]).delete()
+            db.session.commit()
+            return jsonify({'message':'Event deleted'}), 200
+
+    return jsonify({'message':'No Event'}), 401
+
+
 
 
 # ------------------------- Course -------------------------

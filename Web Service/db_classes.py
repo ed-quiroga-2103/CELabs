@@ -65,6 +65,7 @@ class Lab(db.Model):
     capacity = db.Column(db.Integer, nullable = False)
 
 class FaultReport_Lab(db.Model):
+    __tablename__ = "faultreport_lab"
     id_faultreport_lab = db.Column(db.Integer, primary_key = True)
     id_report = db.Column(db.Integer, db.ForeignKey('faultreport.id_report'), nullable = False)
     id_lab = db.Column(db.Integer, db.ForeignKey('lab.id_lab'), nullable = False)
@@ -102,6 +103,12 @@ class Worklog(db.Model):
     init_time = db.Column(db.BigInteger, nullable = False)
     final_time = db.Column(db.BigInteger, nullable = False)
     description = db.Column(db.String(80), nullable = False)
+    id_status = db.Column(db.Integer, db.ForeignKey('worklogstatus.id_status'), nullable = False)
+
+class WorklogStatus(db.Model):
+    __tablename__ = "worklogstatus"
+    id_status= db.Column(db.Integer, primary_key = True)
+    status = db.Column(db.String(50), nullable = False)
 
 class InventoryReport_Lab(db.Model):
     __tablename__= "inventoryreport_lab"
@@ -132,10 +139,22 @@ class AllNighter(db.Model):
     public_id_allnighter = db.Column(db.String(50), unique = True)
     request_date = db.Column(db.BigInteger, nullable = False)
     requested_date = db.Column(db.BigInteger, nullable = False)
+    init_time = db.Column(db.BigInteger, nullable = False)
+    final_time = db.Column(db.BigInteger, nullable = False)
     last_mod_id = db.Column(db.Integer, nullable = False)
     last_mod_date = db.Column(db.BigInteger, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
     state = db.Column(db.Integer, nullable = False)
+
+class AllNighter_Asistance(db.Model):
+    _tablename_ = 'allnighter_asistance'
+    id_allnighter_asistance = db.Column(db.Integer, primary_key = True)
+    id_allnighter = db.Column(db.Integer, db.ForeignKey('allnighter.id_allnighter'), nullable = False)
+    name = db.Column(db.String(50), nullable = False)
+    lastname1 = db.Column(db.String(50), nullable = False)
+    lastname2 = db.Column(db.String(50), nullable = False)
+    university_id = db.Column(db.String, nullable = False)
+    
 
 class AllNighter_Lab(db.Model):
     __tablename__ = 'allnighter_lab'
