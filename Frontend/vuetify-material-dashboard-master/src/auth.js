@@ -83,8 +83,12 @@ export default {
         },
     }).then(response => {
       this.setUserLogged(response.data.token)
+      return response
      //  console.log(response.data.token)
   },
 )
+  },
+  deleteUserLogged () {
+    Cookies.remove('userLogged')
   },
     }

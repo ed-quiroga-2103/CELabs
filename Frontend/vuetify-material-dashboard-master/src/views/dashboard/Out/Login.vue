@@ -90,8 +90,14 @@
       },
       async login () {
         try {
-          await this.$auth.login(this.formValues.username, this.formValues.password)
-          this.$router.push('/start')
+          await this.$auth.login(this.formValues.username, this.formValues.password).then(
+            response => {
+              console.log(response.data.user_type)
+              // eslint-disable-next-line eqeqeq
+              if (response.data.user_type == '3') {
+                this.$router.push('/start')
+              }
+            })
         } catch (error) {
           this.error = true
           alert('The email or password is incorrect')

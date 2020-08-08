@@ -99,7 +99,8 @@
       <v-btn
         to="/"
         text
-      >
+        @click="this.$auth.deleteUserLogged"
+>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>

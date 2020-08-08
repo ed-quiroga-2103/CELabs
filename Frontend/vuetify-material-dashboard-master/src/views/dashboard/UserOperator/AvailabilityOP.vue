@@ -13,7 +13,6 @@
               sm="6"
             >
               <v-btn-toggle
-                v-model="toggle_exclusive"
                 rounded
               >
                 <v-btn @click="l1 = true">
@@ -182,7 +181,7 @@
                         v-model="lab"
                         :items="items"
                         :menu-props="{ top: true, offsetY: true }"
-                        label="Laboratorio"
+                        label="Laboratory"
                       />
                     </v-col>
                   </v-row>
@@ -425,31 +424,42 @@
 
         nativeEvent.stopPropagation()
       },
+      showEvent2 ({ nativeEvent, event }) {
+        const open = () => {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          setTimeout(() => {
+            // eslint-disable-next-line no-return-assign
+            return this.selectedOpen = true
+          }, 10)
+        }
+        if (this.selectedOpen) {
+          this.selectedOpen = false
+          setTimeout(open, 10)
+        } else {
+          open()
+        }
+
+        nativeEvent.stopPropagation()
+      },
       ChangeDate (date) {
         date = date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3]
         return date
       },
       addEvent () {
+        console.log(this.lab)
+        console.log(this.description)
         try {
-          if (this.description && this.time && this.time2) {
-            this.events.push(
-              {
-                name: this.description,
-                start: this.date + ' ' + this.time,
-                end: this.date + ' ' + this.time2,
-                week_day: '',
-                is_repeatable: 0,
-                date: this.date,
-                timed: true,
-              })
-            this.date = this.ChangeDate(this.date)
+          if (this.description && this.time && this.time2 && this.lab) {
+            const date2 = this.ChangeDate(this.date)
             this.postEvent(this.description,
                            this.time + ':00',
                            this.time2 + ':00',
                            '',
                            '0',
                            this.lab,
-                           this.date)
+                           date2)
+            this.getEvents()
           } else {
             alert('Complete all the fields')
           }
@@ -480,8 +490,9 @@
         this.events = []
         for (var i = 0; i < temp.length; i++) {
           var dt = temp[i][2].slice(6, 10) + '-' + temp[i][2].slice(3, 5) + '-' + temp[i][2].slice(0, 2)
+          console.log(temp[i][6])
           // eslint-disable-next-line eqeqeq
-          if (temp[i][3] == 'F2-09') {
+          if (temp[i][6] == 'F2-09') {
             this.events.push({
               name: temp[i][4],
               start: dt + ' ' + temp[i][0].slice(0, 5),
@@ -502,8 +513,8 @@
               date: dt,
             })
           }
-          console.log(this.events)
         }
+        console.log(this.events)
       },
     },
   }
