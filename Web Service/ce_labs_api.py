@@ -322,46 +322,48 @@ def edit_this_reservation(current_user):
 def create_worklog(current_user):
     
     data = request.get_json()
-    
-    date = get_datetime_in_seconds(data['date_time'])
+    date = get_date_in_seconds(data['date_time'])
     time = get_time_in_seconds(data['init_time'])
 
-    worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time
+    ).all()
     
-    
-    if not worklogs:
+    for worklog in worklogs:
+        if worklog[0] == date and worklog[1] == time:
+            return jsonify({'message':'Theres already a worklog report with that date and time'}), 401
 
-        current_id_worklog = str(uuid.uuid4())
 
-        current_id_status= WorklogStatus.query.filter_by(status= "Pending").first() 
+    current_id_worklog = str(uuid.uuid4())
 
-        new_worklog = Worklog(
-            public_id_worklog = current_id_worklog,
-            date_time = date,
-            init_time = time,
-            final_time = get_time_in_seconds(data['final_time']),
-            description = data['description'],
-            id_status = current_id_status.id_status
-            )
+    current_id_status= WorklogStatus.query.filter_by(status= "Pending").first() 
 
-        db.session.add(new_worklog)
-        db.session.commit()
-
-        current_worklog = Worklog.query.filter(Worklog.public_id_worklog.like(current_id_worklog)).first()
-
-        user_relation = User_Worklog(
-            id_worklog = current_worklog.id_worklog,
-            id_user = current_user.id_user   
+    new_worklog = Worklog(
+        public_id_worklog = current_id_worklog,
+        date_time = date,
+        init_time = time,
+        final_time = get_time_in_seconds(data['final_time']),
+        description = data['description'],
+        id_status = current_id_status.id_status
         )
 
-        db.session.add(user_relation)
-        db.session.commit()
+    db.session.add(new_worklog)
+    db.session.commit()
 
-        response = jsonify({'message' : 'New worklog created!'})
-        
-        return response
+    current_worklog = Worklog.query.filter(Worklog.public_id_worklog.like(current_id_worklog)).first()
 
-    return jsonify({'message':'Theres already a worklog with that date and time'})
+    user_relation = User_Worklog(
+        id_worklog = current_worklog.id_worklog,
+        id_user = current_user.id_user   
+    )
+
+    db.session.add(user_relation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New worklog created!'})
+    
+    return response
 
 
 @app.route('/worklog', methods=['GET'])
@@ -398,62 +400,147 @@ def get_all_worklog(current_user):
 
     return jsonify(result), 200
 
+
+@app.route('/worklog', methods= ['DELETE'])
+@token_required
+def delete_this_worklog(current_user):
+    data = request.get_json()
+
+    date = get_date_in_seconds(data['date_time'])
+    time = get_time_in_seconds(data['init_time'])
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.id_worklog
+    ).all()
+
+    for worklog in worklogs:
+        if worklog[0] == date and worklog[1] == time:
+            Worklog.query.filter_by(id_worklog=worklog[2]).delete()
+            User_Worklog.query.filter_by(id_worklog=worklog[2]).delete()
+            db.session.commit()
+            return jsonify({'message':'Worklog Report deleted'}), 200
+
+    return jsonify({'message':'No Worklog Report'}), 401
+
+
+@app.route('/worklog', methods= ['PUT'])
+@token_required
+def edit_this_worklog(current_user):
+    
+    raw_data = request.get_json()
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    date = get_date_in_seconds(data['date_time'])
+    time = get_time_in_seconds(data['init_time'])
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.id_worklog
+    ).all()
+
+    #date = get_date_in_seconds(data['requested_date'])
+    #time = get_time_in_seconds(data['init_time'])
+    
+    #reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
+    #Reservation.init_time, Lab.name, Reservation.id_reservation).all()
+    
+    #Primero se busca la Reservation con el metodo que estamos usando actualmente
+
+
+    for worklog in worklogs:
+        if worklog[0] == date and worklog[1] == time:
+
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
+            current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
+
+            current_worklog.date_time = get_date_in_seconds(new_data['date_time'])
+            current_worklog.init_time = get_time_in_seconds(new_data['init_time'])
+            current_worklog.final_time = get_time_in_seconds(new_data['final_time'])
+            current_worklog.description = new_data['description']
+
+            current_id_status= WorklogStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_worklog.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Worklog modified'}), 200
+
+    return jsonify({'message':'No Worklog'}), 401
+
+
+
+
+
+
+
+
+
+
 # ------------------------- Inventory -------------------------
 
 @app.route('/inventory', methods=['POST'])
 @token_required
 def create_inventory_report(current_user):
-    
-    data = request.get_json()
 
+    data = request.get_json()
     date = get_date_in_seconds(data['date'])
 
-    inventories = InventoryReport.query.filter_by(date = date).first()
-    #Arreglar verificacion
+    inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
+        InventoryReport.date,
+        Lab.name
+    ).all()
 
-    if not inventories:
+    for inventory in inventories:
+        if inventory[0] == date and inventory[1] == data['lab']:
+            return jsonify({'message':'Theres already an inventory report with that date'}), 401
+    
 
-        current_id_report = str(uuid.uuid4())
+    current_id_report = str(uuid.uuid4())
 
-        new_inventoryreport = InventoryReport(
-            public_id_report = current_id_report,
-            date = get_date_in_seconds(data['date']),
-            complete_computers = int(data['complete_computers']),
-            incomplete_computers = int(data['incomplete_computers']),
-            number_projectors = int(data['number_projectors']),
-            number_chairs = int(data['number_chairs']),
-            number_fire_extinguishers = int(data['number_fire_extinguishers'])
-            )
-
-        db.session.add(new_inventoryreport)
-        db.session.commit()
-
-        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
-
-        user_relation = User_InventoryReport(
-            id_report = current_report.id_report,
-            id_user = current_user.id_user   
+    new_inventoryreport = InventoryReport(
+        public_id_report = current_id_report,
+        date = get_date_in_seconds(data['date']),
+        complete_computers = int(data['complete_computers']),
+        incomplete_computers = int(data['incomplete_computers']),
+        number_projectors = int(data['number_projectors']),
+        number_chairs = int(data['number_chairs']),
+        number_fire_extinguishers = int(data['number_fire_extinguishers'])
         )
 
-        db.session.add(user_relation)
-        db.session.commit()
+    db.session.add(new_inventoryreport)
+    db.session.commit()
 
-        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
-        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
+    current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
 
-        lab_relation = InventoryReport_Lab(
-            id_report = current_report.id_report,
-            id_lab = lab.id_lab
-        )
+    user_relation = User_InventoryReport(
+        id_report = current_report.id_report,
+        id_user = current_user.id_user   
+    )
 
-        db.session.add(lab_relation)
-        db.session.commit()
+    db.session.add(user_relation)
+    db.session.commit()
 
-        response = jsonify({'message' : 'New inventory report created!'})
-        
-        return response
+    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+    current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
 
-    return jsonify({'message':'Theres already a inventory report with that date and time'})
+    lab_relation = InventoryReport_Lab(
+        id_report = current_report.id_report,
+        id_lab = lab.id_lab
+    )
+
+    db.session.add(lab_relation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New inventory report created!'})
+    
+    return response
 
 
 @app.route('/inventory', methods=['GET'])
@@ -474,7 +561,6 @@ def get_all_inventory(current_user):
     result = []
 
     for inventory in inventories:
-        print(len(result))
         new_inventory = []
         new_inventory.append(get_date_from_seconds(inventory[0]))
 
@@ -485,61 +571,91 @@ def get_all_inventory(current_user):
 
     return jsonify(result), 200
 
+
+@app.route('/inventory', methods= ['DELETE'])
+@token_required
+def delete_this_inventoryreport(current_user):
+    data = request.get_json()
+
+    date = get_date_in_seconds(data['date'])
+
+    inventories = InventoryReport.query.join(InventoryReport_Lab).join(Lab).join(User_InventoryReport).join(User).with_entities(
+        InventoryReport.date,
+        InventoryReport.id_report,
+        Lab.name
+    ).all()
+
+    for inventory in inventories:
+        if inventory[0] == date and inventory[2] == data['lab']:
+            InventoryReport.query.filter_by(id_report=inventory[1]).delete()
+            InventoryReport_Lab.query.filter_by(id_report=inventory[1]).delete()
+            User_InventoryReport.query.filter_by(id_report=inventory[1]).delete()
+            db.session.commit()
+            return jsonify({'message':'Inventory Report deleted'}), 200
+
+    return jsonify({'message':'No Inventory Report'}), 401
+
 # ------------------------- Faults -------------------------
 
 @app.route('/fault', methods=['POST'])
 @token_required
 def create_fault_report(current_user):
     
+    now = datetime.datetime.now()
+    date_time = now.strftime('%d/%m/%Y %H:%M:%S')
+    
     data = request.get_json()
 
-    date_time_json = get_datetime_in_seconds(data['date_time'])
+    date = get_datetime_in_seconds(str(date_time))
 
-    fault = FaultReport.query.filter_by(date_time = date_time_json).first() 
+    faults = FaultReport.query.join(User_FaultReport).join(User).join(FaultReport_Lab).join(Lab).with_entities(
+        FaultReport.date_time,
+        Lab.name
+    ).all()
 
-    if not fault:
+    for fault in faults:
+        if fault[0] == date and fault[1] == data['lab']:
+            return jsonify({'message':'Theres already a fault report with that date and time'}), 401 
+    
+    current_id_fault = str(uuid.uuid4())
 
-        current_id_fault = str(uuid.uuid4())
+    current_id_status= FaultStatus.query.filter_by(status= "Pending").first() 
 
-        current_id_status= FaultStatus.query.filter_by(status= "Pending").first() 
-
-        new_fault_report = FaultReport(
-            public_id_report = current_id_fault,
-            date_time = get_datetime_in_seconds(data['date_time']),
-            id_fault_part = data['id_fault_part'],
-            description = data['description'],
-            id_status = current_id_status.id_status,
-            )
-
-        db.session.add(new_fault_report)
-        db.session.commit()
-
-        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
-
-        user_relation = User_FaultReport(
-            id_report = current_report.id_report,
-            id_user = current_user.id_user,
+    new_fault_report = FaultReport(
+        public_id_report = current_id_fault,
+        date_time = date,
+        id_fault_part = data['id_fault_part'],
+        description = data['description'],
+        id_status = current_id_status.id_status,
         )
 
-        db.session.add(user_relation)
-        db.session.commit()
+    db.session.add(new_fault_report)
+    db.session.commit()
 
-        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
-        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
+    current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
 
-        lab_relation = FaultReport_Lab(
-            id_report = current_report.id_report,
-            id_lab = lab.id_lab
-        )
+    user_relation = User_FaultReport(
+        id_report = current_report.id_report,
+        id_user = current_user.id_user,
+    )
 
-        db.session.add(lab_relation)
-        db.session.commit()
+    db.session.add(user_relation)
+    db.session.commit()
 
-        response = jsonify({'message' : 'New fault report created!'})
-        
-        return response
+    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+    current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
 
-    return jsonify({'message':'Theres already a fault report with that date and time'})
+    lab_relation = FaultReport_Lab(
+        id_report = current_report.id_report,
+        id_lab = lab.id_lab
+    )
+
+    db.session.add(lab_relation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New fault report created!'})
+    
+    return response
 
 
 @app.route('/fault', methods=['GET'])
@@ -567,6 +683,29 @@ def get_all_fault(current_user):
         result.append(new_fault)
 
     return jsonify(result), 200
+
+
+@app.route('/fault', methods= ['DELETE'])
+@token_required
+def delete_this_faultreport(current_user):
+    data = request.get_json()
+
+    date = get_datetime_in_seconds(data['date_time'])
+
+    faults = FaultReport.query.join(User_FaultReport).join(User).join(FaultReport_Lab).join(Lab).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_report
+    ).all()
+
+    for fault in faults:
+        if fault[0] == date:
+            FaultReport.query.filter_by(id_report=fault[1]).delete()
+            FaultReport_Lab.query.filter_by(id_report=fault[1]).delete()
+            User_FaultReport.query.filter_by(id_report=fault[1]).delete()
+            db.session.commit()
+            return jsonify({'message':'Fault Report deleted'}), 200
+
+    return jsonify({'message':'No Fault Report'}), 401
 
 
 # ------------------------- All-Nighters -------------------------
