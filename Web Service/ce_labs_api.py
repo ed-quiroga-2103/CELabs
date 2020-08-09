@@ -424,6 +424,65 @@ def delete_this_worklog(current_user):
 
     return jsonify({'message':'No Worklog Report'}), 401
 
+
+@app.route('/worklog', methods= ['PUT'])
+@token_required
+def edit_this_worklog(current_user):
+    
+    raw_data = request.get_json()
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    date = get_date_in_seconds(data['date_time'])
+    time = get_time_in_seconds(data['init_time'])
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.id_worklog
+    ).all()
+
+    #date = get_date_in_seconds(data['requested_date'])
+    #time = get_time_in_seconds(data['init_time'])
+    
+    #reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
+    #Reservation.init_time, Lab.name, Reservation.id_reservation).all()
+    
+    #Primero se busca la Reservation con el metodo que estamos usando actualmente
+
+
+    for worklog in worklogs:
+        if worklog[0] == date and worklog[1] == time:
+
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
+            current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
+
+            current_worklog.date_time = get_date_in_seconds(new_data['date_time'])
+            current_worklog.init_time = get_time_in_seconds(new_data['init_time'])
+            current_worklog.final_time = get_time_in_seconds(new_data['final_time'])
+            current_worklog.description = new_data['description']
+
+            current_id_status= WorklogStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_worklog.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Worklog modified'}), 200
+
+    return jsonify({'message':'No Worklog'}), 401
+
+
+
+
+
+
+
+
+
+
 # ------------------------- Inventory -------------------------
 
 @app.route('/inventory', methods=['POST'])

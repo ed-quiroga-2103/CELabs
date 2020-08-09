@@ -8,11 +8,11 @@
 
 ------------------------------- Worklog Check--------------------------
 
--- SELECT * FROM Worklog;
+ SELECT * FROM Worklog;
 
--- SELECT * FROM User_Worklog;
+ SELECT * FROM User_Worklog;
 
--- SELECT * FROM WorklogStatus;
+ SELECT * FROM WorklogStatus;
 
 ------------------------------Fault Report Check-----------------------
 
