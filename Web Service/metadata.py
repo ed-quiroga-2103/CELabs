@@ -1,12 +1,13 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, Text, BigInteger
 from sqlalchemy import ForeignKey
 import uuid
+from constants import *
 
 
-file = open('C:\\CELabs2\\Web Service\\CELabs.db', 'w+')
+file = open(QUIROGA_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///C:\\CELabs2\\Web Service\\CELabs.db')
+engine = create_engine('sqlite:///' + QUIROGA_DB)
 meta = MetaData()
 
 
@@ -54,6 +55,8 @@ AllNighter = Table(
     Column('public_id_allnighter', String(50), unique = True),
     Column('request_date', BigInteger, nullable = False),
     Column('requested_date', BigInteger, nullable = False),
+    Column('init_time', BigInteger, nullable = False),
+    Column('final_time', BigInteger, nullable = False),
     Column('last_mod_id', Text(50), nullable = False),
     Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
@@ -90,6 +93,12 @@ FaultReport = Table(
     
 )
 
+WorklogStatus = Table(
+    'WorklogStatus', meta,
+    Column('id_status', Integer, primary_key = True),
+    Column('status', String(50), nullable= False),
+)
+
 Worklog = Table(
     'Worklog', meta,
     Column('id_worklog', Integer, primary_key = True),
@@ -98,7 +107,7 @@ Worklog = Table(
     Column('init_time', BigInteger, nullable = False),
     Column('final_time', BigInteger, nullable = False),
     Column('description', Text(50), nullable = False),
- 
+    Column('id_status', Integer, ForeignKey('WorklogStatus.id_status'), nullable = False),
 )
 
 Lab = Table(
@@ -194,6 +203,16 @@ User_AllNighter = Table(
     'User_AllNighter', meta,
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
     Column('id_allnighter', ForeignKey('AllNighter.id_allnighter'), nullable = False) 
+)
+
+AllNighter_Asistance = Table(
+    'AllNighter_Asistance', meta,
+    Column('id_allnighter', Integer, ForeignKey('AllNighter.id_allnighter'), nullable = False),
+    Column('name', String(50), nullable = False),
+    Column('lastname1', String(50), nullable = False),
+    Column('lastname2', String(50), nullable = False),
+    Column('university_id', String(50), nullable = False)
+
 )
 
 User_InventoryReport = Table(
