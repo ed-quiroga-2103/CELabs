@@ -15,7 +15,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + QUIROGA_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -491,55 +491,61 @@ def get_all_inventory(current_user):
 @token_required
 def create_fault_report(current_user):
     
+    now = datetime.datetime.now()
+    date_time = now.strftime('%d/%m/%Y %H:%M:%S')
+    
     data = request.get_json()
 
-    date_time_json = get_datetime_in_seconds(data['date_time'])
+    date = get_datetime_in_seconds(str(date_time))
 
-    fault = FaultReport.query.filter_by(date_time = date_time_json).first() 
+    faults = FaultReport.query.join(User_FaultReport).join(User).join(FaultReport_Lab).join(Lab).with_entities(
+        FaultReport.date_time,
+        Lab.name
+    ).all()
 
-    if not fault:
+    for fault in faults:
+        if fault[0] == date and fault[1] == data['lab']:
+            return jsonify({'message':'Theres already a fault report with that date and time'}), 401 
+    
+    current_id_fault = str(uuid.uuid4())
 
-        current_id_fault = str(uuid.uuid4())
+    current_id_status= FaultStatus.query.filter_by(status= "Pending").first() 
 
-        current_id_status= FaultStatus.query.filter_by(status= "Pending").first() 
-
-        new_fault_report = FaultReport(
-            public_id_report = current_id_fault,
-            date_time = get_datetime_in_seconds(data['date_time']),
-            id_fault_part = data['id_fault_part'],
-            description = data['description'],
-            id_status = current_id_status.id_status,
-            )
-
-        db.session.add(new_fault_report)
-        db.session.commit()
-
-        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
-
-        user_relation = User_FaultReport(
-            id_report = current_report.id_report,
-            id_user = current_user.id_user,
+    new_fault_report = FaultReport(
+        public_id_report = current_id_fault,
+        date_time = date,
+        id_fault_part = data['id_fault_part'],
+        description = data['description'],
+        id_status = current_id_status.id_status,
         )
 
-        db.session.add(user_relation)
-        db.session.commit()
+    db.session.add(new_fault_report)
+    db.session.commit()
 
-        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
-        current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
+    current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
 
-        lab_relation = FaultReport_Lab(
-            id_report = current_report.id_report,
-            id_lab = lab.id_lab
-        )
+    user_relation = User_FaultReport(
+        id_report = current_report.id_report,
+        id_user = current_user.id_user,
+    )
 
-        db.session.add(lab_relation)
-        db.session.commit()
+    db.session.add(user_relation)
+    db.session.commit()
 
-        response = jsonify({'message' : 'New fault report created!'})
-        
-        return response
+    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+    current_report = FaultReport.query.filter(FaultReport.public_id_report.like(current_id_fault)).first()
 
-    return jsonify({'message':'Theres already a fault report with that date and time'})
+    lab_relation = FaultReport_Lab(
+        id_report = current_report.id_report,
+        id_lab = lab.id_lab
+    )
+
+    db.session.add(lab_relation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New fault report created!'})
+    
+    return response
 
 
 @app.route('/fault', methods=['GET'])
