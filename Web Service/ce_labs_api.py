@@ -400,6 +400,30 @@ def get_all_worklog(current_user):
 
     return jsonify(result), 200
 
+
+@app.route('/worklog', methods= ['DELETE'])
+@token_required
+def delete_this_worklog(current_user):
+    data = request.get_json()
+
+    date = get_date_in_seconds(data['date_time'])
+    time = get_time_in_seconds(data['init_time'])
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.id_worklog
+    ).all()
+
+    for worklog in worklogs:
+        if worklog[0] == date and worklog[1] == time:
+            Worklog.query.filter_by(id_worklog=worklog[2]).delete()
+            User_Worklog.query.filter_by(id_worklog=worklog[2]).delete()
+            db.session.commit()
+            return jsonify({'message':'Worklog Report deleted'}), 200
+
+    return jsonify({'message':'No Worklog Report'}), 401
+
 # ------------------------- Inventory -------------------------
 
 @app.route('/inventory', methods=['POST'])
@@ -487,6 +511,30 @@ def get_all_inventory(current_user):
         result.append(new_inventory)
 
     return jsonify(result), 200
+
+
+@app.route('/inventory', methods= ['DELETE'])
+@token_required
+def delete_this_inventoryreport(current_user):
+    data = request.get_json()
+
+    date = get_date_in_seconds(data['date'])
+
+    inventories = InventoryReport.query.join(InventoryReport_Lab).join(Lab).join(User_InventoryReport).join(User).with_entities(
+        InventoryReport.date,
+        InventoryReport.id_report,
+        Lab.name
+    ).all()
+
+    for inventory in inventories:
+        if inventory[0] == date and inventory[2] == data['lab']:
+            InventoryReport.query.filter_by(id_report=inventory[1]).delete()
+            InventoryReport_Lab.query.filter_by(id_report=inventory[1]).delete()
+            User_InventoryReport.query.filter_by(id_report=inventory[1]).delete()
+            db.session.commit()
+            return jsonify({'message':'Inventory Report deleted'}), 200
+
+    return jsonify({'message':'No Inventory Report'}), 401
 
 # ------------------------- Faults -------------------------
 
@@ -576,6 +624,29 @@ def get_all_fault(current_user):
         result.append(new_fault)
 
     return jsonify(result), 200
+
+
+@app.route('/fault', methods= ['DELETE'])
+@token_required
+def delete_this_faultreport(current_user):
+    data = request.get_json()
+
+    date = get_datetime_in_seconds(data['date_time'])
+
+    faults = FaultReport.query.join(User_FaultReport).join(User).join(FaultReport_Lab).join(Lab).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_report
+    ).all()
+
+    for fault in faults:
+        if fault[0] == date:
+            FaultReport.query.filter_by(id_report=fault[1]).delete()
+            FaultReport_Lab.query.filter_by(id_report=fault[1]).delete()
+            User_FaultReport.query.filter_by(id_report=fault[1]).delete()
+            db.session.commit()
+            return jsonify({'message':'Fault Report deleted'}), 200
+
+    return jsonify({'message':'No Fault Report'}), 401
 
 
 # ------------------------- All-Nighters -------------------------
