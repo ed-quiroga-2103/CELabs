@@ -37,7 +37,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/availability"
+            to="/op/availability"
           >
             <span class="mr-1">Availability</span>
           </v-btn>
@@ -46,7 +46,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
+            to="/op/allnighter"
           >
             <span class="mr-1">All-Nighters</span>
           </v-btn>

@@ -11,18 +11,18 @@ export default new Router({
   linkExactActiveClass: 'active',
   routes: [
     {
-      path: '/start',
-      redirect: 'start',
+      path: '/op',
+      redirect: '/op/availability',
       component: Index,
       children: [
         {
-          path: '',
-          name: 'dashboard',
-          component: () => import('./views/dashboard/Dashboard.vue'),
+          path: 'allnighter',
+          name: 'allnighter2',
+          component: () => import('./views/dashboard/UserOperator/AllNightersOP.vue'),
         },
         {
-          path: '/availability',
-          name: 'availability',
+          path: 'availability',
+          name: 'availability1',
           component: () => import('./views/dashboard/UserOperator/AvailabilityOP.vue'),
         },
       ],
@@ -38,7 +38,7 @@ export default new Router({
         },
         {
           path: 'availability',
-          name: 'availability',
+          name: 'availability2',
           component: () => import('./views/dashboard/UserAdmin/AvailabilityAD.vue'),
         },
       ],
@@ -49,12 +49,12 @@ export default new Router({
       children: [
         {
           path: '',
-          name: 'dashboard',
+          name: 'dashboard1',
           component: () => import('./views/dashboard/Dashboard.vue'),
         },
         {
           path: 'availability',
-          name: 'availability',
+          name: 'availability3',
           component: () => import('./views/dashboard/UserProfessor/AvailabilityP.vue'),
         },
       ],
@@ -65,12 +65,12 @@ export default new Router({
       children: [
         {
           path: '',
-          name: 'dashboard',
+          name: 'dashboard2',
           component: () => import('./views/dashboard/Dashboard.vue'),
         },
         {
           path: 'availability',
-          name: 'availability',
+          name: 'availability4',
           component: () => import('./views/dashboard/UserAdministrative/AvailabilityA.vue'),
         },
       ],
