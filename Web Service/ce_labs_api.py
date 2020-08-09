@@ -405,57 +405,59 @@ def get_all_worklog(current_user):
 @app.route('/inventory', methods=['POST'])
 @token_required
 def create_inventory_report(current_user):
-    
-    data = request.get_json()
 
+    data = request.get_json()
     date = get_date_in_seconds(data['date'])
 
-    inventories = InventoryReport.query.filter_by(date = date).first()
-    #Arreglar verificacion
+    inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
+        InventoryReport.date,
+        Lab.name
+    ).all()
 
-    if not inventories:
+    for inventory in inventories:
+        if inventory[0] == date and inventory[1] == data['lab']:
+            return jsonify({'message':'Theres already an inventory report with that date'}), 401
+    
 
-        current_id_report = str(uuid.uuid4())
+    current_id_report = str(uuid.uuid4())
 
-        new_inventoryreport = InventoryReport(
-            public_id_report = current_id_report,
-            date = get_date_in_seconds(data['date']),
-            complete_computers = int(data['complete_computers']),
-            incomplete_computers = int(data['incomplete_computers']),
-            number_projectors = int(data['number_projectors']),
-            number_chairs = int(data['number_chairs']),
-            number_fire_extinguishers = int(data['number_fire_extinguishers'])
-            )
-
-        db.session.add(new_inventoryreport)
-        db.session.commit()
-
-        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
-
-        user_relation = User_InventoryReport(
-            id_report = current_report.id_report,
-            id_user = current_user.id_user   
+    new_inventoryreport = InventoryReport(
+        public_id_report = current_id_report,
+        date = get_date_in_seconds(data['date']),
+        complete_computers = int(data['complete_computers']),
+        incomplete_computers = int(data['incomplete_computers']),
+        number_projectors = int(data['number_projectors']),
+        number_chairs = int(data['number_chairs']),
+        number_fire_extinguishers = int(data['number_fire_extinguishers'])
         )
 
-        db.session.add(user_relation)
-        db.session.commit()
+    db.session.add(new_inventoryreport)
+    db.session.commit()
 
-        lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
-        current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
+    current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
 
-        lab_relation = InventoryReport_Lab(
-            id_report = current_report.id_report,
-            id_lab = lab.id_lab
-        )
+    user_relation = User_InventoryReport(
+        id_report = current_report.id_report,
+        id_user = current_user.id_user   
+    )
 
-        db.session.add(lab_relation)
-        db.session.commit()
+    db.session.add(user_relation)
+    db.session.commit()
 
-        response = jsonify({'message' : 'New inventory report created!'})
-        
-        return response
+    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+    current_report = InventoryReport.query.filter(InventoryReport.public_id_report.like(current_id_report)).first()
 
-    return jsonify({'message':'Theres already a inventory report with that date and time'})
+    lab_relation = InventoryReport_Lab(
+        id_report = current_report.id_report,
+        id_lab = lab.id_lab
+    )
+
+    db.session.add(lab_relation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New inventory report created!'})
+    
+    return response
 
 
 @app.route('/inventory', methods=['GET'])
@@ -476,7 +478,6 @@ def get_all_inventory(current_user):
     result = []
 
     for inventory in inventories:
-        print(len(result))
         new_inventory = []
         new_inventory.append(get_date_from_seconds(inventory[0]))
 
