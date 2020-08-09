@@ -313,13 +313,13 @@
               >
                 <v-list-item>
                   <v-list-item-content>
-                    <v-list-item-title>Inicio: </v-list-item-title>
+                    <v-list-item-title>Start: </v-list-item-title>
                     <v-list-item-subtitle v-html="selectedEvent.start" />
                   </v-list-item-content>
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content>
-                    <v-list-item-title>Finalización: </v-list-item-title>
+                    <v-list-item-title>End: </v-list-item-title>
                     <v-list-item-subtitle v-html="selectedEvent.end" />
                   </v-list-item-content>
                 </v-list-item>

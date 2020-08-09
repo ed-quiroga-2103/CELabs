@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(QUIROGA_DB, 'w+')
+file = open(LUIS_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + QUIROGA_DB)
+engine = create_engine('sqlite:///' + LUIS_DB)
 meta = MetaData()
 
 

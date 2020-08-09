@@ -27,6 +27,11 @@ export default new Router({
           name: 'faults',
           component: () => import('./views/dashboard/UserOperator/ReportFaultsOP.vue'),
         },
+        {
+          path: '/myhours',
+          name: 'myhours',
+          component: () => import('./views/dashboard/UserOperator/MyHoursOP.vue'),
+        },
       ],
     },
     {

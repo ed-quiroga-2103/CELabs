@@ -33,12 +33,12 @@
                     :mandatory="false"
                   >
                     <v-radio
-                      label="Laboratorio 1"
-                      value="Laboratorio1"
+                      label="F2-09"
+                      value="F2-09"
                     />
                     <v-radio
-                      label="Laboratorio 2"
-                      value="2"
+                      label="F2-10"
+                      value="F2-10"
                     />
                   </v-radio-group>
                   <v-text-field
@@ -84,19 +84,18 @@
       },
     }),
     methods: {
-      async submitFault (){
-        this.submitFault()
-        try{
-          await this.$auth.submitFault(this.reportValues)
+      async submitFault () {
+        try {
+          await this.$auth.submitFault(this.reportValues.radios, this.reportValues.Idnumb, this.reportValues.textarea)
           this.$router.push('/start')
         } catch (error) {
-          this.error = true;
+          this.error = true
           alert('Error submiting report')
         }
         this.reportValues = {
-        radios: '',
-        Idnumb: '',
-        textarea: '',
+          radios: '',
+          Idnumb: '',
+          textarea: '',
         }
       },
     },

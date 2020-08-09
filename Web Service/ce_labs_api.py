@@ -15,7 +15,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + QUIROGA_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + LUIS_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True

@@ -88,7 +88,63 @@ export default {
   },
   )
   },
-  submitFault (data) {},
+  // Function to push faults
+  // eslint-disable-next-line camelcase
+  submitFault (lab, partId, descrip) {
+    var data = JSON.stringify(
+      {
+        lab: lab,
+        id_fault_part: partId,
+        description: descrip,
+      },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'fault',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
+  },
+  submitHours (date, time, time2, description) {
+    var data = JSON.stringify(
+      {
+        date_time: date,
+        init_time: time,
+        final_time: time2,
+        description: description,
+      },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'worklog',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
+  },
 
   deleteUserLogged () {
     Cookies.remove('userLogged')
