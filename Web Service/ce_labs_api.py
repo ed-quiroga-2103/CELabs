@@ -393,7 +393,7 @@ def get_all_worklog(current_user):
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
 
-        for data in worklog[4:]:
+        for data in worklog[3:]:
             new_worklog.append(data)
 
         result.append(new_worklog)
@@ -473,14 +473,6 @@ def edit_this_worklog(current_user):
             return jsonify({'message':'Worklog modified'}), 200
 
     return jsonify({'message':'No Worklog'}), 401
-
-
-
-
-
-
-
-
 
 
 # ------------------------- Inventory -------------------------
