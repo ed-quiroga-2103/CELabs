@@ -3,10 +3,10 @@ from sqlalchemy import ForeignKey
 import uuid
 
 
-file = open('D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db', 'w+')
+file = open('C:\\CELabs2\\Web Service\\CELabs.db', 'w+')
 file.close()
 
-engine = create_engine('sqlite:///D:\\Documents\\Espe\\CELabs\\Web Service\\CELabs.db')
+engine = create_engine('sqlite:///C:\\CELabs2\\Web Service\\CELabs.db')
 meta = MetaData()
 
 

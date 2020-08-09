@@ -54,7 +54,7 @@
           class="ml-1"
           min-width="0"
           text
-          to="/"
+          to="/faults"
         >
           <span class="mr-1">Report faults</span>
         </v-btn>

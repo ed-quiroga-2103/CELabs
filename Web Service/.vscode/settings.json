@@ -1,6 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\edqui\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
-    
     "python.linting.pylintEnabled": true,
         
     "python.linting.flake8Enabled": false,

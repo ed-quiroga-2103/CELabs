@@ -7,7 +7,7 @@ export default {
   setUserLogged (userLogged) {
     Cookies.set('userLogged', userLogged)
   },
-  // Function to obtein cookies
+  // Function to obtain cookies
   getUserLogged () {
     return Cookies.get('userLogged')
   },
@@ -31,6 +31,7 @@ export default {
       this.setUserLogged(response.data)
       console.log(response.data)
   },
-)
+  )
   },
-    }
+  submitFault(data)
+}
