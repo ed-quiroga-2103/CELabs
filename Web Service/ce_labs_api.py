@@ -322,46 +322,48 @@ def edit_this_reservation(current_user):
 def create_worklog(current_user):
     
     data = request.get_json()
-    
-    date = get_datetime_in_seconds(data['date_time'])
+    date = get_date_in_seconds(data['date_time'])
     time = get_time_in_seconds(data['init_time'])
 
-    worklogs = Worklog.query.filter(Worklog.date_time.like(date) & Worklog.init_time.like(time)).first()
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time
+    ).all()
     
-    
-    if not worklogs:
+    for worklog in worklogs:
+        if worklog[0] == date and worklog[1] == time:
+            return jsonify({'message':'Theres already a worklog report with that date and time'}), 401
 
-        current_id_worklog = str(uuid.uuid4())
 
-        current_id_status= WorklogStatus.query.filter_by(status= "Pending").first() 
+    current_id_worklog = str(uuid.uuid4())
 
-        new_worklog = Worklog(
-            public_id_worklog = current_id_worklog,
-            date_time = date,
-            init_time = time,
-            final_time = get_time_in_seconds(data['final_time']),
-            description = data['description'],
-            id_status = current_id_status.id_status
-            )
+    current_id_status= WorklogStatus.query.filter_by(status= "Pending").first() 
 
-        db.session.add(new_worklog)
-        db.session.commit()
-
-        current_worklog = Worklog.query.filter(Worklog.public_id_worklog.like(current_id_worklog)).first()
-
-        user_relation = User_Worklog(
-            id_worklog = current_worklog.id_worklog,
-            id_user = current_user.id_user   
+    new_worklog = Worklog(
+        public_id_worklog = current_id_worklog,
+        date_time = date,
+        init_time = time,
+        final_time = get_time_in_seconds(data['final_time']),
+        description = data['description'],
+        id_status = current_id_status.id_status
         )
 
-        db.session.add(user_relation)
-        db.session.commit()
+    db.session.add(new_worklog)
+    db.session.commit()
 
-        response = jsonify({'message' : 'New worklog created!'})
-        
-        return response
+    current_worklog = Worklog.query.filter(Worklog.public_id_worklog.like(current_id_worklog)).first()
 
-    return jsonify({'message':'Theres already a worklog with that date and time'})
+    user_relation = User_Worklog(
+        id_worklog = current_worklog.id_worklog,
+        id_user = current_user.id_user   
+    )
+
+    db.session.add(user_relation)
+    db.session.commit()
+
+    response = jsonify({'message' : 'New worklog created!'})
+    
+    return response
 
 
 @app.route('/worklog', methods=['GET'])
