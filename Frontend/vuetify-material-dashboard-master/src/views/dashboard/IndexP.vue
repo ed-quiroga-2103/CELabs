@@ -21,9 +21,10 @@
           contain
           min-width="100"
           src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
+          width="40"
         />
       </div>
+      <v-spacer />
       <v-spacer />
       <div
         class="mx-3"
@@ -32,57 +33,25 @@
       <div
         id="BarraCentral"
       >
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/"
-        >
-          <span class="mr-1">Availability</span>
-        </v-btn>
+        <v-row>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="prof/availability"
+          >
+            <span class="mr-1">Availability</span>
+          </v-btn>
 
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/"
-        >
-          <span class="mr-1">All-Nighters</span>
-        </v-btn>
-
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/"
-        >
-          <span class="mr-1">Report faults</span>
-        </v-btn>
-
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/"
-        >
-          <span class="mr-1">Dashboard</span>
-        </v-btn>
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/pages/user"
-        >
-          <span class="mr-1">Inventory Report</span>
-        </v-btn>
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/pages/user"
-        >
-          <span class="mr-1">My hours</span>
-        </v-btn>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="/pages/user"
+          >
+            <span class="mr-1">My Reservations</span>
+          </v-btn>
+        </v-row>
       </div>
       <v-spacer />
       <v-spacer />
@@ -97,13 +66,11 @@
       <v-btn
         to="/"
         text
+        @click="this.$auth.deleteUserLogged"
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
-
-    <!--<dashboard-core-drawer /> -->
-
     <dashboard-core-view />
 
     <dashboard-core-settings />

@@ -89,7 +89,7 @@
                     type="select"
                     name="user_type"
                     label="User type"
-                    :options="{1: 'Administrator', 2: 'Operator', 3: 'Professor', 4: 'Administrative'}"
+                    :options="{3: 'Professor', 4: 'Administrative'}"
                   />
                   <v-spacer />
                   <FormulateInput

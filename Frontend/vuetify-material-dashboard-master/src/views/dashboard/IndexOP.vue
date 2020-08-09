@@ -64,14 +64,6 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
-          >
-            <span class="mr-1">Dashboard</span>
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
             to="/pages/user"
           >
             <span class="mr-1">Inventory Report</span>
@@ -100,7 +92,7 @@
         to="/"
         text
         @click="this.$auth.deleteUserLogged"
->
+      >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>

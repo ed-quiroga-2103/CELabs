@@ -16,10 +16,10 @@
                 rounded
               >
                 <v-btn @click="l1 = true">
-                  F2-10
+                  F2-09
                 </v-btn>
                 <v-btn @click="l1 = false">
-                  F2-09
+                  F2-10
                 </v-btn>
               </v-btn-toggle>
             </v-col>
@@ -460,6 +460,7 @@
                            this.lab,
                            date2)
             this.getEvents()
+            this.$refs.calendar.checkChange()
           } else {
             alert('Complete all the fields')
           }
