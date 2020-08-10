@@ -475,14 +475,6 @@ def edit_this_worklog(current_user):
     return jsonify({'message':'No Worklog'}), 401
 
 
-
-
-
-
-
-
-
-
 # ------------------------- Inventory -------------------------
 
 @app.route('/inventory', methods=['POST'])
