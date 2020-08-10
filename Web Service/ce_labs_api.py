@@ -581,6 +581,52 @@ def delete_this_inventoryreport(current_user):
 
     return jsonify({'message':'No Inventory Report'}), 401
 
+
+@app.route('/inventory', methods= ['PUT'])
+@token_required
+def edit_this_inventoryreport(current_user):
+    
+    raw_data = request.get_json()
+
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    date = get_datetime_in_seconds(data['date_time'])
+
+    inventories = InventoryReport.query.join(InventoryReport_Lab).join(Lab).join(User_InventoryReport).join(User).with_entities(
+        InventoryReport.date,
+        InventoryReport.id_report,
+        Lab.name
+    ).all()
+
+    for inventory in inventories:
+        if inventory[0] == date and inventory[2] == data['lab']:
+
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
+            current_inventory = db.session.query(InventoryReport).filter_by(id_report = inventory[1]).first()
+
+            current_inventory.complete_computers = int(new_data['complete_computers'])
+            current_inventory.incomplete_computers = int(new_data['incomplete_computers'])
+            current_inventory.number_projectors = int(new_data['number_projectors'])
+            current_inventory.number_chairs = int(new_data['number_chairs'])
+            current_inventory.number_fire_extinguishers = int(new_data['number_fire_extinguishers'])
+            current_inventory.description = new_data['description']
+
+            current_id_lab= Lab.query.filter_by(name = new_data["lab"]).first() 
+            current_inventory.id_status = current_id_lab.id_lab
+
+            #En caso que los reportes de inventario necesiten aprobacion
+            #current_id_status= FaultStatus.query.filter_by(status = new_data["status"]).first() 
+            #current_fault.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Inventory Report modified'}), 200
+
+    return jsonify({'message':'No Inventory Report'}), 401
+
 # ------------------------- Faults -------------------------
 
 @app.route('/fault', methods=['POST'])
