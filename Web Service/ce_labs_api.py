@@ -170,6 +170,17 @@ def get_this_user(current_user):
 
     return jsonify(information), 200
 
+
+@app.route('/user', methods=['PUT'])
+@token_required
+def disable_this_user(current_user):
+
+    current_user.active = 0
+    db.session.commit()
+
+    return jsonify({'message' : 'Your account has been disabled !'}), 200
+
+
 # ------------------------- Reservations -------------------------
 
 @app.route('/reservation', methods=['POST'])

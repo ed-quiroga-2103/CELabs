@@ -21,5 +21,3 @@
 -- SELECT * FROM User_FaultReport;
 
 -- SELECT * FROM FaultReport_Lab;
-
-
