@@ -494,7 +494,8 @@ def create_inventory_report(current_user):
         incomplete_computers = int(data['incomplete_computers']),
         number_projectors = int(data['number_projectors']),
         number_chairs = int(data['number_chairs']),
-        number_fire_extinguishers = int(data['number_fire_extinguishers'])
+        number_fire_extinguishers = int(data['number_fire_extinguishers']),
+        description = data['description']
         )
 
     db.session.add(new_inventoryreport)
@@ -537,6 +538,7 @@ def get_all_inventory(current_user):
         InventoryReport.number_projectors,
         InventoryReport.number_chairs,
         InventoryReport.number_fire_extinguishers,
+        InventoryReport.description,
         Lab.id_lab,
         User.id_user,
         InventoryReport.id_report
