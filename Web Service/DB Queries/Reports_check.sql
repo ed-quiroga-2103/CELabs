@@ -16,8 +16,8 @@
 
 ------------------------------Fault Report Check-----------------------
 
-SELECT * FROM FaultReport;
+-- SELECT * FROM FaultReport;
 
-SELECT * FROM User_FaultReport;
+-- SELECT * FROM User_FaultReport;
 
-SELECT * FROM FaultReport_Lab;
+-- SELECT * FROM FaultReport_Lab;

@@ -15,7 +15,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + LUIS_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -442,21 +442,9 @@ def edit_this_worklog(current_user):
         Worklog.id_worklog
     ).all()
 
-    #date = get_date_in_seconds(data['requested_date'])
-    #time = get_time_in_seconds(data['init_time'])
-    
-    #reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
-    #Reservation.init_time, Lab.name, Reservation.id_reservation).all()
-    
-    #Primero se busca la Reservation con el metodo que estamos usando actualmente
-
-
     for worklog in worklogs:
         if worklog[0] == date and worklog[1] == time:
 
-            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
-            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
-            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
             current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
 
             current_worklog.date_time = get_date_in_seconds(new_data['date_time'])
@@ -482,7 +470,10 @@ def edit_this_worklog(current_user):
 def create_inventory_report(current_user):
 
     data = request.get_json()
-    date = get_date_in_seconds(data['date'])
+
+    now = datetime.datetime.now()
+    date = now.strftime('%d/%m/%Y %H:%M:%S')
+    date = get_datetime_in_seconds(str(date))
 
     inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
         InventoryReport.date,
@@ -498,7 +489,7 @@ def create_inventory_report(current_user):
 
     new_inventoryreport = InventoryReport(
         public_id_report = current_id_report,
-        date = get_date_in_seconds(data['date']),
+        date = date,
         complete_computers = int(data['complete_computers']),
         incomplete_computers = int(data['incomplete_computers']),
         number_projectors = int(data['number_projectors']),
@@ -547,14 +538,15 @@ def get_all_inventory(current_user):
         InventoryReport.number_chairs,
         InventoryReport.number_fire_extinguishers,
         Lab.id_lab,
-        User.id_user
+        User.id_user,
+        InventoryReport.id_report
     )
 
     result = []
 
     for inventory in inventories:
         new_inventory = []
-        new_inventory.append(get_date_from_seconds(inventory[0]))
+        new_inventory.append(get_datetime_from_seconds(inventory[0]))
 
         for data in inventory[1:]:
             new_inventory.append(data)
@@ -700,6 +692,49 @@ def delete_this_faultreport(current_user):
 
     return jsonify({'message':'No Fault Report'}), 401
 
+
+@app.route('/fault', methods= ['PUT'])
+@token_required
+def edit_this_faultreport(current_user):
+    
+    raw_data = request.get_json()
+
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    date = get_datetime_in_seconds(data['date_time'])
+
+    faults = FaultReport.query.join(FaultReport_Lab).join(Lab).join(User_FaultReport).join(User).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_report,
+        Lab.name
+    ).all()
+
+    for fault in faults:
+        if fault[0] == date and fault[2] == data['lab']:
+
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
+            current_fault = db.session.query(FaultReport).filter_by(id_report = fault[1]).first()
+
+            current_fault.id_fault_part = new_data['id_fault_part']
+            current_fault.description = new_data['description']
+
+            current_id_lab= Lab.query.filter_by(name = new_data["lab"]).first() 
+
+            current_fault.id_status = current_id_lab.id_lab
+
+
+            current_id_status= FaultStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_fault.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Fault Report modified'}), 200
+
+    return jsonify({'message':'No Fault Report'}), 401
 
 # ------------------------- All-Nighters -------------------------
 
