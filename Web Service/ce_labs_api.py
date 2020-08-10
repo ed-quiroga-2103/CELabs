@@ -154,6 +154,22 @@ def login():
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
 
+@app.route('/user', methods=['GET'])
+@token_required
+def get_this_user(current_user):
+
+    information = []
+
+    information.append(current_user.name)
+    information.append(current_user.lastname1)
+    information.append(current_user.lastname2)
+    information.append(current_user.id_number)
+    information.append(current_user.email)
+    information.append(current_user.phone_number)
+    information.append(current_user.university_id)
+
+    return jsonify(information), 200
+
 # ------------------------- Reservations -------------------------
 
 @app.route('/reservation', methods=['POST'])
