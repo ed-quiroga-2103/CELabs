@@ -13,7 +13,7 @@
             color="grey darken-2"
             @click="hourReport = true"
           >
-            Reservation
+            Report Hours
           </v-btn>
           <v-menu
             bottom
@@ -28,12 +28,20 @@
           :items="hours"
           :items-per-page="5"
           class="elevation-1"
-        />
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              @click="deleteItem(item)"
+            >
+              del
+            </v-btn>
+          </template>
+        </v-data-table>
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="hourReport">
           <v-card>
             <v-container>
-              <v-form @submit.prevent="addEvent">
+              <v-form @submit.prevent="addHours">
                 <v-text-field
                   v-model=" date"
                   type="date"
@@ -163,14 +171,7 @@
         { text: 'State', value: 'state' },
         { text: 'Delete', value: 'delete' },
       ],
-      hours: [{
-        shiftStart: '10:10',
-        shiftEnd: '11:20',
-        workDescription: 'Se hizo el brete',
-        state: 'Pending',
-        delete: 'X',
-        shiftDate: '09/08/2020',
-      }],
+      hours: [],
       description: '',
       time2: null,
       time: null,
@@ -180,17 +181,18 @@
       hourReport: false,
       date: '',
     }),
+    mounted () {
+      this.getHours()
+    },
     methods: {
       ChangeDate (date) {
-        date = date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3]
-        return date
+        var date2 = date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3]
+        return date2
       },
-      addEvent () {
-        console.log(this.lab)
-        console.log(this.description)
+      addHours () {
         try {
           if (this.description && this.time && this.time2 && this.date) {
-            const date2 = this.ChangeDate(this.date)
+            var date2 = this.ChangeDate(this.date)
             this.submitHours(date2,
                              this.time + ':00',
                              this.time2 + ':00',
@@ -202,9 +204,9 @@
 
         }
       },
-      async submitHours () {
+      async submitHours (date, time, time2, description) {
         try {
-          await this.$auth.submitHours(this.date, this.time, this.time2, this.description)
+          await this.$auth.submitHours(date, time, time2, description)
         } catch (error) {
           this.error = true
           alert('Error submiting report')
@@ -213,6 +215,26 @@
           radios: '',
           Idnumb: '',
           textarea: '',
+        }
+      },
+      async getHours () {
+        try {
+          await this.$auth.getHours().then(
+            response => {
+              var res = response.data
+              for (var i = 0; i < res.length; i++) {
+                this.hours.push({
+                  shiftDate: res[i][0].slice(0, 10),
+                  shiftStart: res[i][1].slice(0, 5),
+                  shiftEnd: res[i][2].slice(0, 5),
+                  workDescription: res[i][3],
+                  state: res[i][4] === 1 ? 'pending' : 'accepted',
+                  delete: res[i][4] === 1 ? 'x' : '',
+                })
+              }
+            })
+        } catch (error) {
+          this.error = true
         }
       },
     },

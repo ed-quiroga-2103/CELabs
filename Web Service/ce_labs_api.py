@@ -393,7 +393,7 @@ def get_all_worklog(current_user):
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
 
-        for data in worklog[4:]:
+        for data in worklog[3:]:
             new_worklog.append(data)
 
         result.append(new_worklog)
@@ -668,6 +668,7 @@ def get_all_fault(current_user):
         FaultReport.description,
         FaultReport.id_status,
         Lab.id_lab,
+        FaultReport.id_report
     )
 
     result = []

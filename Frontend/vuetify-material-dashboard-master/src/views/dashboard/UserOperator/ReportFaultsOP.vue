@@ -1,61 +1,71 @@
 <template>
-  <v-app id="inspire">
-    <v-main>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
+  <v-row class="">
+    <v-col>
+      <v-sheet height="64">
+        <v-toolbar
+          flat
+          color="white"
         >
-          <v-col
-            cols="12"
-            sm="8"
-            md="4"
+          <v-spacer />
+          <v-spacer />
+          <v-btn
+            outlined
+            color="grey darken-2"
+            @click="faultReport = true"
           >
-            <v-card class="elevation-12">
-              <v-toolbar
-                color="primary"
-                dark
-                flat
-              >
-                <v-toolbar-title>Report Fault</v-toolbar-title>
-                <v-spacer />
-                <v-tooltip bottom>
-                  <span>Source</span>
-                </v-tooltip>
-              </v-toolbar>
-              <v-card-text>
-                <v-form>
-                  <v-radio-group
-                    v-model="radios"
-                    :mandatory="false"
-                  >
-                    <v-radio
-                      label="F2-09"
-                      value="F2-09"
-                    />
-                    <v-radio
-                      label="F2-10"
-                      value="F2-10"
-                    />
-                  </v-radio-group>
-                  <v-text-field
-                    id="IDNo"
-                    v-model="Idnumb"
-                    label="IDNo"
-                    name="ID No."
-                    type="text"
+            Report Fault
+          </v-btn>
+          <v-menu
+            bottom
+            right
+          />
+        </v-toolbar>
+      </v-sheet>
+      <!--------------PUT the log here------------------------------------------------------>
+      <v-sheet height="600">
+        <v-data-table
+          :headers="headers"
+          :items="reports"
+          :items-per-page="5"
+          class="elevation-1"
+        />
+        <template v-slot:expanded-item="{ headers, item }">
+          <td :colspan="headers.length">
+            {{ item.descript }}
+          </td>
+        </template>
+        <!--------------Add event------------------------------------------------------>
+        <v-dialog v-model="faultReport">
+          <v-card>
+            <v-container>
+              <v-form>
+                <v-radio-group
+                  v-model="radios"
+                  :mandatory="false"
+                >
+                  <v-radio
+                    label="F2-09"
+                    value="F2-09"
                   />
-                  <v-textarea
-                    v-model="textarea"
-                    solo
-                    name="input-7-4"
-                    label="Fault description"
+                  <v-radio
+                    label="F2-10"
+                    value="F2-10"
                   />
-                </v-form>
-              </v-card-text>
+                </v-radio-group>
+                <v-text-field
+                  id="IDNo"
+                  v-model="Idnumb"
+                  label="IDNo"
+                  name="ID No."
+                  type="text"
+                />
+                <v-textarea
+                  v-model="textarea"
+                  solo
+                  name="input-7-4"
+                  label="Fault description"
+                />
+              </v-form>
               <v-card-actions>
                 <v-spacer />
                 <v-btn
@@ -65,29 +75,43 @@
                   Submit
                 </v-btn>
               </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
-  </v-app>
+            </v-container>
+          </v-card>
+        </v-dialog>
+      </v-sheet>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
   export default {
     data: () => ({
-      pass: '',
-      reportValues: {
-        radios: '',
-        Idnumb: '',
-        textarea: '',
-      },
+      headers: [
+        {
+          text: 'Report Number',
+          align: 'start',
+          sortable: false,
+          value: 'reportNo',
+        },
+        { text: 'Report Date', value: 'reportD' },
+        { text: 'Report Time', value: 'reportT' },
+        { text: 'Laboratory Number', value: 'labNo' },
+        { text: 'ID(Faulty part)', value: 'faultypartID' },
+      ],
+      reports: [],
+      radios: '',
+      Idnumb: '',
+      textarea: '',
+      faultReport: false,
     }),
+    mounted () {
+      this.getFaultReports()
+    },
     methods: {
       async submitFault () {
+        this.faultReport = false
         try {
-          await this.$auth.submitFault(this.reportValues.radios, this.reportValues.Idnumb, this.reportValues.textarea)
-          this.$router.push('/start')
+          await this.$auth.submitFault(this.radios, this.Idnumb, this.textarea)
         } catch (error) {
           this.error = true
           alert('Error submiting report')
@@ -96,6 +120,26 @@
           radios: '',
           Idnumb: '',
           textarea: '',
+        }
+      },
+      async getFaultReports () {
+        try {
+          await this.$auth.getFaultReports().then(
+            response => {
+              var res = response.data
+              console.log(res)
+              for (var i = 0; i < res.length; i++) {
+                this.reports.push({
+                  reportD: res[i][0].slice(0, 10),
+                  reportT: res[i][0].slice(10, 16),
+                  labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
+                  faultypartID: res[i][1],
+                  reportNo: res[i][5],
+                })
+              }
+            })
+        } catch (error) {
+          this.error = true
         }
       },
     },

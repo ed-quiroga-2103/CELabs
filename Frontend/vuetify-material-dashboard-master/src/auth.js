@@ -117,6 +117,23 @@ export default {
       console.error(e.data.message)
   })
   },
+  getFaultReports () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'fault',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+        return response
+    })
+  },
   submitHours (date, time, time2, description) {
     var data = JSON.stringify(
       {
@@ -144,6 +161,23 @@ export default {
       ).catch(e => {
       console.error(e.data.message)
   })
+  },
+  getHours () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'worklog',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+        return response
+    })
   },
 
   deleteUserLogged () {
