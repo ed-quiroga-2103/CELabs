@@ -660,6 +660,7 @@ def get_all_fault(current_user):
         FaultReport.description,
         FaultReport.id_status,
         Lab.id_lab,
+        FaultReport.id_report
     )
 
     result = []
