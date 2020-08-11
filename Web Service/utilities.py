@@ -40,4 +40,3 @@ def get_time_from_seconds(seconds):
     time = datetime.fromtimestamp(seconds).strftime('%H:%M:%S')
 
     return time
-
