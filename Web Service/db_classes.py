@@ -126,6 +126,7 @@ class InventoryReport(db.Model):
     number_projectors = db.Column(db.Integer, nullable = False)
     number_chairs = db.Column(db.Integer, nullable = False)
     number_fire_extinguishers = db.Column(db.Integer, nullable = False)
+    description = db.Column(db.String(80), nullable = False)
 
 class User_InventoryReport(db.Model):
     __tablename__ = "user_inventoryreport"

@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(QUIROGA_DB, 'w+')
+file = open(RACSO_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + QUIROGA_DB)
+engine = create_engine('sqlite:///' + RACSO_DB)
 meta = MetaData()
 
 
@@ -73,7 +73,7 @@ InventoryReport = Table(
     Column('number_projectors', Integer, nullable = False),
     Column('number_chairs', Integer, nullable = False),
     Column('number_fire_extinguishers', Integer, nullable = False),
-
+    Column('description', String(50), nullable = False),
 )
 
 FaultStatus = Table(

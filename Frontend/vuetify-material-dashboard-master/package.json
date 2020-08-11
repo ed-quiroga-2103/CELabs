@@ -20,11 +20,13 @@
     "js-md5": "^0.7.3",
     "vue": "^2.6.11",
     "vue-i18n": "^8.15.3",
+    "vue-moment": "^4.1.0",
     "vue-router": "^3.1.3",
     "vuetify": "^2.3.7",
-    "vuex": "^3.1.2"
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
+    "@mdi/js": "^5.4.55",
     "@nuxtjs/vuetify": "^1.11.2",
     "@vue/cli-plugin-babel": "^4.1.2",
     "@vue/cli-plugin-e2e-cypress": "^4.1.2",
@@ -48,5 +50,12 @@
     "vue-template-compiler": "^2.6.11",
     "vue-world-map": "^0.1.1",
     "vuetify-loader": "^1.4.3"
-  }
+  },
+  "description": "![version](https://img.shields.io/badge/version-2.1.0-blue.svg) [![GitHub issues open](https://img.shields.io/github/issues/creativetimofficial/ct-vuetify-material-dashboard.svg)](https://github.com/creativetimofficial/ct-vuetify-material-dashboard/issues?q=is%3Aopen+is%3Aissue) [![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/creativetimofficial/ct-vuetify-material-dashboard.svg?maxAge=259200)](https://github.com/creativetimofficial/ct-vuetify-material-dashboard/issues?q=is%3Aissue+is%3Aclosed) [![Join the chat at https://gitter.im/NIT-dgp/General](https://badges.gitter.im/NIT-dgp/General.svg)](https://gitter.im/creative-tim/material-dashboard) [![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://discord.gg/E4aHAQy)",
+  "main": ".eslintrc.js",
+  "directories": {
+    "test": "tests"
+  },
+  "author": "",
+  "license": "ISC"
 }

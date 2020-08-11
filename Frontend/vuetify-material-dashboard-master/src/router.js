@@ -22,6 +22,16 @@ export default new Router({
           name: 'availability',
           component: () => import('./views/dashboard/UserOperator/AvailabilityOP.vue'),
         },
+        {
+          path: '/faults',
+          name: 'faults',
+          component: () => import('./views/dashboard/UserOperator/ReportFaultsOP.vue'),
+        },
+        {
+          path: '/myhours',
+          name: 'myhours',
+          component: () => import('./views/dashboard/UserOperator/MyHoursOP.vue'),
+        },
       ],
     },
     {

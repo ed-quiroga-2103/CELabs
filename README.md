@@ -388,16 +388,15 @@ The route for this request is `/worklog`
 
 ### POST
 
-The inputed JSON has the following format:
-
-``` 
-    data:   {
-            "date_time":this.date_time,
-            "init_time": this.init_time,
-            "final_time": this.final_time,
-            "description": this.description,
-            }
-```  
+The data that has to be sent has the following format:
+```
+data: {
+    "date_time": "13/08/2020",
+    "init_time": "08:23:23",
+    "final_time": "10:23:23",
+    "description": "Realice el inventario del equipo"
+    }
+```
 
 The request sends a confirmation message with the following format:
 
@@ -410,13 +409,13 @@ The route for this request is `/fault`
 
 ### POST
 
-The inputed JSON has the following format:
+The data that has to be sent has the following format:
 
 ``` 
     data:   {
-            "date_time":this.date_time,
-            "id_fault_part": this.id_fault_part,
-            "description": this.description,
+            "id_fault_part": "Maquina No. 5",
+            "description": "No enciende",
+            "lab":"F2-09"
             }
 ```  
 
@@ -431,17 +430,17 @@ The route for this request is `/inventory`
 
 ### POST
 
-The inputed JSON has the following format:
+The data that has to be sent has the following format:
 
 ``` 
     data:   {
-            "date":this.date,
-            "complete_computers": this.complete_computers,
-            "incomplete_computers": this.incomplete_computers,
-            "number_projectors": this.number_projectors,
-            "number_chairs": this.number_chairs,
-            "number_fire_extinguishers": this.number_fire_extinguishers,
-            "lab": this.lab
+            "date": "23/08/2020",
+            "complete_computers": "5",
+            "incomplete_computers": "4",
+            "number_projectors": "3",
+            "number_chairs": "2",
+            "number_fire_extinguishers": "1",
+            "lab":"F2-09" 
             }
 ```  
 

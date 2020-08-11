@@ -79,7 +79,7 @@
           class="ml-1"
           min-width="0"
           text
-          to="/pages/user"
+          to="/"
         >
           <span class="mr-1">My hours</span>
         </v-btn>
