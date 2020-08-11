@@ -29,7 +29,7 @@ export default {
       },
       data: data,
   }
-
+  console.log(data)
    axios(config)
       .then(response => {
       this.posts = response.data
@@ -54,6 +54,7 @@ export default {
     }
 
      return axios(config).then(response => {
+        console.log(response.data)
         return response
     })
   },
@@ -72,14 +73,13 @@ export default {
     }
 
      return axios(config).then(response => {
-       console.log(response.data)
+       // console.log(response.data)
         return response
     })
   },
   // Function to post a new AllNighter
   // eslint-disable-next-line camelcase
   postAN (request_date, requested_date, description, lab, init_time, final_time) {
-    console.log('HOLIIIIIIIIIIIIIIIIIIIIIIIII')
     var data = JSON.stringify(
       {
         // eslint-disable-next-line no-undef
@@ -118,7 +118,7 @@ export default {
   setUserLogged (userLogged) {
     Cookies.set('userLogged', userLogged)
   },
-  // Function to obtein cookies
+  // Function to obtain cookies
   getUserLogged () {
     return Cookies.get('userLogged')
   },
@@ -126,7 +126,11 @@ export default {
   // Function to call register on API
   register (formValue) {
     const user = formValue
-    return axios.post(ENDPOINT_PATH + 'user', user)
+    return axios.post(ENDPOINT_PATH + 'user', user).then(response => {
+      this.setUserLogged(response.data.token)
+      return response
+  },
+      )
   },
   // Function to call login on API
   login (u, p) {
@@ -143,9 +147,102 @@ export default {
       return response
      //  console.log(response.data.token)
   },
-)
+  )
   },
+  // Function to push faults
+  // eslint-disable-next-line camelcase
+  submitFault (lab, partId, descrip) {
+    var data = JSON.stringify(
+      {
+        lab: lab,
+        id_fault_part: partId,
+        description: descrip,
+      },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'fault',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      location.reload()
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
+  },
+  getFaultReports () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'fault',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+        return response
+    })
+  },
+  submitHours (date, time, time2, description) {
+    var data = JSON.stringify(
+      {
+        date_time: date,
+        init_time: time,
+        final_time: time2,
+        description: description,
+      },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'worklog',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
+  },
+  getHours () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'worklog',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+        return response
+    })
+  },
+
   deleteUserLogged () {
     Cookies.remove('userLogged')
   },
-    }
+}

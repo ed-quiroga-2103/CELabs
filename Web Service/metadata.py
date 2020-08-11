@@ -73,7 +73,7 @@ InventoryReport = Table(
     Column('number_projectors', Integer, nullable = False),
     Column('number_chairs', Integer, nullable = False),
     Column('number_fire_extinguishers', Integer, nullable = False),
-
+    Column('description', String(50), nullable = False),
 )
 
 FaultStatus = Table(
