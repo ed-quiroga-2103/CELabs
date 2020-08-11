@@ -9,6 +9,7 @@ import datetime
 from functools import wraps
 from utilities import *
 from constants import * 
+from repetable import * 
 
 
 app = Flask(__name__)
@@ -1065,7 +1066,11 @@ def get_all_events(current_user):
             current_event.append(get_time_from_seconds(event[1]))
             current_event.append("")
 
-            for data in event[3:]:
+            key_days = modify_days(event[3])
+            days = array_days(key_days)
+            current_event.append(days)
+
+            for data in event[4:]:
                 current_event.append(data)
         else:
 
