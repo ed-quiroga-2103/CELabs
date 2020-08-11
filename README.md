@@ -354,7 +354,7 @@ data: {
           "init_time": "00:00:00",
           "final_time": "01:00:00",
           "week_day": "L,K,M,J,V,S,U",
-          "is_repeatable": 0,
+          "is_repeatable": "0",
           "date":""
           }
 ```

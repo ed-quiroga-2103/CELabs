@@ -314,7 +314,6 @@ def edit_this_reservation(current_user):
     return jsonify({'message':'No Reservation'}), 401
 
 
-
 # ------------------------- Worklog -------------------------
 
 @app.route('/worklog', methods=['POST'])
@@ -385,13 +384,15 @@ def get_all_worklog(current_user):
     result = []
 
     for worklog in worklogs:
-        new_worklog = []
+        new_worklog = jsonify(shiftDate = get_date_from_seconds(worklog[0]),
+        shiftStart = get_time_from_seconds(worklog[1]), 
+        shiftEnd = )
 
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
 
-        for data in worklog[4:]:
+        for data in worklog[3:]:
             new_worklog.append(data)
 
         result.append(new_worklog)
