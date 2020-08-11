@@ -13,13 +13,9 @@ def array_days(dias):
         result = today + datetime.timedelta(days= i)
         for x in dias:
             if result.weekday() == x:
-                dates.append(result.strftime("%d/%m/%Y"))
-    
-    data = ''
-    for date in dates:        
-        data += date + ' - '
+                dates.append(result.strftime("%Y-%m-%d"))
 
-    return data
+    return dates
 
 
 def modify_days(days):
