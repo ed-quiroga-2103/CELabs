@@ -171,19 +171,11 @@
           @click:more="viewDay"
           @click:date="viewDay"
         />
-
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="dialogo">
           <v-card>
             <v-container>
               <v-form @submit.prevent="addEvent">
-                <v-text-field
-                  v-model="description"
-                  type="text"
-                  label="Description"
-                >
-                  >
-                </v-text-field>
                 <template>
                   <v-row align="center">
                     <v-col cols="12">
@@ -286,6 +278,11 @@
                     </v-btn>
                   </v-time-picker>
                 </v-dialog>
+                <v-textarea
+                  v-model="description"
+                  counter
+                  label="Description"
+                />
                 <v-btn
                   type="submit"
                   color="primary"
@@ -304,13 +301,6 @@
           <v-card>
             <v-container>
               <v-form @submit.prevent="addCourse">
-                <v-text-field
-                  v-model="description2"
-                  type="text"
-                  label="Description"
-                >
-                  >
-                </v-text-field>
                 <v-combobox
                   v-model="form.name2"
                   multiple
@@ -333,14 +323,6 @@
                     </v-col>
                   </v-row>
                 </template>
-
-                <v-text-field
-                  v-model=" date2"
-                  type="date"
-                  label="Date"
-                >
-                  >
-                </v-text-field>
                 <!-----------------------START---------------------------------------------->
                 <v-dialog
                   ref="dialog"
@@ -423,6 +405,11 @@
                     </v-btn>
                   </v-time-picker>
                 </v-dialog>
+                <v-textarea
+                  v-model="description2"
+                  counter
+                  label="Description"
+                />
                 <v-btn
                   type="submit"
                   color="primary"
@@ -642,9 +629,8 @@
       addCourse () {
         try {
           if (this.description2 && this.time3 && this.time4 && this.lab2 && this.form.name2) {
-            const date3 = this.ChangeDate(this.date2)
-            for (var i = 1; i < this.form.name.length; i++) {
-              this.form.name[0] += ',' + this.form.name[i]
+            for (var i = 1; i < this.form.name2.length; i++) {
+              this.form.name2[0] += ',' + this.form.name2[i]
             }
             this.postEvent(this.description2,
                            this.time3 + ':00',
@@ -652,7 +638,7 @@
                            this.form.name2[0],
                            1,
                            this.lab2,
-                           date3)
+                           '')
           } else {
             alert('Complete all the fields')
           }
@@ -661,6 +647,7 @@
         }
       },
       async getEvents () {
+        this.events = []
         try {
           await this.$auth.getEvents().then(
             response => {
@@ -673,15 +660,12 @@
       async postEvent (description, start, end, day, repeatable, lab, date) {
         try {
           for (var i = 0; i < this.events.length; i++) {
-            console.log(this.events[i].start)
-            console.log(this.start)
             if (this.events[i].start === this.start) {
 
             }
           }
           await this.$auth.postEvent(description, start, end, day, repeatable, lab, date)
-          this.events = []
-          this.getEvents()
+          setTimeout(() => { this.getEvents() }, 1000)
         } catch (error) {
           this.error = true
           alert('Error sending events')
@@ -690,32 +674,67 @@
       sortEvents (temp) {
         this.events = []
         for (var i = 0; i < temp.length; i++) {
-          var dt = temp[i][2].slice(6, 10) + '-' + temp[i][2].slice(3, 5) + '-' + temp[i][2].slice(0, 2)
-          // eslint-disable-next-line eqeqeq
-          if (temp[i][6] == 'F2-09') {
-            this.events.push({
-              name: temp[i][4],
-              start: dt + ' ' + temp[i][0].slice(0, 5),
-              end: dt + ' ' + temp[i][1].slice(0, 5),
-              week_day: temp[i][3],
-              is_repeatable: temp[i][5],
-              lab: temp[i][6],
-              date: dt,
-            })
+          if (temp[i][5] === false) {
+            var dt = temp[i][2].slice(6, 10) + '-' + temp[i][2].slice(3, 5) + '-' + temp[i][2].slice(0, 2)
+            // eslint-disable-next-line eqeqeq
+            if (temp[i][6] == 'F2-09') {
+              this.events.push({
+                name: 'Reservado',
+                description: temp[i][4],
+                start: dt + ' ' + temp[i][0].slice(0, 5),
+                end: dt + ' ' + temp[i][1].slice(0, 5),
+                week_day: temp[i][3],
+                is_repeatable: temp[i][5],
+                lab: temp[i][6],
+                date: dt,
+              })
+            } else {
+              this.events2.push({
+                name: 'Reservado',
+                description: temp[i][4],
+                start: dt + ' ' + temp[i][0].slice(0, 5),
+                end: dt + ' ' + temp[i][1].slice(0, 5),
+                week_day: temp[i][3],
+                is_repeatable: temp[i][5],
+                lab: temp[i][6],
+                date: dt,
+              })
+            }
           } else {
-            this.events2.push({
-              name: temp[i][4],
-              start: dt + ' ' + temp[i][0].slice(0, 5),
-              end: dt + ' ' + temp[i][1].slice(0, 5),
-              week_day: temp[i][3],
-              is_repeatable: temp[i][5],
-              lab: temp[i][6],
-              date: dt,
-            })
+            // eslint-disable-next-line eqeqeq
+            if (temp[i][6] == 'F2-09') {
+              for (var j = 0; j < temp[i][3].length; j++) {
+                this.events.push({
+                  name: 'Curso',
+                  description: temp[i][4],
+                  start: temp[i][3][j] + ' ' + temp[i][0].slice(0, 5),
+                  end: temp[i][3][j] + ' ' + temp[i][1].slice(0, 5),
+                  week_day: temp[i][3],
+                  is_repeatable: temp[i][5],
+                  lab: temp[i][6],
+                  date: temp[i][3][j],
+                })
+              }
+            } else {
+              for (var k = 0; k < temp[i][3].length; k++) {
+                this.events2.push({
+                  name: 'Curso',
+                  description: temp[i][4],
+                  start: temp[i][3][k] + ' ' + temp[i][0].slice(0, 5),
+                  end: temp[i][3][k] + ' ' + temp[i][1].slice(0, 5),
+                  week_day: temp[i][3],
+                  is_repeatable: temp[i][5],
+                  lab: temp[i][6],
+                  date: temp[i][3][k],
+                })
+              }
+            }
           }
         }
       },
+
     },
+
   }
 </script>
 <style scoped>

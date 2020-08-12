@@ -172,7 +172,7 @@ export default {
    axios(config)
       .then(response => {
       this.posts = response.data
-      location.reload()
+      // location.reload()
       // console.log(this.posts.message)
       },
       ).catch(e => {
