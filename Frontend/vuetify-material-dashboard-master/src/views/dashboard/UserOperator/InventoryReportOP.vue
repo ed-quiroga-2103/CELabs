@@ -162,35 +162,35 @@
                   v-model="completeComp"
                   label="Number of complete computers"
                   name="completeComp"
-                  type="text"
+                  type="number"
                 />
                 <v-text-field
                   id="incompleteComp"
                   v-model="incompleteComp"
                   label="Number of incomplete computers"
                   name="incompleteComp"
-                  type="text"
+                  type="number"
                 />
                 <v-text-field
                   id="numbProjectors"
                   v-model="projectors"
                   label="Number of Projectors"
                   name="numbProjectors"
-                  type="text"
+                  type="number"
                 />
                 <v-text-field
                   id="numChairs"
                   v-model="chairs"
                   label="Number of chairs"
                   name="numChairs"
-                  type="text"
+                  type="number"
                 />
                 <v-text-field
                   id="fireExt"
                   v-model="fireExt"
                   label="Number of fire extinguishers"
                   name="fireExt"
-                  type="text"
+                  type="number"
                 />
                 <v-textarea
                   v-model="textarea"
