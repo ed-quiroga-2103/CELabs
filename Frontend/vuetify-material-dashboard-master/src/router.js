@@ -32,6 +32,11 @@ export default new Router({
           name: 'myhours',
           component: () => import('./views/dashboard/UserOperator/MyHoursOP.vue'),
         },
+        {
+          path: '/inventory',
+          name: 'inventory',
+          component: () => import('./views/dashboard/UserOperator/InventoryReportOP.vue'),
+        },
       ],
     },
     {

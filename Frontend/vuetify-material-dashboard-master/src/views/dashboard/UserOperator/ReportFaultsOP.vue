@@ -90,7 +90,6 @@
         {
           text: 'Report Number',
           align: 'start',
-          sortable: false,
           value: 'reportNo',
         },
         { text: 'Report Date', value: 'reportD' },

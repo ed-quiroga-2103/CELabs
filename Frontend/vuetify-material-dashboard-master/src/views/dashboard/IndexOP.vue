@@ -72,7 +72,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/pages/user"
+            to="/inventory"
           >
             <span class="mr-1">Inventory Report</span>
           </v-btn>

@@ -162,7 +162,6 @@
         {
           text: 'Shift Date',
           align: 'start',
-          sortable: false,
           value: 'shiftDate',
         },
         { text: 'Shift start time', value: 'shiftStart' },

@@ -179,7 +179,36 @@ export default {
         return response
     })
   },
-
+  submitInv (labo, compCom, incompCom, projectors, chairs, fireExt) {
+    var data = JSON.stringify(
+      {
+        complete_computers: compCom,
+        incomplete_computers: incompCom,
+        number_projectors: projectors,
+        number_chairs: chairs,
+        number_fire_extinguishers: fireExt,
+        lab: labo,
+      },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'inventory',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
+  },
   deleteUserLogged () {
     Cookies.remove('userLogged')
   },
