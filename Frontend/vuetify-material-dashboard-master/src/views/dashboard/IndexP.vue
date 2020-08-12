@@ -42,6 +42,14 @@
           >
             <span class="mr-1">Availability</span>
           </v-btn>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="/"
+          >
+            <span class="mr-1">Report faults</span>
+          </v-btn>
 
           <v-btn
             class="ml-1"

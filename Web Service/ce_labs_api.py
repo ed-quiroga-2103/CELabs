@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_BD
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + LUIS_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -123,7 +123,6 @@ def create_user():
         db.session.add(new_operator)
         db.session.commit()
         
-    print()
 
     response = jsonify({'message' : 'New user created!'})
 
@@ -416,6 +415,7 @@ def get_all_worklog(current_user):
     for worklog in worklogs:
         new_worklog = []
 
+        
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
@@ -424,7 +424,7 @@ def get_all_worklog(current_user):
             new_worklog.append(data)
 
         result.append(new_worklog)
-
+    
     return jsonify(result), 200
 
 

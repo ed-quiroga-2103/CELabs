@@ -1,18 +1,22 @@
 --------------------------Inventory Report Check----------------------
 
-SELECT * FROM InventoryReport;
+-- SELECT * FROM InventoryReport;
 
-SELECT * FROM User_InventoryReport;
+-- SELECT * FROM User_InventoryReport;
 
-SELECT * FROM InventoryReport_Lab;
+-- SELECT * FROM InventoryReport_Lab;
 
 ------------------------------- Worklog Check--------------------------
 
---SELECT * FROM Worklog;
+SELECT * FROM Worklog;
 
---SELECT * FROM User_Worklog;
+SELECT * FROM User_Worklog;
 
---SELECT * FROM WorklogStatus;
+SELECT * FROM WorklogStatus;
+
+SELECT * FROM User_Operator;
+
+SELECT * FROM User;
 
 ------------------------------Fault Report Check-----------------------
 

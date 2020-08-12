@@ -63,7 +63,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
+            to="/adm/Faults"
           >
             <span class="mr-1">Faults</span>
           </v-btn>
@@ -71,7 +71,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/pages/user"
+            to="/adm/Inventory"
           >
             <span class="mr-1">Inventory</span>
           </v-btn>
@@ -79,7 +79,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/pages/user"
+            to="/adm/OPHours"
           >
             <span class="mr-1">Approve hours</span>
           </v-btn>
