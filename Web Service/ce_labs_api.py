@@ -16,7 +16,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + QUIROGA_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -414,9 +414,7 @@ def get_all_worklog(current_user):
     result = []
 
     for worklog in worklogs:
-        new_worklog = jsonify(shiftDate = get_date_from_seconds(worklog[0]),
-        shiftStart = get_time_from_seconds(worklog[1]), 
-        shiftEnd = )
+        new_worklog = []
 
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
