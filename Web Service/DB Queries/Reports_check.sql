@@ -21,3 +21,10 @@
 -- SELECT * FROM User_FaultReport;
 
 -- SELECT * FROM FaultReport_Lab;
+
+
+
+
+-- DROP TABLE Event;
+
+ SELECT *  FROM Event;
