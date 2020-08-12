@@ -209,6 +209,23 @@ export default {
       console.error(e.data.message)
   })
   },
+  getInvReports () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'inventory',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+        return response
+    })
+  },
   deleteUserLogged () {
     Cookies.remove('userLogged')
   },

@@ -1,24 +1,65 @@
 <template>
   <v-row class="">
     <v-col>
-      <v-sheet height="64">
+      <v-sheet height="200">
         <v-toolbar
           flat
           color="white"
         >
+          <v-col>
+            <v-row>
+              <!---Esta as es para el lineamiento de los labels-->
+              <h2>a</h2>
+            </v-row>
+            <v-row>
+              <h2>a</h2>
+            </v-row>
+            <v-row>
+              <h2>a</h2>
+            </v-row>
+            <v-row>
+              <h2>a</h2>
+            </v-row>
+            <v-row>
+              <h2>Operator:</h2>
+            </v-row>
+            <v-row>
+              <label v-text="operator" />
+            </v-row>
+            <v-row>
+              <h2>University ID:</h2>
+            </v-row>
+            <v-row>
+              <label v-text="uniId" />
+            </v-row>
+            <v-row>
+              <h2>Assigned Hours:</h2>
+            </v-row>
+            <v-row>
+              <label v-text="assignedH" />
+            </v-row>
+            <v-row>
+              <h2>Hours Completed:</h2>
+            </v-row>
+            <v-row>
+              <label v-text="complH" />
+            </v-row>
+          </v-col>
           <v-spacer />
           <v-spacer />
-          <v-btn
-            outlined
-            color="grey darken-2"
-            @click="hourReport = true"
-          >
-            Report Hours
-          </v-btn>
-          <v-menu
-            bottom
-            right
-          />
+          <v-col>
+            <v-btn
+              outlined
+              color="grey darken-2"
+              @click="hourReport = true"
+            >
+              Report Hours
+            </v-btn>
+            <v-menu
+              bottom
+              right
+            />
+          </v-col>
         </v-toolbar>
       </v-sheet>
       <!--------------PUT the log here------------------------------------------------------>
@@ -122,13 +163,6 @@
                     >
                       Cancel
                     </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.dialog2.save(time2)"
-                    >
-                      OK
-                    </v-btn>
                   </v-time-picker>
                 </v-dialog>
                 <v-text-field
@@ -171,6 +205,10 @@
         { text: 'Delete', value: 'delete' },
       ],
       hours: [],
+      operator: 'Luis',
+      uniId: '14578878548',
+      assignedH: '28',
+      complH: '3',
       description: '',
       time2: null,
       time: null,

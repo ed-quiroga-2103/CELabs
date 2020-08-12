@@ -482,7 +482,10 @@ def edit_this_worklog(current_user):
 def create_inventory_report(current_user):
 
     data = request.get_json()
-    date = get_date_in_seconds(data['date'])
+
+    now = datetime.datetime.now()
+    date = now.strftime('%d/%m/%Y %H:%M:%S')
+    date = get_datetime_in_seconds(str(date))
 
     inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
         InventoryReport.date,
@@ -492,13 +495,13 @@ def create_inventory_report(current_user):
     for inventory in inventories:
         if inventory[0] == date and inventory[1] == data['lab']:
             return jsonify({'message':'Theres already an inventory report with that date'}), 401
-    
+
 
     current_id_report = str(uuid.uuid4())
 
     new_inventoryreport = InventoryReport(
         public_id_report = current_id_report,
-        date = get_date_in_seconds(data['date']),
+        date = date,
         complete_computers = int(data['complete_computers']),
         incomplete_computers = int(data['incomplete_computers']),
         number_projectors = int(data['number_projectors']),
@@ -513,7 +516,7 @@ def create_inventory_report(current_user):
 
     user_relation = User_InventoryReport(
         id_report = current_report.id_report,
-        id_user = current_user.id_user   
+        id_user = current_user.id_user
     )
 
     db.session.add(user_relation)
@@ -531,7 +534,7 @@ def create_inventory_report(current_user):
     db.session.commit()
 
     response = jsonify({'message' : 'New inventory report created!'})
-    
+
     return response
 
 
@@ -554,7 +557,7 @@ def get_all_inventory(current_user):
 
     for inventory in inventories:
         new_inventory = []
-        new_inventory.append(get_date_from_seconds(inventory[0]))
+        new_inventory.append(get_datetime_from_seconds(inventory[0]))
 
         for data in inventory[1:]:
             new_inventory.append(data)
