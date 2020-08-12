@@ -29,7 +29,7 @@ export default {
       },
       data: data,
   }
-
+  console.log(data)
    axios(config)
       .then(response => {
       this.posts = response.data
@@ -54,8 +54,65 @@ export default {
     }
 
      return axios(config).then(response => {
+        console.log(response.data)
         return response
     })
+  },
+  //  Function to get AllNighters
+  getAN () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'allnighter',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+       // console.log(response.data)
+        return response
+    })
+  },
+  // Function to post a new AllNighter
+  // eslint-disable-next-line camelcase
+  postAN (request_date, requested_date, description, lab, init_time, final_time) {
+    var data = JSON.stringify(
+      {
+        // eslint-disable-next-line no-undef
+        request_date: request_date,
+        // eslint-disable-next-line no-undef
+        requested_date: requested_date,
+        description: description,
+        lab: lab,
+        init_time: init_time,
+        final_time: final_time,
+      },
+
+  )
+  console.log(data)
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'allnighter',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
   },
   // Function to save cookies
   setUserLogged (userLogged) {
@@ -69,7 +126,11 @@ export default {
   // Function to call register on API
   register (formValue) {
     const user = formValue
-    return axios.post(ENDPOINT_PATH + 'user', user)
+    return axios.post(ENDPOINT_PATH + 'user', user).then(response => {
+      this.setUserLogged(response.data.token)
+      return response
+  },
+      )
   },
   // Function to call login on API
   login (u, p) {
@@ -111,6 +172,7 @@ export default {
    axios(config)
       .then(response => {
       this.posts = response.data
+      location.reload()
       // console.log(this.posts.message)
       },
       ).catch(e => {
