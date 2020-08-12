@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(LUIS_DB, 'w+')
+file = open(KIMBERLY_BD, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + LUIS_DB)
+engine = create_engine('sqlite:///' + KIMBERLY_BD)
 meta = MetaData()
 
 
@@ -73,7 +73,7 @@ InventoryReport = Table(
     Column('number_projectors', Integer, nullable = False),
     Column('number_chairs', Integer, nullable = False),
     Column('number_fire_extinguishers', Integer, nullable = False),
-
+    Column('description', String(50), nullable = False),
 )
 
 FaultStatus = Table(

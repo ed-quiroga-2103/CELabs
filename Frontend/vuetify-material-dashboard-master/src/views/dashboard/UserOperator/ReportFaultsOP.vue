@@ -22,18 +22,36 @@
         </v-toolbar>
       </v-sheet>
       <!--------------PUT the log here------------------------------------------------------>
+
+      <div id="app">
+        <v-app id="inspire">
+          <v-data-table
+            :headers="headers"
+            :items="reports"
+            :single-expand="true"
+            :expanded.sync="expanded"
+            :items-per-page="15"
+            item-key="reportNo"
+            show-expand
+            class="elevation-1"
+          >
+            <template v-slot:top>
+              <v-toolbar
+                color="primary"
+                flat
+              >
+                <v-spacer />
+              </v-toolbar>
+            </template>
+            <template v-slot:expanded-item="{ headers, item }">
+              <td :colspan="headers.length">
+                {{ item.description }}
+              </td>
+            </template>
+          </v-data-table>
+        </v-app>
+      </div>
       <v-sheet height="600">
-        <v-data-table
-          :headers="headers"
-          :items="reports"
-          :items-per-page="5"
-          class="elevation-1"
-        />
-        <template v-slot:expanded-item="{ headers, item }">
-          <td :colspan="headers.length">
-            {{ item.descript }}
-          </td>
-        </template>
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="faultReport">
           <v-card>
@@ -57,7 +75,7 @@
                   v-model="Idnumb"
                   label="IDNo"
                   name="ID No."
-                  type="text"
+                  type="number"
                 />
                 <v-textarea
                   v-model="textarea"
@@ -86,6 +104,7 @@
 <script>
   export default {
     data: () => ({
+      expanded: [],
       headers: [
         {
           text: 'Report Number',
@@ -96,6 +115,7 @@
         { text: 'Report Time', value: 'reportT' },
         { text: 'Laboratory Number', value: 'labNo' },
         { text: 'ID(Faulty part)', value: 'faultypartID' },
+        { text: '', value: 'data-table-expand' },
       ],
       reports: [],
       radios: '',
@@ -103,6 +123,11 @@
       textarea: '',
       faultReport: false,
     }),
+    watch: {
+      reports (nuevoValor, valorAnterior) {
+        console.log("Los reportes pasaron de '%s' a '%s'", valorAnterior, nuevoValor)
+      },
+    },
     mounted () {
       this.getFaultReports()
     },
@@ -111,6 +136,7 @@
         this.faultReport = false
         try {
           await this.$auth.submitFault(this.radios, this.Idnumb, this.textarea)
+          setTimeout(() => { this.getFaultReports() }, 1000)
         } catch (error) {
           this.error = true
           alert('Error submiting report')
@@ -123,12 +149,14 @@
       },
       async getFaultReports () {
         try {
+          this.reports = []
           await this.$auth.getFaultReports().then(
             response => {
               var res = response.data
               console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.reports.push({
+                  description: res[i][2],
                   reportD: res[i][0].slice(0, 10),
                   reportT: res[i][0].slice(10, 16),
                   labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',

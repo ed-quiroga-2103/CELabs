@@ -8,16 +8,26 @@ SELECT * FROM InventoryReport_Lab;
 
 ------------------------------- Worklog Check--------------------------
 
--- SELECT * FROM Worklog;
+--SELECT * FROM Worklog;
 
--- SELECT * FROM User_Worklog;
+--SELECT * FROM User_Worklog;
 
--- SELECT * FROM WorklogStatus;
+--SELECT * FROM WorklogStatus;
 
 ------------------------------Fault Report Check-----------------------
 
--- SELECT * FROM FaultReport;
+--SELECT * FROM FaultReport;
 
--- SELECT * FROM User_FaultReport;
+--SELECT * FROM User_FaultReport;
 
 -- SELECT * FROM FaultReport_Lab;
+
+--SELECT * FROM FaultStatus;
+
+------------------------------Events Check-----------------------
+
+-- DROP TABLE Event;
+
+--SELECT *  FROM Event;
+
+

@@ -101,15 +101,15 @@
           to: '/components/icons',
         },
         {
+          icon: 'My account',
+          title: 'dashboard',
+          to: '/',
+        },
+        {
           title: 'My hours',
           icon: 'mdi-map-marker',
           to: '/maps/google-maps',
-        },
-        {
-          title: 'My account',
-          icon: 'mdi-bell',
-          to: '/components/notifications',
-        },
+        }
       ],
       notifications: [
         'Mike John Responded to your email',
