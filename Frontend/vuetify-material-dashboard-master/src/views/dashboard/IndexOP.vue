@@ -54,7 +54,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/faults"
+            to="/op/faults"
           >
             <span class="mr-1">Report faults</span>
           </v-btn>
@@ -63,7 +63,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/pages/user"
+            to="/op/inventory"
           >
             <span class="mr-1">Inventory Report</span>
           </v-btn>
@@ -71,7 +71,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/myhours"
+            to="/op/myhours"
           >
             <span class="mr-1">My hours</span>
           </v-btn>
@@ -79,7 +79,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/myaccount"
+            to="/op/myaccount"
           >
             <span class="mr-1">My account</span>
           </v-btn>
