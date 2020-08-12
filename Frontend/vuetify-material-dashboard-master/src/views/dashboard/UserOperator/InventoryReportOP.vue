@@ -28,31 +28,6 @@
           :items="reports"
           class="elevation-1"
         >
-          <template v-slot:top>
-            <v-toolbar
-              flat
-              color="white"
-            >
-              <v-spacer />
-              <v-dialog
-                v-model="dialog"
-                max-width="500px"
-              >
-                <v-card>
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                      @click="close"
-                    >
-                      Cancel
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-toolbar>
-          </template>
           <template v-slot:item.actions="{ item }">
             <v-icon
               small
@@ -76,6 +51,7 @@
                       v-model="showInv.completeComp"
                       disabled
                       label="Complete computers"
+                      type="number"
                     />
                   </v-row>
                   <v-row>
@@ -83,13 +59,15 @@
                       v-model="showInv.incompleteComp"
                       disabled
                       label="Incomplete Computers"
+                      type="number"
                     />
                   </v-row>
                   <v-row>
                     <v-text-field
                       v-model="showInv.projectors"
                       disabled
-                      label="Projectos"
+                      label="Projectors"
+                      type="number"
                     />
                   </v-row>
                   <v-row>
@@ -97,6 +75,7 @@
                       v-model="showInv.chairs"
                       disabled
                       label="Chairs"
+                      type="number"
                     />
                   </v-row>
                   <v-row>
@@ -104,6 +83,7 @@
                       v-model="showInv.fireExt"
                       disabled
                       label="Fire Extiguishers"
+                      type="number"
                     />
                   </v-row>
                   <v-row>
@@ -111,6 +91,7 @@
                       v-model="showInv.det"
                       disabled
                       label="Details"
+                      type="text"
                     />
                   </v-row>
                 </v-col>
@@ -187,7 +168,7 @@
                   type="number"
                 />
                 <v-textarea
-                  v-model="textarea"
+                  v-model="det"
                   solo
                   name="input-7-4"
                   label="Details"
@@ -224,7 +205,7 @@
         { text: 'Report Time', value: 'reportT' },
         { text: 'Laboratory Number', value: 'labNo' },
         { text: 'Report', value: 'actions', sortable: false },
-        { text: 'Details', value: 'detail' },
+        { text: 'Details', value: 'det' },
       ],
       reports: [],
       dialog: false,
@@ -243,7 +224,7 @@
         fireExt: '',
         det: '',
       },
-      textarea: '',
+      det: '',
       invReport: false,
     }),
     mounted () {
@@ -251,33 +232,27 @@
     },
     methods: {
       seeMore (item) {
-        console.log(item)
         this.showInv.completeComp = item.completeComp
         this.showInv.incompleteComp = item.incompleteComp
         this.showInv.projectors = item.projectors
         this.showInv.chairs = item.chairs
         this.showInv.fireExt = item.fireExt
-        this.det = item.det
+        this.showInv.det = item.det
         this.dialog2 = true
       },
       close () {
         this.dialog2 = false
       },
       async submitInv () {
-        this.invReport = false
         try {
           if (this.radios && this.completeComp && this.incompleteComp && this.projectors && this.chairs && this.fireExt) {
-            await this.$auth.submitInv(this.radios, this.completeComp, this.incompleteComp, this.projectors, this.chairs, this.fireExt)
+            await this.$auth.submitInv(this.radios, this.completeComp, this.incompleteComp, this.projectors, this.chairs, this.fireExt, this.det)
+            this.invReport = false
           } else {
             alert('Complete all the fields')
           }
         } catch (error) {
           alert('Error submiting report')
-        }
-        this.reportValues = {
-          radios: '',
-          Idnumb: '',
-          textarea: '',
         }
       },
       async getInvReports () {
@@ -298,7 +273,7 @@
                   projectors: res[i][3],
                   chairs: res[i][4],
                   fireExt: res[i][5],
-                  det: 'Not implemented yet',
+                  det: res[i][6],
                 })
               }
             })

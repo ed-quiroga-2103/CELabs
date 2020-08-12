@@ -241,7 +241,7 @@ export default {
         return response
     })
   },
-  submitInv (labo, compCom, incompCom, projectors, chairs, fireExt) {
+  submitInv (labo, compCom, incompCom, projectors, chairs, fireExt, det) {
     var data = JSON.stringify(
       {
         complete_computers: compCom,
@@ -250,6 +250,7 @@ export default {
         number_chairs: chairs,
         number_fire_extinguishers: fireExt,
         lab: labo,
+        description: det,
       },
   )
   var config = {
@@ -301,9 +302,92 @@ export default {
         data: data,
     }
      return axios(config).then(response => {
-        console.log(response.data)
         return response
     })
+  },
+  delHourReport (itemId) {
+    var data = JSON.stringify(
+      // {
+      //   date_time: date,
+      //   init_time: time,
+      //   final_time: time2,
+      //   description: description,
+      // },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'worklog',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
+  },
+  disaproveHourReport (itemId) {
+    var data = JSON.stringify(
+      // {
+      //   date_time: date,
+      //   init_time: time,
+      //   final_time: time2,
+      //   description: description,
+      // },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'worklog',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
+  },
+  aproveHourReport (itemId) {
+    var data = JSON.stringify(
+      // {
+      //   date_time: date,
+      //   init_time: time,
+      //   final_time: time2,
+      //   description: description,
+      // },
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'worklog',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+  }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+  })
   },
   deleteUserLogged () {
     Cookies.remove('userLogged')

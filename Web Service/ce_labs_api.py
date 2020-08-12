@@ -9,11 +9,11 @@ import datetime
 from functools import wraps
 from utilities import *
 from constants import * 
+from repetable import * 
 
 
 app = Flask(__name__)
 cors = CORS(app)
-
 app.config['SECRET_KEY'] = "CELabs"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + LUIS_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -123,7 +123,6 @@ def create_user():
         db.session.add(new_operator)
         db.session.commit()
         
-    print()
 
     response = jsonify({'message' : 'New user created!'})
 
@@ -152,6 +151,33 @@ def login():
         return jsonify({'token' : token.decode('UTF-8'), 'user_type': user.user_type})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+
+
+@app.route('/user', methods=['GET'])
+@token_required
+def get_this_user(current_user):
+
+    information = []
+
+    information.append(current_user.name)
+    information.append(current_user.lastname1)
+    information.append(current_user.lastname2)
+    information.append(current_user.id_number)
+    information.append(current_user.email)
+    information.append(current_user.phone_number)
+    information.append(current_user.university_id)
+
+    return jsonify(information), 200
+
+
+@app.route('/user', methods=['PUT'])
+@token_required
+def disable_this_user(current_user):
+
+    current_user.active = 0
+    db.session.commit()
+
+    return jsonify({'message' : 'Your account has been disabled !'}), 200
 
 
 # ------------------------- Reservations -------------------------
@@ -389,6 +415,7 @@ def get_all_worklog(current_user):
     for worklog in worklogs:
         new_worklog = []
 
+        
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
@@ -397,7 +424,7 @@ def get_all_worklog(current_user):
             new_worklog.append(data)
 
         result.append(new_worklog)
-
+    
     return jsonify(result), 200
 
 
@@ -442,21 +469,9 @@ def edit_this_worklog(current_user):
         Worklog.id_worklog
     ).all()
 
-    #date = get_date_in_seconds(data['requested_date'])
-    #time = get_time_in_seconds(data['init_time'])
-    
-    #reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
-    #Reservation.init_time, Lab.name, Reservation.id_reservation).all()
-    
-    #Primero se busca la Reservation con el metodo que estamos usando actualmente
-
-
     for worklog in worklogs:
         if worklog[0] == date and worklog[1] == time:
 
-            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
-            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
-            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
             current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
 
             current_worklog.date_time = get_date_in_seconds(new_data['date_time'])
@@ -506,7 +521,8 @@ def create_inventory_report(current_user):
         incomplete_computers = int(data['incomplete_computers']),
         number_projectors = int(data['number_projectors']),
         number_chairs = int(data['number_chairs']),
-        number_fire_extinguishers = int(data['number_fire_extinguishers'])
+        number_fire_extinguishers = int(data['number_fire_extinguishers']),
+        description = data['description']
         )
 
     db.session.add(new_inventoryreport)
@@ -549,8 +565,10 @@ def get_all_inventory(current_user):
         InventoryReport.number_projectors,
         InventoryReport.number_chairs,
         InventoryReport.number_fire_extinguishers,
+        InventoryReport.description,
         Lab.id_lab,
-        User.id_user
+        User.id_user,
+        InventoryReport.id_report
     )
 
     result = []
@@ -587,6 +605,52 @@ def delete_this_inventoryreport(current_user):
             User_InventoryReport.query.filter_by(id_report=inventory[1]).delete()
             db.session.commit()
             return jsonify({'message':'Inventory Report deleted'}), 200
+
+    return jsonify({'message':'No Inventory Report'}), 401
+
+
+@app.route('/inventory', methods= ['PUT'])
+@token_required
+def edit_this_inventoryreport(current_user):
+    
+    raw_data = request.get_json()
+
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    date = get_datetime_in_seconds(data['date_time'])
+
+    inventories = InventoryReport.query.join(InventoryReport_Lab).join(Lab).join(User_InventoryReport).join(User).with_entities(
+        InventoryReport.date,
+        InventoryReport.id_report,
+        Lab.name
+    ).all()
+
+    for inventory in inventories:
+        if inventory[0] == date and inventory[2] == data['lab']:
+
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
+            current_inventory = db.session.query(InventoryReport).filter_by(id_report = inventory[1]).first()
+
+            current_inventory.complete_computers = int(new_data['complete_computers'])
+            current_inventory.incomplete_computers = int(new_data['incomplete_computers'])
+            current_inventory.number_projectors = int(new_data['number_projectors'])
+            current_inventory.number_chairs = int(new_data['number_chairs'])
+            current_inventory.number_fire_extinguishers = int(new_data['number_fire_extinguishers'])
+            current_inventory.description = new_data['description']
+
+            current_id_lab= Lab.query.filter_by(name = new_data["lab"]).first() 
+            current_inventory.id_status = current_id_lab.id_lab
+
+            #En caso que los reportes de inventario necesiten aprobacion
+            #current_id_status= FaultStatus.query.filter_by(status = new_data["status"]).first() 
+            #current_fault.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Inventory Report modified'}), 200
 
     return jsonify({'message':'No Inventory Report'}), 401
 
@@ -703,6 +767,49 @@ def delete_this_faultreport(current_user):
 
     return jsonify({'message':'No Fault Report'}), 401
 
+
+@app.route('/fault', methods= ['PUT'])
+@token_required
+def edit_this_faultreport(current_user):
+    
+    raw_data = request.get_json()
+
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    date = get_datetime_in_seconds(data['date_time'])
+
+    faults = FaultReport.query.join(FaultReport_Lab).join(Lab).join(User_FaultReport).join(User).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_report,
+        Lab.name
+    ).all()
+
+    for fault in faults:
+        if fault[0] == date and fault[2] == data['lab']:
+
+            #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
+            #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
+            #Solamente mediante el current_reservation se pueden accesar los atributos y modificarlos en la base para el commit
+            current_fault = db.session.query(FaultReport).filter_by(id_report = fault[1]).first()
+
+            current_fault.id_fault_part = new_data['id_fault_part']
+            current_fault.description = new_data['description']
+
+            current_id_lab= Lab.query.filter_by(name = new_data["lab"]).first() 
+
+            current_fault.id_status = current_id_lab.id_lab
+
+
+            current_id_status= FaultStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_fault.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Fault Report modified'}), 200
+
+    return jsonify({'message':'No Fault Report'}), 401
 
 # ------------------------- All-Nighters -------------------------
 
@@ -880,7 +987,6 @@ def create_event(current_user):
 
     data = request.get_json()
 
-
     no_date = data['date'] is None or data['date'] == ""
     no_days = data['week_day'] is None or data['week_day'] == ""
 
@@ -892,10 +998,48 @@ def create_event(current_user):
     if no_days and is_repeatable == '1':
         return jsonify({'message': 'Repeatable events must include a week days!'}), 401
     
+#-------------------------------VERiFICATION DATES--------------------------------------------
+    
+    events = Event.query.with_entities(Event.init_time, Event.final_time, Event.date,Event.week_day,Event.id_lab).all()
 
+    current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
 
+    if no_days:
+    
+        date = get_date_in_seconds(data['date'])
+
+        for event in events:
+            if event[2] == None:
+                temp= modify_days(event[3])
+                dates = array_days2(temp)
+
+                for day in dates:
+                    if get_date_in_seconds(day) == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                        return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+            if event[3] == None:
+                if event[2] == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                    return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+    if no_date:
+
+        date_req= modify_days(data['week_day'])
+        dates_req = array_days2(date_req)
+        for event in events:
+            if event[2] == None:
+                temp= modify_days(event[3])
+                dates = array_days2(temp)
+                for day_req in dates_req:
+                    for day in dates:
+                        if get_date_in_seconds(day) == get_date_in_seconds(day_req) and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time'])and event[4] == current_lab.id_lab:
+                            return jsonify({'message': 'There´s a event already in that date and time'}), 401
+            if event[3] == None:
+                for day_req in dates_req:
+                    if event[2] == get_date_in_seconds(day_req) and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time'])and event[4] == current_lab.id_lab:
+                        return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+#----------------------------------------------------------------------------------------------------------
     current_id_event = str(uuid.uuid4())
-
 
     current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
 
@@ -958,7 +1102,11 @@ def get_all_events(current_user):
             current_event.append(get_time_from_seconds(event[1]))
             current_event.append("")
 
-            for data in event[3:]:
+            key_days = modify_days(event[3])
+            days = array_days(key_days)
+            current_event.append(days)
+
+            for data in event[4:]:
                 current_event.append(data)
         else:
 

@@ -34,14 +34,6 @@
             show-expand
             class="elevation-1"
           >
-            <template v-slot:top>
-              <v-toolbar
-                color="primary"
-                flat
-              >
-                <v-spacer />
-              </v-toolbar>
-            </template>
             <template v-slot:expanded-item="{ headers, item }">
               <td :colspan="headers.length">
                 {{ item.description }}
