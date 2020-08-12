@@ -197,6 +197,25 @@ The request sends a confirmation message with the following format:
 {'message' : 'New user created!'}
 ```
 
+### GET INFORMATION OF A SPECIF USER 
+The route for this request is `/user`
+
+The request returns a JSONArray with all the current reservations in the database with the following format:
+```
+[
+  "Name",
+  "Last Name 1",
+  "Last Name 2",
+  "id_number as string",
+  "racso@email.com",
+  "phone as string",
+  "university_id as string"
+]
+```
+The order of the data in the array is:
+```
+    ['name', 'lastname1', 'lastname2', 'id_number', 'email', 'phone_number', 'university_id']
+```
 
 ## Reservation
 The route for this request is `/reservation`
