@@ -423,7 +423,7 @@ def get_all_worklog(current_user):
         for data in worklog[3:]:
             new_worklog.append(data)
 
-        result.append(new_worklog)
+        result.append(new_worklog)  
     
     return jsonify(result), 200
 

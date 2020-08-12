@@ -1,26 +1,6 @@
 <template>
   <v-row class="">
     <v-col>
-      <v-sheet height="64">
-        <v-toolbar
-          flat
-          color="white"
-        >
-          <v-spacer />
-          <v-spacer />
-          <v-btn
-            outlined
-            color="grey darken-2"
-            @click="faultReport = true"
-          >
-            Report Fault
-          </v-btn>
-          <v-menu
-            bottom
-            right
-          />
-        </v-toolbar>
-      </v-sheet>
       <!--------------PUT the log here------------------------------------------------------>
       <div id="app">
         <v-app id="inspire">
@@ -114,11 +94,6 @@
       textarea: '',
       faultReport: false,
     }),
-    watch: {
-      reports (nuevoValor, valorAnterior) {
-        console.log("Los reportes pasaron de '%s' a '%s'", valorAnterior, nuevoValor)
-      },
-    },
     mounted () {
       this.getFaultReports()
     },

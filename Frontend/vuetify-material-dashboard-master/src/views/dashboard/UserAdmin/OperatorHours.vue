@@ -12,6 +12,7 @@
           <template v-slot:item.actions="{ item }">
             <!-- v-if="item.delete === 1" -->
             <v-icon
+              v-if="item.state === 'pending'"
               small
               class="mr-2"
               @click="delet(item)"
@@ -20,6 +21,7 @@
             </v-icon>
             <!-- v-if="item.delete === 1" -->
             <v-icon
+              v-if="item.state === 'pending'"
               small
               class="mr-2"
               @click="aprove(item)"
@@ -188,19 +190,19 @@
       },
       async getHours () {
         try {
-          // getAllUserhours
           await this.$auth.getHours().then(
             response => {
               var res = response.data
               this.hours = []
               for (var i = 0; i < res.length; i++) {
+                console.log(res)
                 this.hours.push({
                   shiftDate: res[i][0].slice(0, 10),
                   shiftStart: res[i][1].slice(0, 5),
                   shiftEnd: res[i][2].slice(0, 5),
-                  // operator: res[i][5]
+                  operator: res[i][5],
                   workDescription: res[i][3],
-                  state: res[i][4] === 1 ? 'pending' : 'accepted',
+                  state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
                 })
               }
             })
@@ -210,6 +212,7 @@
       },
       delet (item) {
         this.curritem = item
+        this.delitem()
       },
       async delitem () {
         try {
@@ -223,7 +226,8 @@
         }
       },
       aprove (item) {
-        this.aproveitem = item
+        this.curritem = item
+        this.aproveitem()
       },
       async aproveitem () {
         try {

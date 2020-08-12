@@ -71,13 +71,6 @@
           class="elevation-1"
         >
           <template v-slot:item.actions="{ item }">
-            <v-btn
-              @click="deleteItem(item)"
-            >
-              del
-            </v-btn>
-          </template>
-          <template v-slot:item.actions="{ item }">
             <v-icon
               v-if="item.delete === 1"
               small
@@ -324,7 +317,7 @@
                   shiftStart: res[i][1].slice(0, 5),
                   shiftEnd: res[i][2].slice(0, 5),
                   workDescription: res[i][3],
-                  state: res[i][4] === 1 ? 'pending' : 'accepted',
+                  state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
                   delete: res[i][4],
                 })
               }

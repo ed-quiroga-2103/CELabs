@@ -122,11 +122,6 @@
       textarea: '',
       faultReport: false,
     }),
-    watch: {
-      reports (nuevoValor, valorAnterior) {
-        console.log("Los reportes pasaron de '%s' a '%s'", valorAnterior, nuevoValor)
-      },
-    },
     mounted () {
       this.getFaultReports()
     },

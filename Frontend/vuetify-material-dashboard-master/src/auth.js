@@ -361,17 +361,24 @@ export default {
       console.error(e.data.message)
   })
   },
-  aproveHourReport (itemId) {
+  aproveHourReport (date, inittime, fintime, newdescription, newstatus) {
     var data = JSON.stringify(
-      // {
-      //   date_time: date,
-      //   init_time: time,
-      //   final_time: time2,
-      //   description: description,
-      // },
+      {
+        old: {
+            date_time: date,
+            init_time: inittime,
+        },
+        new: {
+            date_time: date,
+            init_time: inittime,
+            final_time: fintime,
+            description: newdescription,
+            status: newstatus,
+        },
+      },
   )
   var config = {
-      method: 'post',
+      method: 'put',
       url: ENDPOINT_PATH + 'worklog',
       headers: {
       'x-access-token': this.getUserLogged(),
@@ -383,7 +390,6 @@ export default {
    axios(config)
       .then(response => {
       this.posts = response.data
-      // console.log(this.posts.message)
       },
       ).catch(e => {
       console.error(e.data.message)
