@@ -107,7 +107,7 @@
       <v-btn
         to="/"
         text
-        @click="this.$auth.deleteUserLogged"
+        @click="deleteUserLogged"
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
@@ -132,5 +132,11 @@
     data: () => ({
       expandOnHover: false,
     }),
+    methods: {
+      deleteUserLogged () {
+        this.$auth.deleteUserLogged()
+      },
+    },
+
   }
 </script>
