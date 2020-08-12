@@ -563,7 +563,7 @@ def create_inventory_report(current_user):
     for inventory in inventories:
         if inventory[0] == date and inventory[1] == data['lab']:
             return jsonify({'message':'Theres already an inventory report with that date'}), 401
-    
+
 
     current_id_report = str(uuid.uuid4())
 
@@ -585,7 +585,7 @@ def create_inventory_report(current_user):
 
     user_relation = User_InventoryReport(
         id_report = current_report.id_report,
-        id_user = current_user.id_user   
+        id_user = current_user.id_user
     )
 
     db.session.add(user_relation)
@@ -603,7 +603,7 @@ def create_inventory_report(current_user):
     db.session.commit()
 
     response = jsonify({'message' : 'New inventory report created!'})
-    
+
     return response
 
 
