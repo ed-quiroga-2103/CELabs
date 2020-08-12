@@ -214,52 +214,59 @@ def create_reservation(current_user):
         if reservation[0] == date and reservation[2] == data['lab'] and time_verification(get_time_from_seconds(reservation[1]),get_time_from_seconds(reservation[3]),data['init_time']):
             return jsonify({'message':'Theres already a reservation with that date and time'}), 401
 
-    current_id_reservation = str(uuid.uuid4())
+    teachers = User.query.with_entities(User.email,User.user_type).all()
 
-    operator = User.query.filter(User.email.like(data['operator'])).first()
+    for teacher in teachers:
+        if teacher[0] == data['requesting_user'] and teacher[1] == 3:
+        
+            current_id_reservation = str(uuid.uuid4())
 
-    new_reservation = Reservation(
-        public_id_reservation = current_id_reservation,
-        request_date = get_date_in_seconds(data['request_date']),
-        requested_date = get_date_in_seconds(data['requested_date']),
-        init_time = get_time_in_seconds(data['init_time']),
-        final_time = get_time_in_seconds(data['final_time']),
-        last_mod_id = current_user.public_id_user,
-        last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
-        subject = data['subject'],
-        description = data['description'],
-        operator = operator.id_user
-        )
+            operator = User.query.filter(User.email.like(data['operator'])).first()
 
-    db.session.add(new_reservation)
-    db.session.commit()
+            new_reservation = Reservation(
+                public_id_reservation = current_id_reservation,
+                request_date = get_date_in_seconds(data['request_date']),
+                requested_date = get_date_in_seconds(data['requested_date']),
+                init_time = get_time_in_seconds(data['init_time']),
+                final_time = get_time_in_seconds(data['final_time']),
+                last_mod_id = current_user.public_id_user,
+                last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
+                subject = data['subject'],
+                description = data['description'],
+                operator = operator.id_user
+                )
 
-    current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
-    #current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+            db.session.add(new_reservation)
+            db.session.commit()
 
-
-    user_relation = User_Reservation(
-        id_reservation = current_reservation.id_reservation,
-        id_user = current_user.id_user    
-    )
-
-    db.session.add(user_relation)
-    db.session.commit()
-
-    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
-
-    lab_relation = Reservation_Lab(
-        id_reservation = current_reservation.id_reservation,
-        id_lab = lab.id_lab
-    )
-
-    db.session.add(lab_relation)
-    db.session.commit()
+            current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
+            #current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
 
 
-    response = jsonify({'message' : 'New reservation created!'})
-    
-    return response, 200
+            user_relation = User_Reservation(
+                id_reservation = current_reservation.id_reservation,
+                id_user = current_user.id_user    
+            )
+
+            db.session.add(user_relation)
+            db.session.commit()
+
+            lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+            lab_relation = Reservation_Lab(
+                id_reservation = current_reservation.id_reservation,
+                id_lab = lab.id_lab
+            )
+
+            db.session.add(lab_relation)
+            db.session.commit()
+
+
+            response = jsonify({'message' : 'New reservation created!'})
+            
+            return response, 200
+      
+    return jsonify({'message':'The resquesting user is not a profesor account'}), 401
 
 
 @app.route('/reservation', methods=['GET'])
