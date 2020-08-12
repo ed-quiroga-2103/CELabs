@@ -30,6 +30,11 @@ export default new Router({
           name: 'faults',
           component: () => import('./views/dashboard/UserOperator/ReportFaultsOP.vue'),
         },
+        {
+          path: '/myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserOperator/MyAccountOP.vue'),
+        },
       ],
     },
     {

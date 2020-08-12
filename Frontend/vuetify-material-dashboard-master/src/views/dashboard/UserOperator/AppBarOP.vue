@@ -103,7 +103,7 @@
         {
           icon: 'My account',
           title: 'dashboard',
-          to: '/',
+          to: "/pages/user",
         },
         {
           title: 'My hours',

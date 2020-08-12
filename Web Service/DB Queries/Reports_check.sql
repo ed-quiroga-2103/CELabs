@@ -8,11 +8,11 @@
 
 ------------------------------- Worklog Check--------------------------
 
---SELECT * FROM Worklog;
+SELECT * FROM Worklog;
 
---SELECT * FROM User_Worklog;
+SELECT * FROM User_Worklog;
 
---SELECT * FROM WorklogStatus;
+SELECT * FROM WorklogStatus;
 
 ------------------------------Fault Report Check-----------------------
 
@@ -28,6 +28,13 @@
 
 -- DROP TABLE Event;
 
---SELECT *  FROM Event;
+ --SELECT *  FROM Event;
 
 
+-- SELECT * FROM Course;
+
+--SELECT * FROM Reservation;
+
+--SELECT * FROM Reservation_Lab;
+
+--SELECT * FROM User_Reservation;

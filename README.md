@@ -15,6 +15,7 @@ Proyecto del curso Especificación y Diseño de Software CE4101
   * [Worklog](#worklog)
   * [Fault Report](#fault_report)
   * [Inventory](#inventory)
+  * [Course](#course)
 
 # Node.js
 
@@ -211,7 +212,7 @@ The inputed JSON has the following format:
           "requesting_user": "requesting_user@email.com",
           "init_time": "HH:MM:SS",
           "final_time": "HH:MM:SS",
-          "subject": "University Subject",
+          "subject": "University Subject"(Curso),
           "description": "Description of the reservation",
           "lab": "Lab name (E.g. F2-09)",
           "operator": "operator@email.com"
@@ -349,14 +350,15 @@ The route for this request is `/event`
 
 The data that has to be sent has the following format:
 ```
-data: {
-          "description": "Description",
-          "init_time": "00:00:00",
-          "final_time": "01:00:00",
+data:   {
+          "description": "Taller de GIT",
+          "init_time": "01:00:00",
+          "final_time": "02:00:00",
           "week_day": "L,K,M,J,V,S,U",
-          "is_repeatable": 0,
-          "date":""
-          }
+          "is_repeatable": "1",
+          "date":"",
+          "lab":"F2-09"
+        }
 ```
 
 For events, repeatable events __must__ include week days, while non-repeatable events __must__ include a date.
@@ -373,9 +375,128 @@ The GET request needs the access token to be executed, therefore, it can be done
 The request returns a JSON Array with the following format:
 ```
 [
-  ["08:00:00","10:00:00","","L,K,M","Consejo de Area", true,"F2-09"],
-  ["12:12:12","13:00:00","12/12/2020","","Espe", false,"F2-09"],
-  ["12:12:12","13:00:00","","K,J","Espe", true,"F2-09"]
+  [
+    "01:00:00",
+    "02:00:00",
+    "",
+    [
+      "2020-08-12",
+      "2020-08-13",
+      "2020-08-14",
+      "2020-08-15",
+      "2020-08-17",
+      "2020-08-18",
+      "2020-08-19",
+      "2020-08-20",
+      "2020-08-21",
+      "2020-08-22",
+      "2020-08-24",
+      "2020-08-25",
+      "2020-08-26",
+      "2020-08-27",
+      "2020-08-28",
+      "2020-08-29",
+      "2020-08-31",
+      "2020-09-01",
+      "2020-09-02",
+      "2020-09-03",
+      "2020-09-04",
+      "2020-09-05",
+      "2020-09-07",
+      "2020-09-08",
+      "2020-09-09",
+      "2020-09-10",
+      "2020-09-11",
+      "2020-09-12",
+      "2020-09-14",
+      "2020-09-15",
+      "2020-09-16",
+      "2020-09-17",
+      "2020-09-18",
+      "2020-09-19",
+      "2020-09-21",
+      "2020-09-22",
+      "2020-09-23",
+      "2020-09-24",
+      "2020-09-25",
+      "2020-09-26",
+      "2020-09-28",
+      "2020-09-29",
+      "2020-09-30",
+      "2020-10-01",
+      "2020-10-02",
+      "2020-10-03",
+      "2020-10-05",
+      "2020-10-06",
+      "2020-10-07",
+      "2020-10-08",
+      "2020-10-09",
+      "2020-10-10",
+      "2020-10-12",
+      "2020-10-13",
+      "2020-10-14",
+      "2020-10-15",
+      "2020-10-16",
+      "2020-10-17",
+      "2020-10-19",
+      "2020-10-20",
+      "2020-10-21",
+      "2020-10-22",
+      "2020-10-23",
+      "2020-10-24",
+      "2020-10-26",
+      "2020-10-27",
+      "2020-10-28",
+      "2020-10-29",
+      "2020-10-30",
+      "2020-10-31",
+      "2020-11-02",
+      "2020-11-03",
+      "2020-11-04",
+      "2020-11-05",
+      "2020-11-06",
+      "2020-11-07",
+      "2020-11-09",
+      "2020-11-10",
+      "2020-11-11",
+      "2020-11-12",
+      "2020-11-13",
+      "2020-11-14",
+      "2020-11-16",
+      "2020-11-17",
+      "2020-11-18",
+      "2020-11-19",
+      "2020-11-20",
+      "2020-11-21",
+      "2020-11-23",
+      "2020-11-24",
+      "2020-11-25",
+      "2020-11-26",
+      "2020-11-27",
+      "2020-11-28",
+      "2020-11-30",
+      "2020-12-01",
+      "2020-12-02",
+      "2020-12-03",
+      "2020-12-04",
+      "2020-12-05",
+      "2020-12-07",
+      "2020-12-08",
+      "2020-12-09",
+      "2020-12-10",
+      "2020-12-11",
+      "2020-12-12",
+      "2020-12-14",
+      "2020-12-15",
+      "2020-12-16",
+      "2020-12-17",
+      "2020-12-18"
+    ],
+    "Taller de GIT",
+    true,
+    "F2-09"
+  ],
+  ["12:12:12","13:00:00","12/12/2020","","Espe", false,"F2-09"]
 ]
 ```
 The order of the data in the array is:
@@ -404,6 +525,50 @@ The request sends a confirmation message with the following format:
 {'message' : 'New worklog created!'}
 ```
 
+## GET
+The GET request needs the access token to be executed, therefore, it can be done in the same way that all the other GET requests are done.
+
+The request returns a JSON Array with the following format:
+
+[
+  [
+    "23/08/2020 00:00:00",
+    "08:23:23",
+    "09:23:23",
+    "No hice nada",
+    1,
+    "Op",
+    "Op",
+    "Op",
+    "Op",
+    20,
+    50
+  ],
+  [
+    "31/08/2020 00:00:00",
+    "08:23:23",
+    "09:23:23",
+    "Conte un chiste",
+    1,
+    "Oscar",
+    "Gonzalez",
+    "Alfaro",
+    "2017xxxxxx",
+    0,
+    0
+  ]
+]
+The order of the data in the array is:
+```
+    ['date_time', 'init_time', 'final_time','description', 'id_status','name','lastname1','lastname2','university_id','pending_hours',
+    'approved_hours']
+```
+
+### GET FROM A SPECIFIC USER (WITH TOOKEN)
+The route for this request is `/worklog/user`
+
+same as above
+
 ## Fault Report
 The route for this request is `/fault`
 
@@ -425,6 +590,26 @@ The request sends a confirmation message with the following format:
 {'message' : 'New fault report created!'}
 ```
 
+### GET
+The GET request needs the access token to be executed, therefore, it can be done in the same way that all the other GET requests are done.
+
+The request returns a JSON Array with the following format:
+
+[
+  [
+    "12/08/2020 04:58:40",
+    "Maquina No. 5",
+    "No enciende",
+    1,
+    1,
+    1
+  ]
+]
+The order of the data in the array is:
+```
+    ['date_time', 'id_fault_part', 'description','id_status', 'id_lab','id_report']
+```
+
 ## Inventory Report
 The route for this request is `/inventory`
 
@@ -434,13 +619,13 @@ The data that has to be sent has the following format:
 
 ``` 
     data:   {
-            "date": "23/08/2020",
             "complete_computers": "5",
             "incomplete_computers": "4",
             "number_projectors": "3",
             "number_chairs": "2",
             "number_fire_extinguishers": "1",
-            "lab":"F2-09" 
+            "lab":"F2-09",
+            "description":"Me encontre un paragüas"
             }
 ```  
 
@@ -448,4 +633,90 @@ The request sends a confirmation message with the following format:
 
 ```
 {'message' : 'New inventory report created!'}
+```
+
+### GET OF ALL
+
+The GET request needs the access token to be executed, therefore, it can be done in the same way that all the other GET requests are done.
+
+The request returns a JSON Array with the following format:
+```
+[
+  [
+    "12/08/2020 04:32:04",
+    5,
+    4,
+    3,
+    2,
+    1,
+    "Me encontre un paragüas",
+    1,
+    3,
+    1
+  ],
+  [
+    "12/08/2020 04:32:33",
+    5,
+    4,
+    3,
+    2,
+    1,
+    "Me encontre un celular",
+    1,
+    1,
+    2
+  ]
+]
+```
+The order of the data in the array is:
+```
+    ['date', 'complete_computers', 'incomplete_computers','number_projectors',
+    'number_chairs','number_fire_extinguishers',
+    'description','id_lab','id_user',id_report]
+```
+
+### GET FROM A SPECIFIC USER (WITH TOOKEN)
+The route for this request is `/inventory/user`
+
+same as above
+
+## Course
+The route for this request is `/course`
+
+### POST
+
+The data that has to be sent has the following format:
+
+``` 
+    data:   {
+                "code": "CE-4401",
+                "name": "Especificacion y  Diseño de Software",
+                "group": "1"
+            }
+
+```  
+
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'The course has been added to the course list!'}
+```
+
+## GET
+
+The GET request needs the access token to be executed, therefore, it can be done in the same way that all the other GET requests are done.
+
+The request returns a JSON Array with the following format:
+```
+[
+  [
+    "CE-4401",
+    "1",
+    "Especificacion y  Diseño de Software"
+  ]
+]
+```
+The order of the data in the array is:
+```
+    ['code', 'group', 'name']
 ```

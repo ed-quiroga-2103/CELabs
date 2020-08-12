@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(KIMBERLY_BD, 'w+')
+file = open(RACSO_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + KIMBERLY_BD)
+engine = create_engine('sqlite:///' + RACSO_DB)
 meta = MetaData()
 
 
@@ -146,8 +146,7 @@ Course = Table(
     Column('id_course', Integer, primary_key = True),
     Column('code', String(50), nullable = False),
     Column('name', String(50), nullable = False),
-    Column('group', String(50), nullable = False),
-    Column('lab', Integer, ForeignKey('Lab.id_lab'), nullable = False)
+    Column('group', String(50), nullable = False)
 )
 
 User_Reservation = Table(
@@ -228,10 +227,9 @@ conn = engine.connect()
 conn.execute(User_Type.insert(),
     [
         {'id_user_type':'1','user_type':'Administrator'},
-        {'id_user_type':'2','user_type':'Admin. Assistant'},
-        {'id_user_type':'3','user_type':'Operator'},
-        {'id_user_type':'4','user_type':'Professor'},
-        {'id_user_type':'5','user_type':'Administrative'}
+        {'id_user_type':'2','user_type':'Operator'},
+        {'id_user_type':'3','user_type':'Professor'},
+        {'id_user_type':'4','user_type':'Administrative'}
     ]
 )
 

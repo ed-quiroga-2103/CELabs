@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_BD
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -106,7 +106,6 @@ def create_user():
         user_type = int(data["user_type"])
     ) 
 
-
     db.session.add(new_user)
     db.session.commit()
 
@@ -122,8 +121,6 @@ def create_user():
 
         db.session.add(new_operator)
         db.session.commit()
-        
-    print()
 
     response = jsonify({'message' : 'New user created!'})
 
@@ -190,13 +187,31 @@ def create_reservation(current_user):
     
     data = request.get_json()
     date = get_date_in_seconds(data['requested_date'])
-    time = get_time_in_seconds(data['init_time'])
+    #time = get_time_in_seconds(data['init_time'])
     
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
-    Reservation.init_time, Lab.name).all()
+    Reservation.init_time, Lab.name, Reservation.final_time).all()
+
+#------------------------------Verficacion para evitar que choque con un evento------------------------------------
+    events = Event.query.with_entities(Event.init_time, Event.final_time, Event.date,Event.week_day,Event.id_lab).all()
+
+    current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+    for event in events:
+        if event[2] == None:
+            temp= modify_days(event[3])
+            dates = array_days2(temp)
+            for day in dates:
+                if get_date_in_seconds(day) == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                    return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+        if event[3] == None:
+            if event[2] == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                return jsonify({'message': 'There´s a event already in that date and time'}), 401
+#-------------------------------------------------------------------------------------------------------------
 
     for reservation in reservations:
-        if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
+        if reservation[0] == date and reservation[2] == data['lab'] and time_verification(get_time_from_seconds(reservation[1]),get_time_from_seconds(reservation[3]),data['init_time']):
             return jsonify({'message':'Theres already a reservation with that date and time'}), 401
 
     current_id_reservation = str(uuid.uuid4())
@@ -220,7 +235,7 @@ def create_reservation(current_user):
     db.session.commit()
 
     current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
-    current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+    #current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
 
 
     user_relation = User_Reservation(
@@ -259,6 +274,9 @@ def get_all_reservations(current_user):
         Reservation.subject,
         Reservation.description,
         User.email,
+        User.name,
+        User.lastname1,
+        User.lastname2,
         Lab.name
         )
 
@@ -290,8 +308,6 @@ def delete_this_reservation(current_user):
 
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
     Reservation.init_time, Lab.name, Reservation.id_reservation).all()
-
-
 
     for reservation in reservations:
         if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
@@ -424,7 +440,44 @@ def get_all_worklog(current_user):
             new_worklog.append(data)
 
         result.append(new_worklog)
+    print(result)
+    return jsonify(result), 200
 
+
+@app.route('/worklog/user', methods=['GET'])
+@token_required
+def get_its_worklog(current_user):
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).join(User_Operator).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.final_time,
+        Worklog.description,
+        Worklog.id_status,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        User.university_id,
+        User_Operator.pending_hours,
+        User_Operator.approved_hours,
+        User.email
+    )
+
+    result = []
+
+    for worklog in worklogs:
+        new_worklog = []
+        if worklog[11] == current_user.email:
+            new_worklog = []
+            new_worklog.append(get_datetime_from_seconds(worklog[0]))
+            new_worklog.append(get_time_from_seconds(worklog[1]))
+            new_worklog.append(get_time_from_seconds(worklog[2]))
+
+            for data in worklog[3:]:
+                new_worklog.append(data)
+        if new_worklog != []:
+            result.append(new_worklog)
+    
     return jsonify(result), 200
 
 
@@ -581,6 +634,40 @@ def get_all_inventory(current_user):
             new_inventory.append(data)
 
         result.append(new_inventory)
+
+    return jsonify(result), 200
+
+
+@app.route('/inventory/user', methods=['GET'])
+@token_required
+def get_its_inventory(current_user):
+
+    inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
+        InventoryReport.date,
+        InventoryReport.complete_computers,
+        InventoryReport.incomplete_computers,
+        InventoryReport.number_projectors,
+        InventoryReport.number_chairs,
+        InventoryReport.number_fire_extinguishers,
+        InventoryReport.description,
+        Lab.id_lab,
+        User.id_user,
+        InventoryReport.id_report,
+        User.email
+    )
+
+    result = []
+
+    for inventory in inventories:
+        new_inventory = []
+        if inventory[10] == current_user.email:
+            new_inventory.append(get_datetime_from_seconds(inventory[0]))
+
+            for data in inventory[1:]:
+                new_inventory.append(data)
+
+        if new_inventory != []:
+            result.append(new_inventory)
 
     return jsonify(result), 200
 
@@ -1155,8 +1242,6 @@ def delete_this_event(current_user):
 def create_course(current_user):
     data = request.get_json()
 
-
-
     course = Course(
         code = data['code'],
         name = data['name'],
@@ -1167,7 +1252,7 @@ def create_course(current_user):
     db.session.commit()
 
 
-    response = jsonify({'message' : 'New course created!'})
+    response = jsonify({'message' : 'The course has been added to the course list!'})
 
     return response, 200
 
