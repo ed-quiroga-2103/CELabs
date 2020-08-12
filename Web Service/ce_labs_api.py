@@ -431,7 +431,8 @@ def get_all_worklog(current_user):
         User.lastname2,
         User.university_id,
         User_Operator.pending_hours,
-        User_Operator.approved_hours
+        User_Operator.approved_hours,
+        Worklog.id_worklog
     )
 
     result = []
@@ -448,7 +449,7 @@ def get_all_worklog(current_user):
             new_worklog.append(data)
 
         result.append(new_worklog)
-    print(result)
+
     return jsonify(result), 200
 
 
@@ -468,7 +469,8 @@ def get_its_worklog(current_user):
         User.university_id,
         User_Operator.pending_hours,
         User_Operator.approved_hours,
-        User.email
+        User.email,
+        Worklog.id_worklog
     )
 
     result = []
@@ -505,7 +507,8 @@ def get_pending_worklog(current_user):
         User.university_id,
         User_Operator.pending_hours,
         User_Operator.approved_hours,
-        User.email
+        User.email,
+        Worklog.id_worklog
     )
 
     result = []
