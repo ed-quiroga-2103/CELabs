@@ -61,6 +61,21 @@ export default new Router({
           name: 'availability2',
           component: () => import('./views/dashboard/UserAdmin/AvailabilityAD.vue'),
         },
+        {
+          path: 'OPHours',
+          name: 'OPHours',
+          component: () => import('./views/dashboard/UserAdmin/OperatorHours.vue'),
+        },
+        {
+          path: 'Inventory',
+          name: 'Inventory',
+          component: () => import('./views/dashboard/UserAdmin/InventoryReportAD.vue'),
+        },
+        {
+          path: 'Faults',
+          name: 'Faults',
+          component: () => import('./views/dashboard/UserAdmin/FaultsAD.vue'),
+        },
       ],
     },
     {

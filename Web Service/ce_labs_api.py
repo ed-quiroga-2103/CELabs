@@ -121,6 +121,7 @@ def create_user():
 
         db.session.add(new_operator)
         db.session.commit()
+        
 
     response = jsonify({'message' : 'New user created!'})
 
@@ -364,7 +365,6 @@ def edit_this_reservation(current_user):
     return jsonify({'message':'No Reservation'}), 401
 
 
-
 # ------------------------- Worklog -------------------------
 
 @app.route('/worklog', methods=['POST'])
@@ -439,6 +439,7 @@ def get_all_worklog(current_user):
     for worklog in worklogs:
         new_worklog = []
 
+        
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
@@ -486,6 +487,44 @@ def get_its_worklog(current_user):
             result.append(new_worklog)
     
     return jsonify(result), 200
+
+
+@app.route('/worklog/pending', methods=['GET'])
+@token_required
+def get_pending_worklog(current_user):
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).join(User_Operator).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.final_time,
+        Worklog.description,
+        Worklog.id_status,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        User.university_id,
+        User_Operator.pending_hours,
+        User_Operator.approved_hours,
+        User.email
+    )
+
+    result = []
+
+    for worklog in worklogs:
+        if worklog[4] == 1:
+            new_worklog = []
+
+            
+            new_worklog.append(get_datetime_from_seconds(worklog[0]))
+            new_worklog.append(get_time_from_seconds(worklog[1]))
+            new_worklog.append(get_time_from_seconds(worklog[2]))
+
+            for data in worklog[3:]:
+                new_worklog.append(data)
+            result.append(new_worklog)
+    
+    return jsonify(result), 200
+
 
 
 @app.route('/worklog', methods= ['DELETE'])

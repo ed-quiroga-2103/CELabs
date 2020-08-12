@@ -109,7 +109,7 @@
           title: 'My hours',
           icon: 'mdi-map-marker',
           to: '/maps/google-maps',
-        }
+        },
       ],
       notifications: [
         'Mike John Responded to your email',

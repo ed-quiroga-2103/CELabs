@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 <template>
   <v-row class="">
     <v-col>
@@ -53,11 +54,20 @@
           <v-spacer />
           <v-spacer />
           <v-btn
+            class="mr-4"
             outlined
             color="grey darken-2"
             @click="dialogo = true"
           >
             Reservation
+          </v-btn>
+          <v-btn
+            class="mr-4"
+            outlined
+            color="grey darken-2"
+            @click="dialogo2 = true"
+          >
+            Course
           </v-btn>
           <v-btn
             outlined
@@ -161,26 +171,18 @@
           @click:more="viewDay"
           @click:date="viewDay"
         />
-
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="dialogo">
           <v-card>
             <v-container>
               <v-form @submit.prevent="addEvent">
-                <v-text-field
-                  v-model="description"
-                  type="text"
-                  label="Description"
-                >
-                  >
-                </v-text-field>
                 <template>
                   <v-row align="center">
                     <v-col cols="12">
                       <v-select
                         v-model="lab"
                         :items="items"
-                        :menu-props="{ top: true, offsetY: true }"
+                        :menu-props="{ top: true, offsetY: true}"
                         label="Laboratory"
                       />
                     </v-col>
@@ -276,6 +278,11 @@
                     </v-btn>
                   </v-time-picker>
                 </v-dialog>
+                <v-textarea
+                  v-model="description"
+                  counter
+                  label="Description"
+                />
                 <v-btn
                   type="submit"
                   color="primary"
@@ -288,6 +295,134 @@
             </v-container>
           </v-card>
         </v-dialog>
+
+        <!------------------------------AÑADIR CURSO------------------------------------>
+        <v-dialog v-model="dialogo2">
+          <v-card>
+            <v-container>
+              <v-form @submit.prevent="addCourse">
+                <v-combobox
+                  v-model="form.name2"
+                  multiple
+                  :items="items4"
+                  label="Item Name"
+                  placeholder="Choose the days"
+                  item-text="name"
+                  item-value="id"
+                  :return-object="false"
+                />
+                <template>
+                  <v-row align="center">
+                    <v-col cols="12">
+                      <v-select
+                        v-model="lab2"
+                        :items="items"
+                        :menu-props="{ top: true, offsetY: true }"
+                        label="Laboratory"
+                      />
+                    </v-col>
+                  </v-row>
+                </template>
+                <!-----------------------START---------------------------------------------->
+                <v-dialog
+                  ref="dialog"
+                  v-model="modal"
+                  :return-value.sync="time3"
+                  persistent
+                  width="290px"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="time3"
+                      label="Start"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="modal"
+                    v-model="time3"
+                    min="7:30"
+                    max="21:59"
+                    full-width
+                  >
+                    <v-spacer />
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="modal = false"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.dialog.save(time3)"
+                    >
+                      OK
+                    </v-btn>
+                  </v-time-picker>
+                </v-dialog>
+                <!----------------------END------------------------------------------------->
+                <v-dialog
+                  ref="dialog2"
+                  v-model="modal2"
+                  :return-value.sync="time4"
+                  persistent
+                  width="290px"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="time4"
+                      label="End"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="modal2"
+                    v-model="time4"
+                    full-width
+                    min="7:30"
+                    max="21:59"
+                  >
+                    <v-spacer />
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="modal2 = false"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.dialog2.save(time4)"
+                    >
+                      OK
+                    </v-btn>
+                  </v-time-picker>
+                </v-dialog>
+                <v-textarea
+                  v-model="description2"
+                  counter
+                  label="Description"
+                />
+                <v-btn
+                  type="submit"
+                  color="primary"
+                  class="mr-4"
+                  @click.stop="dialogo2 = false"
+                >
+                  Add
+                </v-btn>
+              </v-form>
+            </v-container>
+          </v-card>
+        </v-dialog>
+        <!------------------------------------------------------------------------------------->
         <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
@@ -313,13 +448,13 @@
               >
                 <v-list-item>
                   <v-list-item-content>
-                    <v-list-item-title>Inicio: </v-list-item-title>
+                    <v-list-item-title>Start: </v-list-item-title>
                     <v-list-item-subtitle v-html="selectedEvent.start" />
                   </v-list-item-content>
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content>
-                    <v-list-item-title>Finalización: </v-list-item-title>
+                    <v-list-item-title>End: </v-list-item-title>
                     <v-list-item-subtitle v-html="selectedEvent.end" />
                   </v-list-item-content>
                 </v-list-item>
@@ -345,6 +480,7 @@
 <script>
   import { mdiCalendarMonth } from '@mdi/js'
   const weekdaysDefault = [1, 2, 3, 4, 5, 6]
+
   export default {
     data: () => ({
       item: 1,
@@ -353,6 +489,20 @@
         { text: 'Audience', icon: 'mdi-account' },
         { text: 'Conversions', icon: 'mdi-flag' },
       ],
+      d_weeks: '',
+      items4: [
+        { id: 'L', name: 'Monday' },
+        { id: 'K', name: 'Tuesday' },
+        { id: 'M', name: 'Wednesday' },
+        { id: 'J', name: 'Thursday' },
+        { id: 'V', name: 'Friday' },
+        { id: 'S', name: 'Saturday' },
+      ],
+      form: {
+        id: null,
+        name: '',
+        name2: '',
+      },
       l1: false,
       calendarmonth: mdiCalendarMonth,
       intervals: {
@@ -365,13 +515,19 @@
       startMenu: false,
       items: ['F2-09', 'F2-10'],
       description: '',
+      description2: '',
       lab: '',
+      lab2: '',
       week_day: ' ',
       is_repeatable: 0,
       date: '',
+      date2: '',
+      date1: '',
       shortWeekdays: false,
       time2: null,
       time: null,
+      time3: null,
+      time4: null,
       modal: false,
       modal2: false,
       start: new Date().toISOString().substr(0, 10),
@@ -381,6 +537,7 @@
       details: null,
       color: '#197602',
       dialogo: false,
+      dialogo2: false,
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
@@ -388,6 +545,11 @@
       events: [],
       events2: [],
     }),
+    watch: {
+      events (nuevoValor, valorAnterior) {
+        console.log("Los eventos pasaron de '%s' a '%s'", valorAnterior, nuevoValor)
+      },
+    },
     mounted () {
       this.getEvents()
       this.$refs.calendar.checkChange()
@@ -447,8 +609,6 @@
         return date
       },
       addEvent () {
-        console.log(this.lab)
-        console.log(this.description)
         try {
           if (this.description && this.time && this.time2 && this.lab) {
             const date2 = this.ChangeDate(this.date)
@@ -456,11 +616,29 @@
                            this.time + ':00',
                            this.time2 + ':00',
                            '',
-                           '0',
+                           0,
                            this.lab,
                            date2)
-            this.getEvents()
-            this.$refs.calendar.checkChange()
+          } else {
+            alert('Complete all the fields')
+          }
+        } catch (error) {
+
+        }
+      },
+      addCourse () {
+        try {
+          if (this.description2 && this.time3 && this.time4 && this.lab2 && this.form.name2) {
+            for (var i = 1; i < this.form.name2.length; i++) {
+              this.form.name2[0] += ',' + this.form.name2[i]
+            }
+            this.postEvent(this.description2,
+                           this.time3 + ':00',
+                           this.time4 + ':00',
+                           this.form.name2[0],
+                           1,
+                           this.lab2,
+                           '')
           } else {
             alert('Complete all the fields')
           }
@@ -469,6 +647,7 @@
         }
       },
       async getEvents () {
+        this.events = []
         try {
           await this.$auth.getEvents().then(
             response => {
@@ -480,44 +659,82 @@
       },
       async postEvent (description, start, end, day, repeatable, lab, date) {
         try {
+          for (var i = 0; i < this.events.length; i++) {
+            if (this.events[i].start === this.start) {
+
+            }
+          }
           await this.$auth.postEvent(description, start, end, day, repeatable, lab, date)
+          setTimeout(() => { this.getEvents() }, 1000)
         } catch (error) {
           this.error = true
           alert('Error sending events')
         }
       },
       sortEvents (temp) {
-        console.log(this.events)
         this.events = []
         for (var i = 0; i < temp.length; i++) {
-          var dt = temp[i][2].slice(6, 10) + '-' + temp[i][2].slice(3, 5) + '-' + temp[i][2].slice(0, 2)
-          console.log(temp[i][6])
-          // eslint-disable-next-line eqeqeq
-          if (temp[i][6] == 'F2-09') {
-            this.events.push({
-              name: temp[i][4],
-              start: dt + ' ' + temp[i][0].slice(0, 5),
-              end: dt + ' ' + temp[i][1].slice(0, 5),
-              week_day: temp[i][3],
-              is_repeatable: temp[i][5],
-              lab: temp[i][6],
-              date: dt,
-            })
+          if (temp[i][5] === false) {
+            var dt = temp[i][2].slice(6, 10) + '-' + temp[i][2].slice(3, 5) + '-' + temp[i][2].slice(0, 2)
+            // eslint-disable-next-line eqeqeq
+            if (temp[i][6] == 'F2-09') {
+              this.events.push({
+                name: 'Reservado',
+                description: temp[i][4],
+                start: dt + ' ' + temp[i][0].slice(0, 5),
+                end: dt + ' ' + temp[i][1].slice(0, 5),
+                week_day: temp[i][3],
+                is_repeatable: temp[i][5],
+                lab: temp[i][6],
+                date: dt,
+              })
+            } else {
+              this.events2.push({
+                name: 'Reservado',
+                description: temp[i][4],
+                start: dt + ' ' + temp[i][0].slice(0, 5),
+                end: dt + ' ' + temp[i][1].slice(0, 5),
+                week_day: temp[i][3],
+                is_repeatable: temp[i][5],
+                lab: temp[i][6],
+                date: dt,
+              })
+            }
           } else {
-            this.events2.push({
-              name: temp[i][4],
-              start: dt + ' ' + temp[i][0].slice(0, 5),
-              end: dt + ' ' + temp[i][1].slice(0, 5),
-              week_day: temp[i][3],
-              is_repeatable: temp[i][5],
-              lab: temp[i][6],
-              date: dt,
-            })
+            // eslint-disable-next-line eqeqeq
+            if (temp[i][6] == 'F2-09') {
+              for (var j = 0; j < temp[i][3].length; j++) {
+                this.events.push({
+                  name: 'Curso',
+                  description: temp[i][4],
+                  start: temp[i][3][j] + ' ' + temp[i][0].slice(0, 5),
+                  end: temp[i][3][j] + ' ' + temp[i][1].slice(0, 5),
+                  week_day: temp[i][3],
+                  is_repeatable: temp[i][5],
+                  lab: temp[i][6],
+                  date: temp[i][3][j],
+                })
+              }
+            } else {
+              for (var k = 0; k < temp[i][3].length; k++) {
+                this.events2.push({
+                  name: 'Curso',
+                  description: temp[i][4],
+                  start: temp[i][3][k] + ' ' + temp[i][0].slice(0, 5),
+                  end: temp[i][3][k] + ' ' + temp[i][1].slice(0, 5),
+                  week_day: temp[i][3],
+                  is_repeatable: temp[i][5],
+                  lab: temp[i][6],
+                  date: temp[i][3][k],
+                })
+              }
+            }
           }
         }
-        console.log(this.events)
       },
+
     },
+
   }
 </script>
 <style scoped>
