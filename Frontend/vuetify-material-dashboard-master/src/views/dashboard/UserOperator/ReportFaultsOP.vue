@@ -106,6 +106,11 @@
     data: () => ({
       expanded: [],
       headers: [
+        {
+          text: 'Report Number',
+          align: 'start',
+          value: 'reportNo',
+        },
         { text: 'Report Date', value: 'reportD' },
         { text: 'Report Time', value: 'reportT' },
         { text: 'Laboratory Number', value: 'labNo' },

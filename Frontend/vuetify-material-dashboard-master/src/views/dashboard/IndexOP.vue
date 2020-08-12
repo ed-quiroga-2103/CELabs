@@ -76,7 +76,6 @@
           >
             <span class="mr-1">My hours</span>
           </v-btn>
-
           <v-btn
             class="ml-1"
             min-width="0"

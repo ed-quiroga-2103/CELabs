@@ -93,7 +93,6 @@ export default new Router({
           name: 'availability4',
           component: () => import('./views/dashboard/UserAdministrative/AvailabilityA.vue'),
         },
-
       ],
     },
     {
