@@ -123,7 +123,6 @@ def create_user():
         db.session.add(new_operator)
         db.session.commit()
         
-    print()
 
     response = jsonify({'message' : 'New user created!'})
 
@@ -415,6 +414,7 @@ def get_all_worklog(current_user):
     for worklog in worklogs:
         new_worklog = []
 
+        
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
@@ -423,7 +423,7 @@ def get_all_worklog(current_user):
             new_worklog.append(data)
 
         result.append(new_worklog)
-
+    
     return jsonify(result), 200
 
 
