@@ -37,7 +37,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/availability"
+            to="/op/availability"
           >
             <span class="mr-1">Availability</span>
           </v-btn>
@@ -46,7 +46,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
+            to="/op/allnighter"
           >
             <span class="mr-1">All-Nighters</span>
           </v-btn>
@@ -55,7 +55,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/faults"
+            to="/op/faults"
           >
             <span class="mr-1">Report faults</span>
           </v-btn>
@@ -64,15 +64,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
-          >
-            <span class="mr-1">Dashboard</span>
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="/pages/user"
+            to="/op/inventory"
           >
             <span class="mr-1">Inventory Report</span>
           </v-btn>
@@ -80,9 +72,17 @@
             class="ml-1"
             min-width="0"
             text
-            to="/myhours"
+            to="/op/myhours"
           >
             <span class="mr-1">My hours</span>
+          </v-btn>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="/op/myaccount"
+          >
+            <span class="mr-1">My account</span>
           </v-btn>
         </v-row>
       </div>

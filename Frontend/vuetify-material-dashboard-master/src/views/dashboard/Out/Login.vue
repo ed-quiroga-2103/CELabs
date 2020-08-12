@@ -94,8 +94,14 @@
             response => {
               console.log(response.data.user_type)
               // eslint-disable-next-line eqeqeq
-              if (response.data.user_type == '3') {
-                this.$router.push('/start')
+              if (response.data.user_type === 2) {
+                this.$router.push('/op')
+              } else if (response.data.user_type.String === 1) {
+                this.$router.push('/adm')
+              } else if (response.data.user_type === 3) {
+                this.$router.push('/prof')
+              } else if (response.data.user_type === 4) {
+                this.$router.push('/pa')
               }
             })
         } catch (error) {

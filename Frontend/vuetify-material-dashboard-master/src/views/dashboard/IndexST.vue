@@ -73,6 +73,14 @@
           text
           to="/pages/user"
         >
+        <span class="mr-1">My account</span>
+        </v-btn>
+        <v-btn
+          class="ml-1"
+          min-width="0"
+          text
+          to="/"
+        >
           <span class="mr-1">Inventory Report</span>
         </v-btn>
         <v-btn

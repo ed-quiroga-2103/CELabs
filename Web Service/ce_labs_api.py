@@ -14,9 +14,8 @@ from repetable import *
 
 app = Flask(__name__)
 cors = CORS(app)
-
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + QUIROGA_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_BD
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -510,7 +509,7 @@ def create_inventory_report(current_user):
     for inventory in inventories:
         if inventory[0] == date and inventory[1] == data['lab']:
             return jsonify({'message':'Theres already an inventory report with that date'}), 401
-    
+
 
     current_id_report = str(uuid.uuid4())
 
@@ -532,7 +531,7 @@ def create_inventory_report(current_user):
 
     user_relation = User_InventoryReport(
         id_report = current_report.id_report,
-        id_user = current_user.id_user   
+        id_user = current_user.id_user
     )
 
     db.session.add(user_relation)
@@ -550,7 +549,7 @@ def create_inventory_report(current_user):
     db.session.commit()
 
     response = jsonify({'message' : 'New inventory report created!'})
-    
+
     return response
 
 
@@ -987,7 +986,6 @@ def create_event(current_user):
 
     data = request.get_json()
 
-
     no_date = data['date'] is None or data['date'] == ""
     no_days = data['week_day'] is None or data['week_day'] == ""
 
@@ -999,10 +997,48 @@ def create_event(current_user):
     if no_days and is_repeatable == '1':
         return jsonify({'message': 'Repeatable events must include a week days!'}), 401
     
+#-------------------------------VERiFICATION DATES--------------------------------------------
+    
+    events = Event.query.with_entities(Event.init_time, Event.final_time, Event.date,Event.week_day,Event.id_lab).all()
 
+    current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
 
+    if no_days:
+    
+        date = get_date_in_seconds(data['date'])
+
+        for event in events:
+            if event[2] == None:
+                temp= modify_days(event[3])
+                dates = array_days2(temp)
+
+                for day in dates:
+                    if get_date_in_seconds(day) == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                        return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+            if event[3] == None:
+                if event[2] == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                    return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+    if no_date:
+
+        date_req= modify_days(data['week_day'])
+        dates_req = array_days2(date_req)
+        for event in events:
+            if event[2] == None:
+                temp= modify_days(event[3])
+                dates = array_days2(temp)
+                for day_req in dates_req:
+                    for day in dates:
+                        if get_date_in_seconds(day) == get_date_in_seconds(day_req) and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time'])and event[4] == current_lab.id_lab:
+                            return jsonify({'message': 'There´s a event already in that date and time'}), 401
+            if event[3] == None:
+                for day_req in dates_req:
+                    if event[2] == get_date_in_seconds(day_req) and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time'])and event[4] == current_lab.id_lab:
+                        return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+#----------------------------------------------------------------------------------------------------------
     current_id_event = str(uuid.uuid4())
-
 
     current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
 

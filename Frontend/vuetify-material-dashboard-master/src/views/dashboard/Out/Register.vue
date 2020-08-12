@@ -89,7 +89,7 @@
                     type="select"
                     name="user_type"
                     label="User type"
-                    :options="{1: 'Administrator', 2: 'Operator', 3: 'Professor', 4: 'Administrative'}"
+                    :options="{3: 'Professor', 4: 'Administrative'}"
                   />
                   <v-spacer />
                   <FormulateInput
@@ -147,8 +147,18 @@
         delete this.formValues.password1
         console.log(this.formValues)
         try {
-          await this.$auth.register(this.formValues)
-          this.$router.push('/start')
+          await this.$auth.register(this.formValues).then(
+            response => {
+              if (response.data.user_type === 2) {
+                this.$router.push('/op')
+              } else if (response.data.user_type.String === 1) {
+                this.$router.push('/adm')
+              } else if (response.data.user_type === 3) {
+                this.$router.push('/prof')
+              } else if (response.data.user_type === 4) {
+                this.$router.push('/pa')
+              }
+            })
         } catch (error) {
           alert('Already exists an account associated with the email')
         }
