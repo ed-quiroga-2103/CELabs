@@ -22,7 +22,6 @@
         </v-toolbar>
       </v-sheet>
       <!--------------PUT the log here------------------------------------------------------>
-
       <div id="app">
         <v-app id="inspire">
           <v-data-table
