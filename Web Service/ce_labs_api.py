@@ -978,6 +978,38 @@ def edit_this_faultreport(current_user):
 
     return jsonify({'message':'No Fault Report'}), 401
 
+
+@app.route('/fault/state', methods= ['PUT'])
+@token_required
+def edit_state_faultreport(current_user):
+    
+    raw_data = request.get_json()
+
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    faults = FaultReport.query.join(FaultReport_Lab).join(Lab).join(User_FaultReport).join(User).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_report,
+        Lab.name
+    ).all()
+
+    for fault in faults:
+        if fault[1] == int(data["id_report"]):
+
+           
+            current_fault = db.session.query(FaultReport).filter_by(id_report = fault[1]).first()
+
+            current_id_status= FaultStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_fault.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Fault Report modified'}), 200
+
+    return jsonify({'message':'No Fault Report'}), 401
+
 # ------------------------- All-Nighters -------------------------
 
 @app.route('/allnighter', methods=['POST'])
