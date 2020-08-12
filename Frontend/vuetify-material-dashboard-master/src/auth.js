@@ -288,6 +288,23 @@ export default {
         return response
     })
   },
+  getUser () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'user',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+     return axios(config).then(response => {
+        console.log(response.data)
+        return response
+    })
+  },
   deleteUserLogged () {
     Cookies.remove('userLogged')
   },

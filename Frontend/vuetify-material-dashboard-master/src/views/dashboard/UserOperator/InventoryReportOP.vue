@@ -33,12 +33,6 @@
               flat
               color="white"
             >
-              <v-toolbar-title>My CRUD</v-toolbar-title>
-              <v-divider
-                class="mx-4"
-                inset
-                vertical
-              />
               <v-spacer />
               <v-dialog
                 v-model="dialog"

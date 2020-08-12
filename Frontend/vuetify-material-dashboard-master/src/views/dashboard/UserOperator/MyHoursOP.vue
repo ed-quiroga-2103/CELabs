@@ -188,7 +188,6 @@
     </v-col>
   </v-row>
 </template>
-
 <script>
   export default {
     data: () => ({
@@ -220,6 +219,7 @@
     }),
     mounted () {
       this.getHours()
+      this.getUser()
     },
     methods: {
       ChangeDate (date) {
@@ -259,6 +259,27 @@
           await this.$auth.getHours().then(
             response => {
               var res = response.data
+              for (var i = 0; i < res.length; i++) {
+                this.hours.push({
+                  shiftDate: res[i][0].slice(0, 10),
+                  shiftStart: res[i][1].slice(0, 5),
+                  shiftEnd: res[i][2].slice(0, 5),
+                  workDescription: res[i][3],
+                  state: res[i][4] === 1 ? 'pending' : 'accepted',
+                  delete: res[i][4] === 1 ? 'x' : '',
+                })
+              }
+            })
+        } catch (error) {
+          this.error = true
+        }
+      },
+      async getUser () {
+        try {
+          await this.$auth.getUser().then(
+            response => {
+              var res = response.data
+              console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.hours.push({
                   shiftDate: res[i][0].slice(0, 10),
