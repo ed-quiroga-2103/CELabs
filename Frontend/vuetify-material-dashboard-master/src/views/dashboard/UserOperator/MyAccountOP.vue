@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    class="mx-auto"
-    outlined
-  >
+  <v-card>
     <v-list-item three-line>
       <v-list-item-content>
         <v-list-item-title

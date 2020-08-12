@@ -26,9 +26,24 @@ export default new Router({
           component: () => import('./views/dashboard/UserOperator/AvailabilityOP.vue'),
         },
         {
-          path: '/faults',
+          path: 'faults',
           name: 'faults',
           component: () => import('./views/dashboard/UserOperator/ReportFaultsOP.vue'),
+        },
+        {
+          path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserOperator/MyAccountOP.vue'),
+        },
+        {
+          path: 'myhours',
+          name: 'myhours',
+          component: () => import('./views/dashboard/UserOperator/MyHoursOP.vue'),
+        },
+        {
+          path: 'inventory',
+          name: 'inventory',
+          component: () => import('./views/dashboard/UserOperator/InventoryReportOP.vue'),
         },
       ],
     },
@@ -78,16 +93,7 @@ export default new Router({
           name: 'availability4',
           component: () => import('./views/dashboard/UserAdministrative/AvailabilityA.vue'),
         },
-        {
-          path: '/myaccount',
-          name: 'myaccount',
-          component: () => import('./views/dashboard/UserOperator/MyAccountOP.vue'),
-        },
-        {
-          path: '/myhours',
-          name: 'myhours',
-          component: () => import('./views/dashboard/UserOperator/MyHoursOP.vue'),
-        },
+
       ],
     },
     {
