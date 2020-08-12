@@ -20,6 +20,14 @@
 
 --SELECT * FROM User_FaultReport;
 
---SELECT * FROM FaultReport_Lab;
+-- SELECT * FROM FaultReport_Lab;
 
 --SELECT * FROM FaultStatus;
+
+------------------------------Events Check-----------------------
+
+-- DROP TABLE Event;
+
+--SELECT *  FROM Event;
+
+

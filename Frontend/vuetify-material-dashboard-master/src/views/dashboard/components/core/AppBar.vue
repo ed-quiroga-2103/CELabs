@@ -106,9 +106,9 @@
           to: '/maps/google-maps',
         },
         {
-          title: 'My account',
-          icon: 'mdi-bell',
-          to: '/components/notifications',
+          icon: 'My Account',
+          title: 'dashboard',
+          to: '/',
         },
       ],
       notifications: [
