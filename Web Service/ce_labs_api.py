@@ -589,6 +589,37 @@ def edit_this_worklog(current_user):
     return jsonify({'message':'No Worklog'}), 401
 
 
+@app.route('/worklog/state', methods= ['PUT'])
+@token_required
+def edit_state_worklog(current_user):
+    
+    raw_data = request.get_json()
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    id_modified = data['id_worklog']
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.id_worklog
+    ).all()
+
+    for worklog in worklogs:
+        if worklog[2] == int(id_modified):
+
+            current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
+
+            current_id_status= WorklogStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_worklog.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Worklog modified'}), 200
+
+    return jsonify({'message':'No Worklog'}), 401
+
 # ------------------------- Inventory -------------------------
 
 @app.route('/inventory', methods=['POST'])
