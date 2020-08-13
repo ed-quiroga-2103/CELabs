@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(RACSO_DB, 'w+')
+file = open(QUIROGA_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + RACSO_DB)
+engine = create_engine('sqlite:///' + QUIROGA_DB)
 meta = MetaData()
 
 
@@ -251,6 +251,21 @@ conn.execute(User.insert(),
         'password':'Op', 'email':'Op', 'phone_number':'Op', 'active': 1, 'university_id':'Op', 'user_type':2},
         {'id_user': 2, 'public_id_user': str(uuid.uuid4()), 'name': 'Prof', 'lastname1': 'Prof', 'lastname2':'Prof', 'id_number':'Prof',
         'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':3}
+    ]
+)
+
+conn.execute(WorklogStatus.insert(),
+    [
+        {'id_status': 1, 'status':'Pending'},
+        {'id_status': 2, 'status':'Completed'},
+        {'id_status': 3, 'status':'Denied'}
+    ]
+)
+conn.execute(FaultStatus.insert(),
+    [
+        {'id_status': 1, 'status':'Pending'},
+        {'id_status': 2, 'status':'Completed'},
+        {'id_status': 3, 'status':'In process'}  
     ]
 )
 
