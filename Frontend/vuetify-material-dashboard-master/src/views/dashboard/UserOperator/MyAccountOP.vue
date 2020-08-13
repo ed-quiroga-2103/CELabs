@@ -103,7 +103,7 @@
               class="mr-8"
               @click="Reporthour = true"
             >
-              All-Nighter Requests
+              Edit
             </v-btn>
             <v-menu
               bottom
@@ -149,7 +149,7 @@
       date: '',
     }),
     mounted () {
-      this.getHours()
+      this.getPerfil()
     },
     methods: {
       ChangeDate (date) {
@@ -184,21 +184,19 @@
           textarea: '',
         }
       },
-      async getHours () {
+      async getPerfil () {
         try {
-          await this.$auth.getHours().then(
+          await this.$auth.getPerfil().then(
             response => {
+              console.log(response)
               var res = response.data
-              for (var i = 0; i < res.length; i++) {
-                this.hours.push({
-                  shiftDate: res[i][0].slice(0, 10),
-                  shiftStart: res[i][1].slice(0, 5),
-                  shiftEnd: res[i][2].slice(0, 5),
-                  workDescription: res[i][3],
-                  state: res[i][4] === 1 ? 'pending' : 'accepted',
-                  delete: res[i][4] === 1 ? 'x' : '',
-                })
-              }
+              this.user = res[0]
+              this.apellido1 = res[1]
+              this.apellido2 = res[2]
+              this.Idnumb = res[3]
+              this.Iduni = res[6]
+              this.numero = res[5]
+              this.email = res[4]
             })
         } catch (error) {
           this.error = true

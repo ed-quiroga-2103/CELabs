@@ -217,6 +217,43 @@ The order of the data in the array is:
     ['name', 'lastname1', 'lastname2', 'id_number', 'email', 'phone_number', 'university_id']
 ```
 
+### DISABLE ACCOUNT
+The route for this request is `/user/disable`
+The method is __PUT__
+
+The request returns a JSONArray with all the current reservations in the database with the following format:
+
+```
+{'message' : 'Your account has been disabled !'}), 200
+```
+
+### MODIFY ACCOUNT 
+According with the client, the only thing that can't be modify is email.
+
+The route for this request is `/user`
+
+The method is __PUT__
+
+The inputed JSON has the following format:
+
+```
+  {
+    "name": "Racso",
+    "lastname1": "Gonzalez",
+    "lastname2": "Alfaro ",
+    "id_number": "1-1750-0XXX",
+    "password": "password",
+    "phone_number": "831072XX",
+    "university_id": "20171215XX"
+  }
+```       
+
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'Your account has been modified !'}
+```
+
 ## Reservation
 The route for this request is `/reservation`
 
@@ -224,7 +261,7 @@ The route for this request is `/reservation`
 
 The inputed JSON has the following format:
 
-```
+``` 
     data: {
           "request_date": "Date of the request",
           "requested_date": "Requested Date",
@@ -263,6 +300,11 @@ The order of the data in the array is:
     ['Request Data', 'Requested Date', 'Subject', 'Description', 'User that Requested']
 ```
 
+### GET ALL RESERVATION OF A USER
+The route for this request is `reservation/user`
+
+Same format as above
+
 ## All-Nighters
 The route for this request is `/allnighter`
 
@@ -272,16 +314,14 @@ The inputed JSON has the following format:
 
 ```
     data: {
-          "request_date": "Date of the request",
-          "requested_date": "Requested Date",
-          "description": "Description of the reservation",
-          "lab": "Lab name (E.g. F2-09)",
-          "init_time": "00:00:00",
-          "final_time": "01:00:00"
+            "request_date": "13/08/2020",
+            "requested_date": "26/08/2020",
+            "description": "Torneito de FIfa",
+            "lab": "F2-09",
+            "init_time": "10:00:00",
+            "final_time": "12:00:00"
           }
 ```       
-
-
 
 The request sends a confirmation message with the following format:
 
@@ -293,14 +333,44 @@ The request sends a confirmation message with the following format:
 The request returns a JSONArray with all the current reservations in the database with the following format:
 ```
 [
-    ["12/12/2020", "12/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 0, "Op"],
-    ["13/12/2020", "13/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 1, "Op"],
-    ["14/12/2020", "14/12/2020","12:12:12","13:00:00", "Desarrollo de proyecto", 2, "Op"]
+  [
+    "13/08/2020",
+    "21/08/2020",
+    "10:00:00",
+    "12:00:00",
+    "Trabajar en proyectos",
+    0,
+    "Op",
+    "F2-09",
+    1
+  ],
+  [
+    "13/08/2020",
+    "22/08/2020",
+    "10:00:00",
+    "12:00:00",
+    "Torneo de Call",
+    0,
+    "prof@email.com",
+    "F2-09",
+    2
+  ],
+  [
+    "13/08/2020",
+    "26/08/2020",
+    "10:00:00",
+    "12:00:00",
+    "Torneo de FIFA",
+    0,
+    "Op",
+    "F2-09",
+    3
+  ]
 ]
 ```
 The order of the data in the array is:
 ```
-    ['Request Data', 'Requested Date', 'init_time', 'final_time', 'Description', 'State of the Request', 'User that Requested']
+    ['Request Data', 'Requested Date', 'init_time', 'final_time', 'Description', 'State of the Request', 'User that Requested', 'Name of the Laboratory', 'Id of the AllNighter']
 ```
 
 The state of the requests is described in the following table:
@@ -310,6 +380,29 @@ The state of the requests is described in the following table:
 | Pending | 0 |
 | Approved | 1 |
 | Denied | 2 |
+
+### GET OF ALLNIGHTER FOR A SPECIFIC USER
+The route for this request is `/allnighter/user`
+
+Same as above, just the ones for the user
+
+### MODIFY STATUS OF A ALLNIGHTER
+The route for this request is `/allnighter/state`
+
+The inputed JSON has the following format:
+
+```
+{
+   "id_allnighter" : "2",
+   "status" : "Denied"
+}
+```
+The request sends a confirmation message with the following format:
+
+```
+{'message' : 'message':'AllNighter modified'}
+```
+
 
 ## Evaluations
 The route for this request is `/evaluation`
@@ -333,8 +426,9 @@ The POST request for evaluation __does not__ need an access token, therefore, th
 The data that has to be sent has the following format:
 ```
 data: {
+          "score": "1",
           "comment": "Comment",
-          "score": "1"
+          "comment2": "Comment",
           }
 ```
 
@@ -358,7 +452,7 @@ The request returns a JSON Array with the following format:
 ```
 The order of the data in the array is:
 ```
-    ['Date Time', 'Comment', 'Score']
+    ['Date Time', 'Comment','Comment2', 'Score']
 ```
 
 

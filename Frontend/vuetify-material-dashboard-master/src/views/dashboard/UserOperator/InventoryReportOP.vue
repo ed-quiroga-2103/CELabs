@@ -247,7 +247,13 @@
         try {
           if (this.radios && this.completeComp && this.incompleteComp && this.projectors && this.chairs && this.fireExt) {
             await this.$auth.submitInv(this.radios, this.completeComp, this.incompleteComp, this.projectors, this.chairs, this.fireExt, this.det)
+            setTimeout(() => { this.getInvReports() }, 1000)
             this.invReport = false
+            this.radios = ''
+            this.completeComp = ''
+            this.incompleteComp = ''
+            this.projectors = ''
+            this.chairs = ''
           } else {
             alert('Complete all the fields')
           }
@@ -260,6 +266,7 @@
           await this.$auth.getInvReports().then(
             response => {
               var res = response.data
+              this.reports = []
               console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.reports.push({
@@ -267,7 +274,7 @@
                   reportT: res[i][0].slice(11, 16),
                   labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
                   Detail: res[i][1],
-                  reportNo: res[i][5],
+                  reportNo: res[i][9],
                   completeComp: res[i][1],
                   incompleteComp: res[i][2],
                   projectors: res[i][3],

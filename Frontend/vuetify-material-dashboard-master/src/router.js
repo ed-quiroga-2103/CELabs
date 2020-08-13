@@ -76,6 +76,11 @@ export default new Router({
           name: 'Faults',
           component: () => import('./views/dashboard/UserAdmin/FaultsAD.vue'),
         },
+        {
+          path: 'CreateUser',
+          name: 'CreateUser',
+          component: () => import('./views/dashboard/UserAdmin/CreateUsersAD.vue'),
+        },
       ],
     },
     {

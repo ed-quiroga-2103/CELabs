@@ -75,14 +75,6 @@
           >
             <span class="mr-1">My hours</span>
           </v-btn>
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="/op/myaccount"
-          >
-            <span class="mr-1">My account</span>
-          </v-btn>
         </v-row>
       </div>
       <v-spacer />

@@ -125,6 +125,7 @@ Evaluation = Table(
     Column('date_time', BigInteger, nullable = False),
     Column('score', Integer, nullable = False),
     Column('comment', String(50), nullable = False),
+    Column('comment2', String(50), nullable = False)
 
 )
 
