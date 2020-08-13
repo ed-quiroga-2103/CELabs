@@ -74,7 +74,6 @@
                   v-model="Idnumb"
                   label="IDNo"
                   name="ID No."
-                  type="number"
                 />
                 <v-textarea
                   v-model="textarea"

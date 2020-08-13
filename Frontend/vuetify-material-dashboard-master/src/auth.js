@@ -389,6 +389,35 @@ export default {
       console.error(e.data.message)
     })
   },
+  changeFaultReport (id, newstatus) {
+    var data = JSON.stringify(
+      {
+        old: {
+            id_report: id,
+        },
+        new: {
+            status: newstatus,
+        },
+      },
+    )
+    var config = {
+      method: 'put',
+      url: ENDPOINT_PATH + 'fault/state',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+    }
+   axios(config)
+      .then(response => {
+      this.posts = response.data
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+    })
+  },
   deleteUserLogged () {
     // eslint-disable-next-line no-undef
     Cookies.remove('userLogged')

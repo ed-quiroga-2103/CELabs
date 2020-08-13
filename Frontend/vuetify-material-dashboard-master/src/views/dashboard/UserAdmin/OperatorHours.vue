@@ -15,7 +15,7 @@
               v-if="item.state === 'pending'"
               small
               class="mr-2"
-              @click="aprovehours(item.worklogid, 3)"
+              @click="declinehours(item.worklogid)"
             >
               mdi-check
             </v-icon>
@@ -24,7 +24,7 @@
               v-if="item.state === 'pending'"
               small
               class="mr-2"
-              @click="declinehours(item.worklogid, 2)"
+              @click="aprovehours(item.worklogid)"
             >
               mdi-close
             </v-icon>
@@ -94,10 +94,10 @@
         }
       },
       aprovehours (id) {
-        this.changeHours(id, 2)
+        this.changeHours(id, 'Denied')
       },
       declinehours (id) {
-        this.changeHours(id, 3)
+        this.changeHours(id, 'Completed')
       },
       async changeHours (id, newStatus) {
         console.log(id, newStatus)

@@ -254,6 +254,21 @@ conn.execute(User.insert(),
     ]
 )
 
+conn.execute(WorklogStatus.insert(),
+    [
+        {'id_status': 1, 'status':'Pending'},
+        {'id_status': 2, 'status':'Completed'},
+        {'id_status': 3, 'status':'Denied'}
+    ]
+)
+conn.execute(FaultStatus.insert(),
+    [
+        {'id_status': 1, 'status':'Pending'},
+        {'id_status': 2, 'status':'Completed'},
+        {'id_status': 3, 'status':'In process'}  
+    ]
+)
+
 conn.close()
 
 print("The database was successfully created")

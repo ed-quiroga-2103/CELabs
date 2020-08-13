@@ -121,7 +121,7 @@
               <v-form>
                 <v-radio-group
                   v-model="radios"
-                  :mandatory="false"
+                  :mandatory="true"
                 >
                   <v-radio
                     label="F2-09"
