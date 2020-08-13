@@ -74,7 +74,6 @@
                   v-model="Idnumb"
                   label="IDNo"
                   name="ID No."
-                  type="number"
                 />
                 <v-textarea
                   v-model="textarea"
@@ -122,11 +121,6 @@
       textarea: '',
       faultReport: false,
     }),
-    watch: {
-      reports (nuevoValor, valorAnterior) {
-        console.log("Los reportes pasaron de '%s' a '%s'", valorAnterior, nuevoValor)
-      },
-    },
     mounted () {
       this.getFaultReports()
     },

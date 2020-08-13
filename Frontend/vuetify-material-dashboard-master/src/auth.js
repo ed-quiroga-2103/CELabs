@@ -28,16 +28,16 @@ export default {
       'Content-Type': 'application/json',
       },
       data: data,
-  }
-  console.log(data)
-   axios(config)
+    }
+    console.log(data)
+    axios(config)
       .then(response => {
       this.posts = response.data
       // console.log(this.posts.message)
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
+    })
   },
   // Function to get events
   getEvents () {
@@ -73,10 +73,10 @@ export default {
           lab: lab,
           operator: operator,
           },
-  )
-  console.log(data)
+   )
+    console.log(data)
 
-  var config = {
+    var config = {
       method: 'post',
       url: ENDPOINT_PATH + 'reservation',
       headers: {
@@ -85,16 +85,16 @@ export default {
       'Content-Type': 'application/json',
       },
       data: data,
-  }
-  console.log(data)
-   axios(config)
+    }
+    console.log(data)
+    axios(config)
       .then(response => {
       this.posts = response.data
       // console.log(this.posts.message)
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
+    })
   },
   // Function to get Reservations
   getReservations () {
@@ -149,9 +149,9 @@ export default {
         final_time: final_time,
       },
 
-  )
-  console.log(data)
-  var config = {
+    )
+    console.log(data)
+    var config = {
       method: 'post',
       url: ENDPOINT_PATH + 'allnighter',
       headers: {
@@ -160,7 +160,7 @@ export default {
       'Content-Type': 'application/json',
       },
       data: data,
-  }
+    }
 
    axios(config)
       .then(response => {
@@ -169,7 +169,7 @@ export default {
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
+    })
   },
   // Function to save cookies
   setUserLogged (userLogged) {
@@ -179,14 +179,13 @@ export default {
   getUserLogged () {
     return Cookies.get('userLogged')
   },
-
   // Function to call register on API
   register (formValue) {
     const user = formValue
     return axios.post(ENDPOINT_PATH + 'user', user).then(response => {
       this.setUserLogged(response.data.token)
       return response
-  },
+    },
       )
   },
   // Function to call login on API
@@ -204,11 +203,9 @@ export default {
       this.setUserLogged(response.data.token)
       return response
      //  console.log(response.data.token)
+   },
+    )
   },
-  )
-  },
-  // Function to push faults
-  // eslint-disable-next-line camelcase
   submitFault (lab, partId, descrip) {
     var data = JSON.stringify(
       {
@@ -216,8 +213,8 @@ export default {
         id_fault_part: partId,
         description: descrip,
       },
-  )
-  var config = {
+    )
+    var config = {
       method: 'post',
       url: ENDPOINT_PATH + 'fault',
       headers: {
@@ -226,8 +223,8 @@ export default {
       'Content-Type': 'application/json',
       },
       data: data,
-  }
-   axios(config)
+   }
+    axios(config)
       .then(response => {
       this.posts = response.data
       // location.reload()
@@ -235,7 +232,7 @@ export default {
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
+   })
   },
   getFaultReports () {
     var data = ''
@@ -262,8 +259,8 @@ export default {
         final_time: time2,
         description: description,
       },
-  )
-  var config = {
+    )
+   var config = {
       method: 'post',
       url: ENDPOINT_PATH + 'worklog',
       headers: {
@@ -272,7 +269,7 @@ export default {
       'Content-Type': 'application/json',
       },
       data: data,
-  }
+    }
    axios(config)
       .then(response => {
       this.posts = response.data
@@ -280,7 +277,7 @@ export default {
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
+    })
   },
   getHours () {
     var data = ''
@@ -310,8 +307,8 @@ export default {
         lab: labo,
         description: det,
       },
-  )
-  var config = {
+    )
+    var config = {
       method: 'post',
       url: ENDPOINT_PATH + 'inventory',
       headers: {
@@ -320,7 +317,7 @@ export default {
       'Content-Type': 'application/json',
       },
       data: data,
-  }
+    }
    axios(config)
       .then(response => {
       this.posts = response.data
@@ -328,7 +325,7 @@ export default {
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
+   })
   },
   getInvReports () {
     var data = ''
@@ -363,89 +360,63 @@ export default {
         return response
     })
   },
-  delHourReport (itemId) {
+  changeHourReport (id, newstatus) {
     var data = JSON.stringify(
-      // {
-      //   date_time: date,
-      //   init_time: time,
-      //   final_time: time2,
-      //   description: description,
-      // },
-  )
-  var config = {
-      method: 'post',
-      url: ENDPOINT_PATH + 'worklog',
+      {
+        old: {
+            id_worklog: id,
+        },
+        new: {
+            status: newstatus,
+        },
+      },
+    )
+    var config = {
+      method: 'put',
+      url: ENDPOINT_PATH + 'worklog/state',
       headers: {
       'x-access-token': this.getUserLogged(),
       Authorization: 'Basic QWRtaW46MTIzNDU=',
       'Content-Type': 'application/json',
       },
       data: data,
-  }
+    }
    axios(config)
       .then(response => {
       this.posts = response.data
-      // console.log(this.posts.message)
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
+    })
   },
-  disaproveHourReport (itemId) {
+  changeFaultReport (id, newstatus) {
     var data = JSON.stringify(
-      // {
-      //   date_time: date,
-      //   init_time: time,
-      //   final_time: time2,
-      //   description: description,
-      // },
-  )
-  var config = {
-      method: 'post',
-      url: ENDPOINT_PATH + 'worklog',
+      {
+        old: {
+            id_report: id,
+        },
+        new: {
+            status: newstatus,
+        },
+      },
+    )
+    var config = {
+      method: 'put',
+      url: ENDPOINT_PATH + 'fault/state',
       headers: {
       'x-access-token': this.getUserLogged(),
       Authorization: 'Basic QWRtaW46MTIzNDU=',
       'Content-Type': 'application/json',
       },
       data: data,
-  }
+    }
    axios(config)
       .then(response => {
       this.posts = response.data
-      // console.log(this.posts.message)
       },
       ).catch(e => {
       console.error(e.data.message)
-  })
-  },
-  aproveHourReport (itemId) {
-    var data = JSON.stringify(
-      // {
-      //   date_time: date,
-      //   init_time: time,
-      //   final_time: time2,
-      //   description: description,
-      // },
-  )
-  var config = {
-      method: 'post',
-      url: ENDPOINT_PATH + 'worklog',
-      headers: {
-      'x-access-token': this.getUserLogged(),
-      Authorization: 'Basic QWRtaW46MTIzNDU=',
-      'Content-Type': 'application/json',
-      },
-      data: data,
-  }
-   axios(config)
-      .then(response => {
-      this.posts = response.data
-      // console.log(this.posts.message)
-      },
-      ).catch(e => {
-      console.error(e.data.message)
-  })
+    })
   },
   deleteUserLogged () {
     // eslint-disable-next-line no-undef
