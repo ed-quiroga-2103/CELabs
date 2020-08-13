@@ -20,7 +20,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-toolbar-title>Log In</v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
               <FormulateForm
@@ -96,7 +96,7 @@
               // eslint-disable-next-line eqeqeq
               if (response.data.user_type === 2) {
                 this.$router.push('/op')
-              } else if (response.data.user_type.String === 1) {
+              } else if (response.data.user_type === 1) {
                 this.$router.push('/adm')
               } else if (response.data.user_type === 3) {
                 this.$router.push('/prof')

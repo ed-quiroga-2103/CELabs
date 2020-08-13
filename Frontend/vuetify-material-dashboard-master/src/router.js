@@ -5,6 +5,7 @@ import IndexAD from '@/views/dashboard/IndexAD.vue'
 import IndexLogin from '@/views/dashboard/IndexLogin.vue'
 import IndexP from '@/views/dashboard/IndexP.vue'
 import IndexA from '@/views/dashboard/IndexA.vue'
+import IndexSat from '@/views/dashboard/IndexSat.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -61,6 +62,21 @@ export default new Router({
           name: 'availability2',
           component: () => import('./views/dashboard/UserAdmin/AvailabilityAD.vue'),
         },
+        {
+          path: 'OPHours',
+          name: 'OPHours',
+          component: () => import('./views/dashboard/UserAdmin/OperatorHours.vue'),
+        },
+        {
+          path: 'Inventory',
+          name: 'Inventory',
+          component: () => import('./views/dashboard/UserAdmin/InventoryReportAD.vue'),
+        },
+        {
+          path: 'Faults',
+          name: 'Faults',
+          component: () => import('./views/dashboard/UserAdmin/FaultsAD.vue'),
+        },
       ],
     },
     {
@@ -109,6 +125,18 @@ export default new Router({
           path: '/register',
           name: 'register',
           component: () => import('./views/dashboard/Out/Register.vue'),
+        },
+      ],
+    },
+    {
+      path: '/satisfaccion',
+      redirect: '/satisfaccion/form',
+      component: IndexSat,
+      children: [
+        {
+          path: 'form',
+          name: 'form',
+          component: () => import('./views/dashboard/Out/Satisfaccion.vue'),
         },
       ],
     },

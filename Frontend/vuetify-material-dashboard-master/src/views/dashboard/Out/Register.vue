@@ -20,7 +20,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-toolbar-title>Sign up</v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
               <FormulateForm
@@ -89,7 +89,7 @@
                     type="select"
                     name="user_type"
                     label="User type"
-                    :options="{3: 'Professor', 4: 'Administrative'}"
+                    :options="{3: 'Professor', 4: 'Administrative', 1:'Administrador', 2: 'Operador'}"
                   />
                   <v-spacer />
                   <FormulateInput

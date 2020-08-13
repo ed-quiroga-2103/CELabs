@@ -21,6 +21,16 @@
               <h2>a</h2>
             </v-row>
             <v-row>
+              <h2>' '</h2>
+            </v-row>
+
+            <v-row>
+              <h2 />
+            </v-row>
+            <v-row>
+              <h2 />
+            </v-row>
+            <v-row>
               <h2>Operator:</h2>
             </v-row>
             <v-row>
@@ -71,13 +81,48 @@
           class="elevation-1"
         >
           <template v-slot:item.actions="{ item }">
-            <v-btn
-              @click="deleteItem(item)"
+            <v-icon
+              v-if="item.delete === 1"
+              small
+              class="mr-2"
+              @click="delet(item)"
             >
-              del
-            </v-btn>
+              mdi-delete
+            </v-icon>
           </template>
         </v-data-table>
+        <v-dialog
+          v-model="deldialog"
+          width="500"
+          height="300"
+        >
+          <v-card>
+            <v-card-title class="headline grey lighten-2">
+              Delete confirmation.
+            </v-card-title>
+            <v-card-text>
+              Are you sure you wish to delete this report?
+            </v-card-text>
+            <v-divider />
+            <v-card-actions>
+              <v-btn
+                color="primary"
+                text
+                @click="delitem()"
+              >
+                Yes
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                color="primary"
+                text
+                @click="deldialog = false"
+              >
+                No
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="hourReport">
           <v-card>
@@ -163,6 +208,13 @@
                     >
                       Cancel
                     </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.dialog2.save(time2)"
+                    >
+                      OK
+                    </v-btn>
                   </v-time-picker>
                 </v-dialog>
                 <v-text-field
@@ -202,13 +254,13 @@
         { text: 'Shift end time', value: 'shiftEnd' },
         { text: 'Description of work performed', value: 'workDescription' },
         { text: 'State', value: 'state' },
-        { text: 'Delete', value: 'delete' },
+        { text: 'Delete', value: 'actions', sortable: false },
       ],
       hours: [],
-      operator: 'Luis',
-      uniId: '14578878548',
-      assignedH: '28',
-      complH: '3',
+      operator: '',
+      uniId: '',
+      assignedH: '',
+      complH: '',
       description: '',
       time2: null,
       time: null,
@@ -217,8 +269,11 @@
       end: null,
       hourReport: false,
       date: '',
+      deldialog: false,
+      currdel: [],
     }),
     mounted () {
+      this.getUser()
       this.getHours()
     },
     methods: {
@@ -234,6 +289,10 @@
                              this.time + ':00',
                              this.time2 + ':00',
                              this.description)
+            this.date = ''
+            this.time = ''
+            this.time2 = ''
+            this.description = ''
           } else {
             alert('Complete all the fields')
           }
@@ -242,8 +301,10 @@
         }
       },
       async submitHours (date, time, time2, description) {
+        console.log(date, time, time2, description)
         try {
           await this.$auth.submitHours(date, time, time2, description)
+          setTimeout(() => { this.getHours() }, 1000)
         } catch (error) {
           this.error = true
           alert('Error submiting report')
@@ -259,16 +320,50 @@
           await this.$auth.getHours().then(
             response => {
               var res = response.data
+              this.hours = []
               for (var i = 0; i < res.length; i++) {
                 this.hours.push({
                   shiftDate: res[i][0].slice(0, 10),
                   shiftStart: res[i][1].slice(0, 5),
                   shiftEnd: res[i][2].slice(0, 5),
                   workDescription: res[i][3],
-                  state: res[i][4] === 1 ? 'pending' : 'accepted',
-                  delete: res[i][4] === 1 ? 'x' : '',
+                  state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
+                  delete: res[i][4],
                 })
               }
+            })
+        } catch (error) {
+          this.error = true
+        }
+      },
+      async getUser () {
+        try {
+          await this.$auth.getUser().then(
+            response => {
+              var res = response.data
+              console.log(res)
+              for (var i = 0; i < res.length; i++) {
+                this.operator = res[0]
+                this.uniId = res[3]
+                this.assignedH = res[1]
+                this.complH = res[2]
+              }
+            })
+        } catch (error) {
+          this.error = true
+        }
+      },
+      delet (item) {
+        this.currdel = item
+        this.deldialog = true
+        console.log(item)
+      },
+      async delitem () {
+        try {
+          await this.$auth.delHourReport(this.currdel).then(
+            response => {
+              var res = response.data
+              console.log(res)
             })
         } catch (error) {
           this.error = true
@@ -280,5 +375,48 @@
 <style scoped>
 .controls {
   position: relative;
+}
+.css
+h1 {
+  color: #6c2eb9;
+  font-weight: normal;
+  font-size: 20px;
+  font-family: Arial;
+  text-transform: uppercase;
+}
+h2 {
+  color: #3c1b66;
+  font-weight: normal;
+  font-size: 15px;
+  font-family: Arial;
+  text-transform: uppercase;
+}
+h3 {
+  color: #443963;
+  font-weight: normal;
+  font-size: 30px;
+  font-family: Arial;
+  text-transform: lowercase;
+}
+h4 {
+  color: #4f4866;
+  font-weight: normal;
+  font-size: 25px;
+  font-family: Arial;
+  text-transform: lowercase;
+}
+h5 {
+  color: #656172;
+  font-weight: normal;
+  font-size: 20px;
+  font-family: Arial;
+  text-transform: lowercase;
+}
+h6 {
+  color: #747377;
+  font-weight: normal;
+  font-size: 18px;
+  font-family: Arial;
+  text-transform: lowercase;
 }
 </style>

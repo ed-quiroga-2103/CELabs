@@ -22,7 +22,6 @@
         </v-toolbar>
       </v-sheet>
       <!--------------PUT the log here------------------------------------------------------>
-
       <div id="app">
         <v-app id="inspire">
           <v-data-table
@@ -75,7 +74,6 @@
                   v-model="Idnumb"
                   label="IDNo"
                   name="ID No."
-                  type="number"
                 />
                 <v-textarea
                   v-model="textarea"
@@ -88,7 +86,7 @@
                 <v-spacer />
                 <v-btn
                   color="primary"
-                  @click="submitFault()"
+                  @click="addFault()"
                 >
                   Submit
                 </v-btn>
@@ -123,15 +121,21 @@
       textarea: '',
       faultReport: false,
     }),
-    watch: {
-      reports (nuevoValor, valorAnterior) {
-        console.log("Los reportes pasaron de '%s' a '%s'", valorAnterior, nuevoValor)
-      },
-    },
     mounted () {
       this.getFaultReports()
     },
     methods: {
+      addFault () {
+        try {
+          if (this.radios && this.Idnumb && this.textarea) {
+            this.submitFault()
+          } else {
+            alert('Complete all the fields')
+          }
+        } catch (error) {
+
+        }
+      },
       async submitFault () {
         this.faultReport = false
         try {
