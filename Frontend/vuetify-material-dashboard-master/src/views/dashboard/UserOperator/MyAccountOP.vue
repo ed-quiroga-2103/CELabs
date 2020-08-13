@@ -129,7 +129,6 @@
         </v-toolbar>
         <FormulateForm
           v-model="formValues"
-          values="formValues"
           @submit="handleSubmit()"
         >
           <v-card-text ml="10">
@@ -292,7 +291,7 @@
       async handleSubmit () {
         console.log(this.formValues)
         try {
-          await this.$auth.submitHours(this.formValues)
+          await this.$auth.putPerfil(this.formValues.name, this.formValues.apellido1, this.formValues.apellido2, this.formValues.idnumb, this.formValues.numero, this.formValues.iduni)
         } catch (error) {
           this.error = true
           alert('Error submiting report')

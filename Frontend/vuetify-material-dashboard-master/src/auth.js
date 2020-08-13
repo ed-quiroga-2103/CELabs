@@ -98,8 +98,15 @@ export default {
   },
   // Function to put user data
   // eslint-disable-next-line camelcase
-  putPerfil (formValues) {
-    var data = formValues
+  putPerfil (name, lastname1, lastname2, id_number, phone_number, university_id) {
+    var data = {
+    name: name,
+    lastname1: lastname1,
+    lastname2: lastname2,
+    id_number: id_number,
+    phone_number: phone_number,
+    university_id: university_id,
+}
     console.log(data)
 
     var config = {
