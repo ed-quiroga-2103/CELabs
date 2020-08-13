@@ -115,7 +115,7 @@ def create_user():
 
         new_operator = User_Operator(
             id_user = identifier.id_user,
-            approved_hours = 0,
+            approved_hours = 50,
             pending_hours = 0
         )
 
@@ -123,7 +123,7 @@ def create_user():
         db.session.commit()
         
 
-    response = jsonify({'message' : 'New user created!'})
+    response = jsonify({'message' : 'New user created!'}),200
 
     return response
 
@@ -496,7 +496,6 @@ def get_all_worklog(current_user):
     for worklog in worklogs:
         new_worklog = []
 
-        
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
@@ -545,7 +544,6 @@ def get_its_worklog(current_user):
             result.append(new_worklog)
     
     return jsonify(result), 200
-
 
 @app.route('/worklog/pending', methods=['GET'])
 @token_required
@@ -1497,3 +1495,37 @@ def get_all_courses(current_user):
     courses = Course.query.with_entities(Course.code, Course.group, Course.name).all()
 
     return jsonify(courses), 200
+
+
+# ------------------------- Dashboard -------------------------
+
+@app.route('/dashboard/usuarios', methods = ['GET'])
+@token_required
+def get_users_lab(current_user):
+
+    reports = InventoryReport.query.with_entities(InventoryReport.complete_computers).all()
+
+    results = []
+
+    for report in reports:
+        results.append(report[0])
+
+    average = sum(results)/len(results)
+
+    return jsonify(average), 200
+
+
+@app.route('/dashboard/satisfaction', methods = ['GET'])
+@token_required
+def get_satisfaction(current_user):
+
+    evaluations = Evaluation.query.with_entities(Evaluation.score).all()
+
+    results = []
+
+    for evaluation in evaluations:
+        results.append(evaluation[0])
+
+    average = sum(results)/len(results)
+
+    return jsonify(average), 200
