@@ -1105,7 +1105,8 @@ def get_its_allnighters(current_user):
         AllNighter.subject,
         AllNighter.state,
         User.email,
-        Lab.name
+        Lab.name,
+        AllNighter.id_allnighter
         )
 
     result = []
@@ -1138,7 +1139,8 @@ def get_all_allnighters(current_user):
         AllNighter.subject,
         AllNighter.state,
         User.email,
-        Lab.name
+        Lab.name,
+        AllNighter.id_allnighter
         )
 
     result = []
@@ -1180,6 +1182,40 @@ def delete_this_allnighter(current_user):
             return jsonify({'message':'All-Nighter deleted'}), 200
 
     return jsonify({'message':'No All-Nighter'}), 401
+
+
+@app.route('/allnighter/state', methods= ['PUT'])
+@token_required
+def edit_state_allnighter(current_user):
+    
+    data = request.get_json()
+
+    allnighters = AllNighter.query.with_entities(
+        AllNighter.id_allnighter,
+        AllNighter.state,
+    ).all()
+
+    for allnighter in allnighters:
+        if allnighter[0] == int(data["id_allnighter"]):
+
+            current_allnighter = db.session.query(AllNighter).filter_by(id_allnighter = allnighter[0]).first()
+
+            if data["status"] == "Pending":
+                current_allnighter.state = 0
+
+            if data["status"] == "Approved":
+                current_allnighter.state = 1
+
+            if data["status"] == "Denied":
+                current_allnighter.state = 2
+
+            db.session.commit()
+
+            return jsonify({'message':'AllNighter modified'}), 200
+
+    return jsonify({'message':'No AllNighter'}), 401
+
+
 
 # ------------------------- Evaluations -------------------------
 
