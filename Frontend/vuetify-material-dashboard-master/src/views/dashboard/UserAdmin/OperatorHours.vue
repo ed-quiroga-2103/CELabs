@@ -15,7 +15,7 @@
               v-if="item.state === 'pending'"
               small
               class="mr-2"
-              @click="delet(item)"
+              @click="aprovehours(item.worklogid, 3)"
             >
               mdi-check
             </v-icon>
@@ -24,125 +24,12 @@
               v-if="item.state === 'pending'"
               small
               class="mr-2"
-              @click="aprove(item)"
+              @click="declinehours(item.worklogid, 2)"
             >
               mdi-close
             </v-icon>
           </template>
         </v-data-table>
-        <!--------------Add event------------------------------------------------------>
-        <v-dialog v-model="hourReport">
-          <v-card>
-            <v-container>
-              <v-form @submit.prevent="addHours">
-                <v-text-field
-                  v-model=" date"
-                  type="date"
-                  label="Date"
-                >
-                  >
-                </v-text-field>
-                <v-dialog
-                  ref="dialog"
-                  v-model="modal"
-                  :return-value.sync="time"
-                  persistent
-                  width="290px"
-                >
-                  <!-----------------------START---------------------------------------------->
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="time"
-                      label="Start"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    />
-                  </template>
-                  <v-time-picker
-                    v-if="modal"
-                    v-model="time"
-                    min="7:30"
-                    max="21:59"
-                    full-width
-                  >
-                    <v-spacer />
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="modal = false"
-                    >
-                      Cancel
-                    </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.dialog.save(time)"
-                    >
-                      OK
-                    </v-btn>
-                  </v-time-picker>
-                </v-dialog>
-                <!----------------------END------------------------------------------------->
-                <v-dialog
-                  ref="dialog2"
-                  v-model="modal2"
-                  :return-value.sync="time2"
-                  persistent
-                  width="290px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="time2"
-                      label="End"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    />
-                  </template>
-                  <v-time-picker
-                    v-if="modal2"
-                    v-model="time2"
-                    full-width
-                    min="7:30"
-                    max="21:59"
-                  >
-                    <v-spacer />
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="modal2 = false"
-                    >
-                      Cancel
-                    </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.dialog2.save(time2)"
-                    >
-                      OK
-                    </v-btn>
-                  </v-time-picker>
-                </v-dialog>
-                <v-text-field
-                  v-model="description"
-                  type="text"
-                  label="Description"
-                >
-                  >
-                </v-text-field>
-                <v-btn
-                  type="submit"
-                  color="primary"
-                  class="mr-4"
-                  @click.stop="hourReport = false"
-                >
-                  Add
-                </v-btn>
-              </v-form>
-            </v-container>
-          </v-card>
-        </v-dialog>
       </v-sheet>
     </v-col>
   </v-row>
@@ -178,24 +65,19 @@
       hourReport: false,
       date: '',
       deldialog: false,
-      curritem: [],
     }),
     mounted () {
       this.getHours()
     },
     methods: {
-      ChangeDate (date) {
-        var date2 = date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3]
-        return date2
-      },
       async getHours () {
         try {
           await this.$auth.getHours().then(
             response => {
               var res = response.data
               this.hours = []
+              console.log(res)
               for (var i = 0; i < res.length; i++) {
-                console.log(res)
                 this.hours.push({
                   shiftDate: res[i][0].slice(0, 10),
                   shiftStart: res[i][1].slice(0, 5),
@@ -203,6 +85,7 @@
                   operator: res[i][5],
                   workDescription: res[i][3],
                   state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
+                  worklogid: res[i][11],
                 })
               }
             })
@@ -210,28 +93,16 @@
           this.error = true
         }
       },
-      delet (item) {
-        this.curritem = item
-        this.delitem()
+      aprovehours (id) {
+        this.changeHours(id, 2)
       },
-      async delitem () {
+      declinehours (id) {
+        this.changeHours(id, 3)
+      },
+      async changeHours (id, newStatus) {
+        console.log(id, newStatus)
         try {
-          await this.$auth.disaproveHourReport(this.curritem).then(
-            response => {
-              var res = response.data
-              console.log(res)
-            })
-        } catch (error) {
-          this.error = true
-        }
-      },
-      aprove (item) {
-        this.curritem = item
-        this.aproveitem()
-      },
-      async aproveitem () {
-        try {
-          await this.$auth.aproveHourReport(this.curritem).then(
+          await this.$auth.changeHourReport(id, newStatus).then(
             response => {
               var res = response.data
               console.log(res)

@@ -106,7 +106,6 @@ def create_user():
         user_type = int(data["user_type"])
     ) 
 
-
     db.session.add(new_user)
     db.session.commit()
 
@@ -189,61 +188,86 @@ def create_reservation(current_user):
     
     data = request.get_json()
     date = get_date_in_seconds(data['requested_date'])
-    time = get_time_in_seconds(data['init_time'])
+    #time = get_time_in_seconds(data['init_time'])
     
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
-    Reservation.init_time, Lab.name).all()
+    Reservation.init_time, Lab.name, Reservation.final_time).all()
+
+#------------------------------Verficacion para evitar que choque con un evento------------------------------------
+    events = Event.query.with_entities(Event.init_time, Event.final_time, Event.date,Event.week_day,Event.id_lab).all()
+
+    current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+    for event in events:
+        if event[2] == None:
+            temp= modify_days(event[3])
+            dates = array_days2(temp)
+            for day in dates:
+                if get_date_in_seconds(day) == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                    return jsonify({'message': 'There´s a event already in that date and time'}), 401
+
+        if event[3] == None:
+            if event[2] == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
+                return jsonify({'message': 'There´s a event already in that date and time'}), 401
+#-------------------------------------------------------------------------------------------------------------
 
     for reservation in reservations:
-        if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
+        if reservation[0] == date and reservation[2] == data['lab'] and time_verification(get_time_from_seconds(reservation[1]),get_time_from_seconds(reservation[3]),data['init_time']):
             return jsonify({'message':'Theres already a reservation with that date and time'}), 401
 
-    current_id_reservation = str(uuid.uuid4())
+    teachers = User.query.with_entities(User.email,User.user_type).all()
 
-    operator = User.query.filter(User.email.like(data['operator'])).first()
+    for teacher in teachers:
+        if teacher[0] == data['requesting_user'] and teacher[1] == 3:
+        
+            current_id_reservation = str(uuid.uuid4())
 
-    new_reservation = Reservation(
-        public_id_reservation = current_id_reservation,
-        request_date = get_date_in_seconds(data['request_date']),
-        requested_date = get_date_in_seconds(data['requested_date']),
-        init_time = get_time_in_seconds(data['init_time']),
-        final_time = get_time_in_seconds(data['final_time']),
-        last_mod_id = current_user.public_id_user,
-        last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
-        subject = data['subject'],
-        description = data['description'],
-        operator = operator.id_user
-        )
+            operator = User.query.filter(User.email.like(data['operator'])).first()
 
-    db.session.add(new_reservation)
-    db.session.commit()
+            new_reservation = Reservation(
+                public_id_reservation = current_id_reservation,
+                request_date = get_date_in_seconds(data['request_date']),
+                requested_date = get_date_in_seconds(data['requested_date']),
+                init_time = get_time_in_seconds(data['init_time']),
+                final_time = get_time_in_seconds(data['final_time']),
+                last_mod_id = current_user.public_id_user,
+                last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
+                subject = data['subject'],
+                description = data['description'],
+                operator = operator.id_user
+                )
 
-    current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
-    current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+            db.session.add(new_reservation)
+            db.session.commit()
 
-
-    user_relation = User_Reservation(
-        id_reservation = current_reservation.id_reservation,
-        id_user = current_user.id_user    
-    )
-
-    db.session.add(user_relation)
-    db.session.commit()
-
-    lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
-
-    lab_relation = Reservation_Lab(
-        id_reservation = current_reservation.id_reservation,
-        id_lab = lab.id_lab
-    )
-
-    db.session.add(lab_relation)
-    db.session.commit()
+            current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
+            #current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
 
 
-    response = jsonify({'message' : 'New reservation created!'})
-    
-    return response, 200
+            user_relation = User_Reservation(
+                id_reservation = current_reservation.id_reservation,
+                id_user = current_user.id_user    
+            )
+
+            db.session.add(user_relation)
+            db.session.commit()
+
+            lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+            lab_relation = Reservation_Lab(
+                id_reservation = current_reservation.id_reservation,
+                id_lab = lab.id_lab
+            )
+
+            db.session.add(lab_relation)
+            db.session.commit()
+
+
+            response = jsonify({'message' : 'New reservation created!'})
+            
+            return response, 200
+      
+    return jsonify({'message':'The resquesting user is not a profesor account'}), 401
 
 
 @app.route('/reservation', methods=['GET'])
@@ -258,6 +282,9 @@ def get_all_reservations(current_user):
         Reservation.subject,
         Reservation.description,
         User.email,
+        User.name,
+        User.lastname1,
+        User.lastname2,
         Lab.name
         )
 
@@ -289,8 +316,6 @@ def delete_this_reservation(current_user):
 
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
     Reservation.init_time, Lab.name, Reservation.id_reservation).all()
-
-
 
     for reservation in reservations:
         if reservation[0] == date and reservation[1] == time and reservation[2] == data['lab']:
@@ -338,7 +363,6 @@ def edit_this_reservation(current_user):
             return jsonify({'message':'Reservation modified'}), 200
 
     return jsonify({'message':'No Reservation'}), 401
-
 
 
 # ------------------------- Worklog -------------------------
@@ -407,7 +431,8 @@ def get_all_worklog(current_user):
         User.lastname2,
         User.university_id,
         User_Operator.pending_hours,
-        User_Operator.approved_hours
+        User_Operator.approved_hours,
+        Worklog.id_worklog
     )
 
     result = []
@@ -423,9 +448,86 @@ def get_all_worklog(current_user):
         for data in worklog[3:]:
             new_worklog.append(data)
 
-        result.append(new_worklog)  
+        result.append(new_worklog)
+
+    return jsonify(result), 200
+
+
+@app.route('/worklog/user', methods=['GET'])
+@token_required
+def get_its_worklog(current_user):
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).join(User_Operator).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.final_time,
+        Worklog.description,
+        Worklog.id_status,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        User.university_id,
+        User_Operator.pending_hours,
+        User_Operator.approved_hours,
+        User.email,
+        Worklog.id_worklog
+    )
+
+    result = []
+
+    for worklog in worklogs:
+        new_worklog = []
+        if worklog[11] == current_user.email:
+            new_worklog = []
+            new_worklog.append(get_datetime_from_seconds(worklog[0]))
+            new_worklog.append(get_time_from_seconds(worklog[1]))
+            new_worklog.append(get_time_from_seconds(worklog[2]))
+
+            for data in worklog[3:]:
+                new_worklog.append(data)
+        if new_worklog != []:
+            result.append(new_worklog)
     
     return jsonify(result), 200
+
+
+@app.route('/worklog/pending', methods=['GET'])
+@token_required
+def get_pending_worklog(current_user):
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).join(User_Operator).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.final_time,
+        Worklog.description,
+        Worklog.id_status,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        User.university_id,
+        User_Operator.pending_hours,
+        User_Operator.approved_hours,
+        User.email,
+        Worklog.id_worklog
+    )
+
+    result = []
+
+    for worklog in worklogs:
+        if worklog[4] == 1:
+            new_worklog = []
+
+            
+            new_worklog.append(get_datetime_from_seconds(worklog[0]))
+            new_worklog.append(get_time_from_seconds(worklog[1]))
+            new_worklog.append(get_time_from_seconds(worklog[2]))
+
+            for data in worklog[3:]:
+                new_worklog.append(data)
+            result.append(new_worklog)
+    
+    return jsonify(result), 200
+
 
 
 @app.route('/worklog', methods= ['DELETE'])
@@ -489,6 +591,37 @@ def edit_this_worklog(current_user):
 
     return jsonify({'message':'No Worklog'}), 401
 
+
+@app.route('/worklog/state', methods= ['PUT'])
+@token_required
+def edit_state_worklog(current_user):
+    
+    raw_data = request.get_json()
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    id_modified = data['id_worklog']
+
+    worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
+        Worklog.date_time,
+        Worklog.init_time,
+        Worklog.id_worklog
+    ).all()
+
+    for worklog in worklogs:
+        if worklog[2] == int(id_modified):
+
+            current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
+
+            current_id_status= WorklogStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_worklog.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Worklog modified'}), 200
+
+    return jsonify({'message':'No Worklog'}), 401
 
 # ------------------------- Inventory -------------------------
 
@@ -581,6 +714,40 @@ def get_all_inventory(current_user):
             new_inventory.append(data)
 
         result.append(new_inventory)
+
+    return jsonify(result), 200
+
+
+@app.route('/inventory/user', methods=['GET'])
+@token_required
+def get_its_inventory(current_user):
+
+    inventories = InventoryReport.query.join(User_InventoryReport).join(User).join(InventoryReport_Lab).join(Lab).with_entities(
+        InventoryReport.date,
+        InventoryReport.complete_computers,
+        InventoryReport.incomplete_computers,
+        InventoryReport.number_projectors,
+        InventoryReport.number_chairs,
+        InventoryReport.number_fire_extinguishers,
+        InventoryReport.description,
+        Lab.id_lab,
+        User.id_user,
+        InventoryReport.id_report,
+        User.email
+    )
+
+    result = []
+
+    for inventory in inventories:
+        new_inventory = []
+        if inventory[10] == current_user.email:
+            new_inventory.append(get_datetime_from_seconds(inventory[0]))
+
+            for data in inventory[1:]:
+                new_inventory.append(data)
+
+        if new_inventory != []:
+            result.append(new_inventory)
 
     return jsonify(result), 200
 
@@ -800,6 +967,38 @@ def edit_this_faultreport(current_user):
 
             current_fault.id_status = current_id_lab.id_lab
 
+
+            current_id_status= FaultStatus.query.filter_by(status = new_data["status"]).first() 
+
+            current_fault.id_status = current_id_status.id_status
+
+            db.session.commit()
+
+            return jsonify({'message':'Fault Report modified'}), 200
+
+    return jsonify({'message':'No Fault Report'}), 401
+
+
+@app.route('/fault/state', methods= ['PUT'])
+@token_required
+def edit_state_faultreport(current_user):
+    
+    raw_data = request.get_json()
+
+    data = raw_data['old']
+    new_data = raw_data['new']
+
+    faults = FaultReport.query.join(FaultReport_Lab).join(Lab).join(User_FaultReport).join(User).with_entities(
+        FaultReport.date_time,
+        FaultReport.id_report,
+        Lab.name
+    ).all()
+
+    for fault in faults:
+        if fault[1] == int(data["id_report"]):
+
+           
+            current_fault = db.session.query(FaultReport).filter_by(id_report = fault[1]).first()
 
             current_id_status= FaultStatus.query.filter_by(status = new_data["status"]).first() 
 
@@ -1155,8 +1354,6 @@ def delete_this_event(current_user):
 def create_course(current_user):
     data = request.get_json()
 
-
-
     course = Course(
         code = data['code'],
         name = data['name'],
@@ -1167,7 +1364,7 @@ def create_course(current_user):
     db.session.commit()
 
 
-    response = jsonify({'message' : 'New course created!'})
+    response = jsonify({'message' : 'The course has been added to the course list!'})
 
     return response, 200
 

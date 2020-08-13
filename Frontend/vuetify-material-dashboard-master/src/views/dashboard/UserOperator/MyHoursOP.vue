@@ -21,6 +21,16 @@
               <h2>a</h2>
             </v-row>
             <v-row>
+              <h2>' '</h2>
+            </v-row>
+
+            <v-row>
+              <h2 />
+            </v-row>
+            <v-row>
+              <h2 />
+            </v-row>
+            <v-row>
               <h2>Operator:</h2>
             </v-row>
             <v-row>
@@ -365,5 +375,48 @@
 <style scoped>
 .controls {
   position: relative;
+}
+.css
+h1 {
+  color: #6c2eb9;
+  font-weight: normal;
+  font-size: 20px;
+  font-family: Arial;
+  text-transform: uppercase;
+}
+h2 {
+  color: #3c1b66;
+  font-weight: normal;
+  font-size: 15px;
+  font-family: Arial;
+  text-transform: uppercase;
+}
+h3 {
+  color: #443963;
+  font-weight: normal;
+  font-size: 30px;
+  font-family: Arial;
+  text-transform: lowercase;
+}
+h4 {
+  color: #4f4866;
+  font-weight: normal;
+  font-size: 25px;
+  font-family: Arial;
+  text-transform: lowercase;
+}
+h5 {
+  color: #656172;
+  font-weight: normal;
+  font-size: 20px;
+  font-family: Arial;
+  text-transform: lowercase;
+}
+h6 {
+  color: #747377;
+  font-weight: normal;
+  font-size: 18px;
+  font-family: Arial;
+  text-transform: lowercase;
 }
 </style>

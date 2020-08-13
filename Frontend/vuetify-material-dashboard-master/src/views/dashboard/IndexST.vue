@@ -73,7 +73,7 @@
           text
           to="/pages/user"
         >
-        <span class="mr-1">My account</span>
+          <span class="mr-1">My account</span>
         </v-btn>
         <v-btn
           class="ml-1"
@@ -105,6 +105,7 @@
       <v-btn
         to="/"
         text
+        @click="deleteUserLogged"
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
@@ -132,5 +133,10 @@
     data: () => ({
       expandOnHover: false,
     }),
+    methods: {
+      deleteUserLogged () {
+        this.$auth.deleteUserLogged()
+      },
+    },
   }
 </script>
