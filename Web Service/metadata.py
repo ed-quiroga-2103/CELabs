@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(LUIS_DB, 'w+')
+file = open(KIMBERLY_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + LUIS_DB)
+engine = create_engine('sqlite:///' + KIMBERLY_DB)
 meta = MetaData()
 
 
