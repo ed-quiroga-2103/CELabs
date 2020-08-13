@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -140,7 +140,7 @@ def login():
     if not user:
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    if user.password == auth.password:
+    if user.password == auth.password and user.active == 1:
         if user.name == 'Op':
             token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, app.config['SECRET_KEY'])
         else:
@@ -169,15 +169,31 @@ def get_this_user(current_user):
     return jsonify(information), 200
 
 
-@app.route('/user', methods=['PUT'])
+@app.route('/user/disable', methods=['PUT'])
 @token_required
 def disable_this_user(current_user):
-
     current_user.active = 0
     db.session.commit()
 
     return jsonify({'message' : 'Your account has been disabled !'}), 200
 
+
+@app.route('/user', methods=['PUT'])
+@token_required
+def edit_this_user(current_user):
+
+    data = request.get_json()
+
+    current_user.name = data["name"]
+    current_user.lastname1 = data["lastname1"]
+    current_user.lastname2 = data["lastname2"]
+    current_user.id_number = data["id_number"]
+    current_user.phone_number = data["phone_number"]
+    current_user.university_id = data["university_id"]
+
+    db.session.commit()
+
+    return jsonify({'message' : 'Your account has been modified !'}), 200
 
 # ------------------------- Reservations -------------------------
 
@@ -305,6 +321,46 @@ def get_all_reservations(current_user):
         result.append(new_reserv)
 
     return jsonify(result), 200
+
+
+@app.route('/reservation/user', methods=['GET'])
+@token_required
+def get_its_reservations(current_user):
+
+    reservations = Reservation.query.join(User_Reservation).join(User).join(Reservation_Lab).join(Lab).with_entities(
+        Reservation.request_date, 
+        Reservation.requested_date,
+        Reservation.init_time,
+        Reservation.final_time,
+        Reservation.subject,
+        Reservation.description,
+        User.email,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        Lab.name
+        )
+
+    result = []
+
+    for reserv in reservations:
+        new_reserv = []
+        
+        if reserv[6] == current_user.email:
+            new_reserv.append(get_date_from_seconds(reserv[0]))
+            new_reserv.append(get_date_from_seconds(reserv[1]))
+            new_reserv.append(get_time_from_seconds(reserv[2]))
+            new_reserv.append(get_time_from_seconds(reserv[3]))
+
+
+            for data in reserv[4:]:
+                new_reserv.append(data)
+
+        if new_reserv != []:
+            result.append(new_reserv)
+
+    return jsonify(result), 200
+
 
 @app.route('/reservation', methods= ['DELETE'])
 @token_required
@@ -1077,6 +1133,40 @@ def create_allnighter(current_user):
     return response, 200
 
 
+@app.route('/allnighter/user', methods=['GET'])
+@token_required
+def get_its_allnighters(current_user):
+
+    allnighters = AllNighter.query.join(User_AllNighter).join(User).join(AllNighter_Lab).join(Lab).with_entities(
+        AllNighter.request_date, 
+        AllNighter.requested_date,
+        AllNighter.init_time,
+        AllNighter.final_time,
+        AllNighter.subject,
+        AllNighter.state,
+        User.email,
+        Lab.name,
+        AllNighter.id_allnighter
+        )
+
+    result = []
+
+    for allnighter in allnighters:
+        new_allnighter = []
+        if allnighter[6] == current_user.email:
+            new_allnighter.append(get_date_from_seconds(allnighter[0]))
+            new_allnighter.append(get_date_from_seconds(allnighter[1]))
+            new_allnighter.append(get_time_from_seconds(allnighter[2]))
+            new_allnighter.append(get_time_from_seconds(allnighter[3]))
+
+            for data in allnighter[4:]:
+                new_allnighter.append(data)
+
+        if new_allnighter != []:
+            result.append(new_allnighter)
+
+    return jsonify(result), 200
+
 @app.route('/allnighter', methods=['GET'])
 @token_required
 def get_all_allnighters(current_user):
@@ -1089,7 +1179,8 @@ def get_all_allnighters(current_user):
         AllNighter.subject,
         AllNighter.state,
         User.email,
-        Lab.name
+        Lab.name,
+        AllNighter.id_allnighter
         )
 
     result = []
@@ -1132,6 +1223,40 @@ def delete_this_allnighter(current_user):
 
     return jsonify({'message':'No All-Nighter'}), 401
 
+
+@app.route('/allnighter/state', methods= ['PUT'])
+@token_required
+def edit_state_allnighter(current_user):
+    
+    data = request.get_json()
+
+    allnighters = AllNighter.query.with_entities(
+        AllNighter.id_allnighter,
+        AllNighter.state,
+    ).all()
+
+    for allnighter in allnighters:
+        if allnighter[0] == int(data["id_allnighter"]):
+
+            current_allnighter = db.session.query(AllNighter).filter_by(id_allnighter = allnighter[0]).first()
+
+            if data["status"] == "Pending":
+                current_allnighter.state = 0
+
+            if data["status"] == "Approved":
+                current_allnighter.state = 1
+
+            if data["status"] == "Denied":
+                current_allnighter.state = 2
+
+            db.session.commit()
+
+            return jsonify({'message':'AllNighter modified'}), 200
+
+    return jsonify({'message':'No AllNighter'}), 401
+
+
+
 # ------------------------- Evaluations -------------------------
 
 @app.route('/evaluation', methods=['POST'])
@@ -1161,7 +1286,7 @@ def create_evaluation():
 @token_required
 def get_all_evaluations(current_user):
 
-    evaluations = Evaluation.query.with_entities(Evaluation.date_time, Evaluation.comment, Evaluation.score).all()
+    evaluations = Evaluation.query.with_entities(Evaluation.date_time, Evaluation.comment,Evaluation.comment2,Evaluation.score).all()
 
     result = []
 
