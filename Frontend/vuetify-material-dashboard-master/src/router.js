@@ -5,6 +5,7 @@ import IndexAD from '@/views/dashboard/IndexAD.vue'
 import IndexLogin from '@/views/dashboard/IndexLogin.vue'
 import IndexP from '@/views/dashboard/IndexP.vue'
 import IndexA from '@/views/dashboard/IndexA.vue'
+import IndexST from '@/views/dashboard/IndexST.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -80,6 +81,47 @@ export default new Router({
           path: 'CreateUser',
           name: 'CreateUser',
           component: () => import('./views/dashboard/UserAdmin/CreateUsersAD.vue'),
+        },
+      ],
+    },
+    {
+      path: '/ST',
+      component: IndexST,
+      children: [
+        {
+          path: '',
+          name: 'dashboard',
+          component: () => import('./views/dashboard/Dashboard.vue'),
+        },
+        // {
+        //   path: 'availability',
+        //   name: 'availability2',
+        //   component: () => import('./views/dashboard/UserSupportTeam/AvailabilityAD.vue'),
+        // },
+        // {
+        //   path: 'OPHours',
+        //   name: 'OPHours',
+        //   component: () => import('./views/dashboard/UserSupportTeam/OperatorHours.vue'),
+        // },
+        {
+          path: 'Inventory',
+          name: 'Inventory',
+          component: () => import('./views/dashboard/UserSupportTeam/InventoryReportST.vue'),
+        },
+        {
+          path: 'Faults',
+          name: 'Faults',
+          component: () => import('./views/dashboard/UserSupportTeam/FaultsST.vue'),
+        },
+        // {
+        //   path: 'CreateUser',
+        //   name: 'CreateUser',
+        //   component: () => import('./views/dashboard/UserSupportTeam/CreateUsersAD.vue'),
+        // },
+        {
+          path: 'myhours',
+          name: 'myhours',
+          component: () => import('./views/dashboard/UserSupportTeam/MyHoursST.vue'),
         },
       ],
     },

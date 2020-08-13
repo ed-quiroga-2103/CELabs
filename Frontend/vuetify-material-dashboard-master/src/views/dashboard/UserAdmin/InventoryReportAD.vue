@@ -175,7 +175,7 @@
                   reportT: res[i][0].slice(11, 16),
                   labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
                   Detail: res[i][1],
-                  reportNo: res[i][5],
+                  reportNo: res[i][9],
                   completeComp: res[i][1],
                   incompleteComp: res[i][2],
                   projectors: res[i][3],

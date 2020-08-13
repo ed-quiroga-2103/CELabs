@@ -54,9 +54,9 @@
           class="ml-1"
           min-width="0"
           text
-          to="/"
+          to="/ST/faults"
         >
-          <span class="mr-1">Report faults</span>
+          <span class="mr-1">Faults</span>
         </v-btn>
 
         <v-btn
@@ -79,7 +79,7 @@
           class="ml-1"
           min-width="0"
           text
-          to="/"
+          to="/ST/Inventory"
         >
           <span class="mr-1">Inventory Report</span>
         </v-btn>
@@ -87,7 +87,7 @@
           class="ml-1"
           min-width="0"
           text
-          to="/pages/user"
+          to="/ST/myhours"
         >
           <span class="mr-1">My hours</span>
         </v-btn>
