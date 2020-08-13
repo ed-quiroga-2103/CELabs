@@ -360,11 +360,8 @@
       },
       async delitem () {
         try {
-          await this.$auth.delHourReport(this.currdel).then(
-            response => {
-              var res = response.data
-              console.log(res)
-            })
+          await this.$auth.delHourReport(this.currdel)
+          setTimeout(() => { this.getHours() }, 1000)
         } catch (error) {
           this.error = true
         }

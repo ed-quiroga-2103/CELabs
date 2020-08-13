@@ -296,6 +296,32 @@ export default {
         return response
     })
   },
+  delHourReport (id) {
+      var data = JSON.stringify(
+        {
+          old: {
+              id_worklog: id,
+          },
+        },
+      )
+      var config = {
+        method: 'DELETE',
+        url: ENDPOINT_PATH + '/worklog',
+        headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+        },
+        data: data,
+      }
+     axios(config)
+        .then(response => {
+        this.posts = response.data
+        },
+        ).catch(e => {
+        console.error(e.data.message)
+      })
+  },
   submitInv (labo, compCom, incompCom, projectors, chairs, fireExt, det) {
     var data = JSON.stringify(
       {
