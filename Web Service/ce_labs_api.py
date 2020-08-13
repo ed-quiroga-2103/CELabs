@@ -140,7 +140,7 @@ def login():
     if not user:
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    if user.password == auth.password:
+    if user.password == auth.password and user.active == 1:
         if user.name == 'Op':
             token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, app.config['SECRET_KEY'])
         else:
