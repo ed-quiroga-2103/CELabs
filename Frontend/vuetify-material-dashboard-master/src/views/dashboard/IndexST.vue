@@ -10,18 +10,17 @@
           alt="Vuetify Logo"
           class="shrink mr-2"
           contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          src="https://i.ibb.co/txtdCJ1/logo.png"
           transition="scale-transition"
+          min-width="70"
           width="40"
         />
-
         <v-img
           alt="Vuetify Name"
           class="shrink mt-1 hidden-sm-and-down"
           contain
           min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
+          width="40"
         />
       </div>
       <v-spacer />
@@ -95,11 +94,12 @@
       <v-spacer />
       <v-spacer />
       <v-btn
-        class="ml-1"
+        sclass="ml-1"
         min-width="0"
         text
-        to="/pages/user"
+        to="/op/myaccount"
       >
+        <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>
       </v-btn>
       <v-btn

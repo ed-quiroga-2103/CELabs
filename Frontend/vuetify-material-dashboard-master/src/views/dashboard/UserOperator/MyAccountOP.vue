@@ -101,7 +101,7 @@
               outlined
               color="grey darken-2"
               class="mr-8"
-              @click="Reporthour = true"
+              @click="visible= true"
             >
               Edit
             </v-btn>
@@ -113,6 +113,80 @@
         </v-toolbar>
       </v-sheet>
     </v-col>
+    <v-dialog
+      v-model="visible"
+    >
+      <v-card
+        class="elevation-12"
+      >
+        <v-toolbar
+          color="primary"
+          dark
+          flat
+        >
+          <v-toolbar-title>Edit personal information</v-toolbar-title>
+          <v-spacer />
+        </v-toolbar>
+        <FormulateForm
+          v-model="formValues"
+          @submit="handleSubmit()"
+        >
+          <v-card-text ml="10">
+            <FormulateInput
+              class="input-group-alternative mb-3"
+              type="text"
+              name="name"
+              label="Name"
+            />
+            <FormulateInput
+              class="input-group-alternative mb-3"
+              type="text"
+              name="apellido1"
+              label="First Last Name"
+            />
+            <FormulateInput
+              class="input-group-alternative mb-3"
+              type="text"
+              name="apellido2"
+              label="Second Last Name"
+            />
+            <FormulateInput
+              class="input-group-alternative mb-3"
+              type="text"
+              name="idnumb"
+              label="Id Number"
+              validation="number"
+            />
+            <FormulateInput
+              class="input-group-alternative mb-3"
+              type="text"
+              name="numero"
+              label="Phone Number"
+              validation="number"
+            />
+            <FormulateInput
+              class="input-group-alternative mb-3"
+              type="text"
+              name="iduni"
+              label="University ID"
+              validation="number"
+            />
+            <v-spacer />
+            <FormulateInput
+              type="submit"
+              class="btn btn-primary"
+              label="Save"
+            />
+            <v-btn
+              @click="visible = false"
+            >
+              Cancel
+            </v-btn>
+          </v-card-text>
+        </FormulateForm>
+        <v-spacer />
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
@@ -131,6 +205,8 @@
         { text: 'State', value: 'state' },
         { text: 'Delete', value: 'delete' },
       ],
+      formValues: {},
+      visible: false,
       hours: [],
       user: 'Kimberly',
       apellido1: 'Calderón',
@@ -197,9 +273,33 @@
               this.Iduni = res[6]
               this.numero = res[5]
               this.email = res[4]
+              this.formValues =
+                {
+                  name: this.user,
+                  apellido1: this.apellido1,
+                  apellido2: this.apellido2,
+                  idnumb: this.Idnumb,
+                  iduni: this.Iduni,
+                  numero: this.numero,
+                  email2: this.email,
+                }
             })
         } catch (error) {
           this.error = true
+        }
+      },
+      async handleSubmit () {
+        console.log(this.formValues)
+        try {
+          await this.$auth.putPerfil(this.formValues.name, this.formValues.apellido1, this.formValues.apellido2, this.formValues.idnumb, this.formValues.numero, this.formValues.iduni)
+        } catch (error) {
+          this.error = true
+          alert('Error submiting report')
+        }
+        this.reportValues = {
+          radios: '',
+          Idnumb: '',
+          textarea: '',
         }
       },
     },

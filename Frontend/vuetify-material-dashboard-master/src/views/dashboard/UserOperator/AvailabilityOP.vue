@@ -83,7 +83,6 @@
               <v-btn
                 fab
                 text
-
                 dense
                 readonly
                 outlined
@@ -171,7 +170,14 @@
                 <template>
                   <v-row align="center">
                     <v-col cols="12">
-                      >
+                      <v-text-field
+                        v-model="prof"
+                        :rules="[rules.email]"
+                        filled
+                        color="deep-purple"
+                        label="User"
+                        type="email"
+                      />
                       <v-text-field
                         v-model="start"
                         type="date"
@@ -298,6 +304,14 @@
                   counter
                   label="Justification"
                 />
+                <v-text-field
+                  v-model="operador"
+                  filled
+                  color="white"
+                  label="Operator"
+                  type="email"
+                  readonly
+                />
                 <v-btn
                   type="submit"
                   color="primary"
@@ -390,6 +404,10 @@
         name: '',
         name2: '',
       },
+      rules: {
+        email: v => !!(v || '').match(/@/) || 'Please enter a valid email',
+        required: v => !!v || 'This field is required',
+      },
       l1: false,
       calendarmonth: mdiCalendarMonth,
       intervals: {
@@ -403,6 +421,8 @@
       items: ['F2-09', 'F2-10'],
       description: '',
       description2: '',
+      operador: 'operador@gmail.com',
+      prof: ' ',
       lab: '',
       lab2: '',
       course: '',
@@ -441,6 +461,8 @@
     mounted () {
       this.getReservations()
       this.$refs.calendar.checkChange()
+      this.getPerfil()
+      this.getCourses()
     },
     methods: {
       allowedDates: val => parseInt(val.split('-')[2], 10) % 2 === 0,
@@ -500,20 +522,18 @@
       addReservation () {
         try {
           if (this.date && this.time && this.time2 && this.description && this.lab && this.course) {
-            this.requesting_user = 'profesor@gmail.com'
-            this.operator = 'operator@gmail.com'
             const date2 = this.ChangeDate(this.date)
             const date3 = this.ChangeDate(this.start)
-            console.log(date2, date3, this.requesting_user, this.time + ':00', this.time2 + ':00', this.course, this.description, this.lab, this.operator)
+            console.log(date2, date3, this.prof, this.time + ':00', this.time2 + ':00', this.course, this.description, this.lab, this.operator)
             this.postReservation(date2,
                                  date3,
-                                 this.requesting_user,
+                                 this.prof,
                                  this.time + ':00',
                                  this.time2 + ':00',
                                  this.course,
                                  this.description,
                                  this.lab,
-                                 this.operator)
+                                 this.operador)
           } else {
             alert('Complete all the fields')
           }
@@ -570,6 +590,32 @@
               date: dt,
             })
           }
+        }
+      },
+      async getPerfil () {
+        try {
+          await this.$auth.getPerfil().then(
+            response => {
+              var res = response.data
+              this.operador = res[4]
+              console.log(res[4])
+            })
+        } catch (error) {
+          this.error = true
+        }
+      },
+      async getCourses () {
+        try {
+          await this.$auth.getCourses().then(
+            response => {
+              this.iCourses = []
+              var res = response.data
+              this.iCourses.name = res[2]
+              this.iCourses.code = res[0]
+              this.iCourses.group = res[1]
+            })
+        } catch (error) {
+          this.error = true
         }
       },
     },

@@ -96,6 +96,71 @@ export default {
       console.error(e.data.message)
     })
   },
+  // Function to put user data
+  // eslint-disable-next-line camelcase
+  putPerfil (name, lastname1, lastname2, id_number, phone_number, university_id) {
+    var data = {
+    name: name,
+    lastname1: lastname1,
+    lastname2: lastname2,
+    id_number: id_number,
+    phone_number: phone_number,
+    university_id: university_id,
+}
+    console.log(data)
+
+    var config = {
+      method: 'put',
+      url: ENDPOINT_PATH + 'evaluation',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+    }
+    console.log(data)
+    axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+    })
+},
+  // Function to post evaluation
+  // eslint-disable-next-line camelcase
+  postSatisfaccion (score, comment, comment2) {
+    var data = JSON.stringify(
+       {
+          score: score,
+          comment: comment,
+          comment2: comment2,
+       },
+   )
+    console.log(data)
+
+    var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'evaluation',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+    }
+    console.log(data)
+    axios(config)
+      .then(response => {
+      this.posts = response.data
+      // console.log(this.posts.message)
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+    })
+  },
   // Function to get Reservations
   getReservations () {
     var data = ''
@@ -133,6 +198,24 @@ export default {
           return response
       })
     },
+        // Function to get Courses
+        getCourses () {
+          var data = ''
+          var config = {
+          method: 'get',
+          url: ENDPOINT_PATH + 'course',
+          headers: {
+              'x-access-token': this.getUserLogged(),
+              Authorization: 'Basic QWRtaW46MTIzNDU=',
+              'Content-Type': 'application/json',
+          },
+              data: data,
+          }
+           return axios(config).then(response => {
+              console.log(response.data)
+              return response
+          })
+        },
   //  Function to get AllNighters
   getAN () {
     var data = ''
