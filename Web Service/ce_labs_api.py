@@ -1246,7 +1246,7 @@ def create_evaluation():
 @token_required
 def get_all_evaluations(current_user):
 
-    evaluations = Evaluation.query.with_entities(Evaluation.date_time, Evaluation.comment, Evaluation.score).all()
+    evaluations = Evaluation.query.with_entities(Evaluation.date_time, Evaluation.comment,Evaluation.comment2,Evaluation.score).all()
 
     result = []
 

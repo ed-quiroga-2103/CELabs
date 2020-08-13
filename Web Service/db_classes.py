@@ -217,5 +217,6 @@ class Evaluation(db.Model):
     date_time = db.Column(db.Text, nullable = False)
     score = db.Column(db.BigInteger, nullable = False)
     comment = db.Column(db.String(50), nullable = False)
+    comment2 = db.Column(db.String(50), nullable = False)
 
 print("The database classes were successfully loaded")
