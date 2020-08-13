@@ -322,6 +322,46 @@ def get_all_reservations(current_user):
 
     return jsonify(result), 200
 
+
+@app.route('/reservation/user', methods=['GET'])
+@token_required
+def get_its_reservations(current_user):
+
+    reservations = Reservation.query.join(User_Reservation).join(User).join(Reservation_Lab).join(Lab).with_entities(
+        Reservation.request_date, 
+        Reservation.requested_date,
+        Reservation.init_time,
+        Reservation.final_time,
+        Reservation.subject,
+        Reservation.description,
+        User.email,
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        Lab.name
+        )
+
+    result = []
+
+    for reserv in reservations:
+        new_reserv = []
+        
+        if reserv[6] == current_user.email:
+            new_reserv.append(get_date_from_seconds(reserv[0]))
+            new_reserv.append(get_date_from_seconds(reserv[1]))
+            new_reserv.append(get_time_from_seconds(reserv[2]))
+            new_reserv.append(get_time_from_seconds(reserv[3]))
+
+
+            for data in reserv[4:]:
+                new_reserv.append(data)
+
+        if new_reserv != []:
+            result.append(new_reserv)
+
+    return jsonify(result), 200
+
+
 @app.route('/reservation', methods= ['DELETE'])
 @token_required
 def delete_this_reservation(current_user):
