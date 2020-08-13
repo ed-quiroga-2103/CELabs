@@ -5,6 +5,7 @@ import IndexAD from '@/views/dashboard/IndexAD.vue'
 import IndexLogin from '@/views/dashboard/IndexLogin.vue'
 import IndexP from '@/views/dashboard/IndexP.vue'
 import IndexA from '@/views/dashboard/IndexA.vue'
+import IndexSat from '@/views/dashboard/IndexSat.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -124,6 +125,18 @@ export default new Router({
           path: '/register',
           name: 'register',
           component: () => import('./views/dashboard/Out/Register.vue'),
+        },
+      ],
+    },
+    {
+      path: '/satisfaccion',
+      redirect: '/satisfaccion/form',
+      component: IndexSat,
+      children: [
+        {
+          path: 'form',
+          name: 'form',
+          component: () => import('./views/dashboard/Out/Satisfaccion.vue'),
         },
       ],
     },

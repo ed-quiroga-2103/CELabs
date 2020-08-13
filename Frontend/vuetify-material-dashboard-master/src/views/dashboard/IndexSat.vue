@@ -27,26 +27,6 @@
       <div
         class="mx-3"
       />
-      <v-btn
-        class="ml-1"
-        min-width="0"
-        text
-        to="/login"
-      >
-        <span class="mr-1">Log In</span>
-        <v-spacer />
-        <v-spacer />
-      </v-btn>
-      <v-btn
-        class="ml-1"
-        min-width="0"
-        text
-        to="/register"
-      >
-        <span class="mr-1">Sign up</span>
-        <v-spacer />
-        <v-spacer />
-      </v-btn>
     </v-app-bar>
 
     <dashboard-core-view />

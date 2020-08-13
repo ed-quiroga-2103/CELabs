@@ -10,8 +10,9 @@
           alt="Vuetify Logo"
           class="shrink mr-2"
           contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          src="https://i.ibb.co/txtdCJ1/logo.png"
           transition="scale-transition"
+          min-width="70"
           width="40"
         />
         <v-img
@@ -19,7 +20,6 @@
           class="shrink mt-1 hidden-sm-and-down"
           contain
           min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
           width="40"
         />
       </div>
