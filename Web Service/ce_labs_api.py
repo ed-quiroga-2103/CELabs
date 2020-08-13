@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -1076,6 +1076,39 @@ def create_allnighter(current_user):
 
     return response, 200
 
+
+@app.route('/allnighter/user', methods=['GET'])
+@token_required
+def get_its_allnighters(current_user):
+
+    allnighters = AllNighter.query.join(User_AllNighter).join(User).join(AllNighter_Lab).join(Lab).with_entities(
+        AllNighter.request_date, 
+        AllNighter.requested_date,
+        AllNighter.init_time,
+        AllNighter.final_time,
+        AllNighter.subject,
+        AllNighter.state,
+        User.email,
+        Lab.name
+        )
+
+    result = []
+
+    for allnighter in allnighters:
+        new_allnighter = []
+        if allnighter[6] == current_user.email:
+            new_allnighter.append(get_date_from_seconds(allnighter[0]))
+            new_allnighter.append(get_date_from_seconds(allnighter[1]))
+            new_allnighter.append(get_time_from_seconds(allnighter[2]))
+            new_allnighter.append(get_time_from_seconds(allnighter[3]))
+
+            for data in allnighter[4:]:
+                new_allnighter.append(data)
+
+        if new_allnighter != []:
+            result.append(new_allnighter)
+
+    return jsonify(result), 200
 
 @app.route('/allnighter', methods=['GET'])
 @token_required
