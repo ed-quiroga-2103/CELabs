@@ -169,15 +169,31 @@ def get_this_user(current_user):
     return jsonify(information), 200
 
 
-@app.route('/user', methods=['PUT'])
+@app.route('/user/disable', methods=['PUT'])
 @token_required
 def disable_this_user(current_user):
-
     current_user.active = 0
     db.session.commit()
 
     return jsonify({'message' : 'Your account has been disabled !'}), 200
 
+
+@app.route('/user', methods=['PUT'])
+@token_required
+def edit_this_user(current_user):
+
+    data = request.get_json()
+
+    current_user.name = data["name"]
+    current_user.lastname1 = data["lastname1"]
+    current_user.lastname2 = data["lastname2"]
+    current_user.id_number = data["id_number"]
+    current_user.phone_number = data["phone_number"]
+    current_user.university_id = data["university_id"]
+
+    db.session.commit()
+
+    return jsonify({'message' : 'Your account has been modified !'}), 200
 
 # ------------------------- Reservations -------------------------
 
