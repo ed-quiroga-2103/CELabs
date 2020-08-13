@@ -158,9 +158,10 @@
               } else if (response.data.user_type === 4) {
                 this.$router.push('/pa')
               }
-            })
+            }).catch(e => {
+            console.error(e.data.message)
+          })
         } catch (error) {
-          alert('Already exists an account associated with the email')
         }
       },
     },

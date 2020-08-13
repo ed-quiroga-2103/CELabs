@@ -22,6 +22,11 @@ export default new Router({
           component: () => import('./views/dashboard/UserOperator/AllNightersOP.vue'),
         },
         {
+          path: 'myan',
+          name: 'myan2',
+          component: () => import('./views/dashboard/UserOperator/MyAN.vue'),
+        },
+        {
           path: 'availability',
           name: 'availability1',
           component: () => import('./views/dashboard/UserOperator/AvailabilityOP.vue'),

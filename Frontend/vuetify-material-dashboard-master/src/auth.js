@@ -29,7 +29,6 @@ export default {
       },
       data: data,
     }
-    console.log(data)
     axios(config)
       .then(response => {
       this.posts = response.data
@@ -111,7 +110,7 @@ export default {
 
     var config = {
       method: 'put',
-      url: ENDPOINT_PATH + 'evaluation',
+      url: ENDPOINT_PATH + 'user',
       headers: {
       'x-access-token': this.getUserLogged(),
       Authorization: 'Basic QWRtaW46MTIzNDU=',
@@ -129,6 +128,51 @@ export default {
       console.error(e.data.message)
     })
 },
+     // Function all-nighters from specific user
+getANuser () {
+  var data = ''
+  var config = {
+  method: 'get',
+  url: ENDPOINT_PATH + 'allnighter/user',
+  headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+  },
+      data: data,
+  }
+
+   return axios(config).then(response => {
+      console.log(response.data)
+      return response
+  })
+},
+    // Function to delete account
+    putDelete () {
+      var data = {
+    }
+      console.log(data)
+
+      var config = {
+        method: 'put',
+        url: ENDPOINT_PATH + 'user/disable',
+        headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+        },
+        data: data,
+      }
+      console.log(data)
+      axios(config)
+        .then(response => {
+        this.posts = response.data
+        // console.log(this.posts.message)
+        },
+        ).catch(e => {
+        console.error(e.data.message)
+      })
+    },
   // Function to post evaluation
   // eslint-disable-next-line camelcase
   postSatisfaccion (score, comment, comment2) {
