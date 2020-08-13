@@ -230,7 +230,7 @@ The request returns a JSONArray with all the current reservations in the databas
 ### MODIFY ACCOUNT 
 According with the client, the only thing that can't be modify is email.
 
-The route for this request is `/reservation`
+The route for this request is `/user`
 
 The method is __PUT__
 
