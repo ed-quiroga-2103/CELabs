@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -234,7 +234,7 @@ def create_reservation(current_user):
     teachers = User.query.with_entities(User.email,User.user_type).all()
 
     for teacher in teachers:
-        if teacher[0] == data['requesting_user'] and teacher[1] == 3:
+        if teacher[0] == data['requesting_user'] and teacher[1] == 3 and data["operator"] != "cualquiera@gmail.com":
         
             current_id_reservation = str(uuid.uuid4())
 
@@ -282,6 +282,54 @@ def create_reservation(current_user):
             response = jsonify({'message' : 'New reservation created!'})
             
             return response, 200
+        
+        if teacher[0] == data['requesting_user'] and teacher[1] == 3 and data["operator"] == "cualquiera@gmail.com":
+        
+            current_id_reservation = str(uuid.uuid4())
+
+            new_reservation = Reservation(
+                public_id_reservation = current_id_reservation,
+                request_date = get_date_in_seconds(data['request_date']),
+                requested_date = get_date_in_seconds(data['requested_date']),
+                init_time = get_time_in_seconds(data['init_time']),
+                final_time = get_time_in_seconds(data['final_time']),
+                last_mod_id = current_user.public_id_user,
+                last_mod_date = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
+                subject = data['subject'],
+                description = data['description'],
+                operator = None
+                )
+
+            db.session.add(new_reservation)
+            db.session.commit()
+
+            current_reservation = Reservation.query.filter(Reservation.public_id_reservation.like(current_id_reservation)).first()
+            #current_user = User.query.filter(User.email.like(data['requesting_user'])).first()
+
+
+            user_relation = User_Reservation(
+                id_reservation = current_reservation.id_reservation,
+                id_user = current_user.id_user    
+            )
+
+            db.session.add(user_relation)
+            db.session.commit()
+
+            lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
+
+            lab_relation = Reservation_Lab(
+                id_reservation = current_reservation.id_reservation,
+                id_lab = lab.id_lab
+            )
+
+            db.session.add(lab_relation)
+            db.session.commit()
+
+
+            response = jsonify({'message' : 'New reservation created!'})
+            
+            return response, 200
+
       
     return jsonify({'message':'The resquesting user is not a profesor account'}), 401
 
@@ -656,7 +704,8 @@ def edit_state_worklog(current_user):
     worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
         Worklog.date_time,
         Worklog.init_time,
-        Worklog.id_worklog
+        Worklog.id_worklog,
+        User.id_user
     ).all()
 
     for worklog in worklogs:

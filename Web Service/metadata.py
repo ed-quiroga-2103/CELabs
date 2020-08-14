@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(KIMBERLY_DB, 'w+')
+file = open(RACSO_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + KIMBERLY_DB)
+engine = create_engine('sqlite:///' + RACSO_DB)
 meta = MetaData()
 
 
@@ -46,7 +46,7 @@ Reservation = Table(
     Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
-    Column('operator', Integer, ForeignKey('User.id_user'), nullable = False),
+    Column('operator', Integer, ForeignKey('User.id_user'), nullable = True),
 )
 
 AllNighter = Table(
