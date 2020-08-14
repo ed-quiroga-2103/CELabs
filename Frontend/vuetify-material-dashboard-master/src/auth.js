@@ -603,7 +603,7 @@ getRuser () {
     var data = ''
     var config = {
     method: 'get',
-    url: ENDPOINT_PATH + 'users',
+    url: ENDPOINT_PATH + 'operators',
     headers: {
         'x-access-token': this.getUserLogged(),
         Authorization: 'Basic QWRtaW46MTIzNDU=',

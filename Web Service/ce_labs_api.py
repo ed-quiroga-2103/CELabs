@@ -15,11 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-<<<<<<< HEAD
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + LUIS_DB
-=======
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
->>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True

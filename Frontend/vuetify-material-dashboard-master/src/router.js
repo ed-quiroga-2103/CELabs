@@ -85,6 +85,11 @@ export default new Router({
           component: () => import('./views/dashboard/UserAdmin/FaultsAD.vue'),
         },
         {
+          path: 'Operators',
+          name: 'Operators',
+          component: () => import('./views/dashboard/UserAdmin/Operators.vue'),
+        },
+        {
           path: 'CreateUser',
           name: 'CreateUser',
           component: () => import('./views/dashboard/UserAdmin/CreateUsersAD.vue'),
@@ -100,16 +105,6 @@ export default new Router({
           name: 'dashboard',
           component: () => import('./views/dashboard/Dashboard.vue'),
         },
-        // {
-        //   path: 'availability',
-        //   name: 'availability2',
-        //   component: () => import('./views/dashboard/UserSupportTeam/AvailabilityAD.vue'),
-        // },
-        // {
-        //   path: 'OPHours',
-        //   name: 'OPHours',
-        //   component: () => import('./views/dashboard/UserSupportTeam/OperatorHours.vue'),
-        // },
         {
           path: 'Inventory',
           name: 'Inventory',
@@ -154,11 +149,11 @@ export default new Router({
         },
         {
           path: 'myaccount',
-<<<<<<< HEAD
           name: 'myaccount',
           component: () => import('./views/dashboard/UserProfessor/MyAccountP.vue'),
         },
-=======
+        {
+          path: 'myaccount2',
           name: 'myaccount2',
           component: () => import('./views/dashboard/UserProfessor/MyAccountP.vue'),
         },
@@ -167,7 +162,6 @@ export default new Router({
           name: 'myres',
           component: () => import('./views/dashboard/UserProfessor/MyReservationsP.vue'),
         },
->>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
       ],
     },
     {
@@ -181,15 +175,14 @@ export default new Router({
           component: () => import('./views/dashboard/UserAdministrative/AvailabilityA.vue'),
         },
         {
-<<<<<<< HEAD
           path: 'myaccount',
           name: 'myaccount',
           component: () => import('./views/dashboard/UserAdministrative/MyAccountA.vue'),
-=======
+        },
+        {
           path: 'myreservations',
           name: 'myres2',
           component: () => import('./views/dashboard/UserAdministrative/MyReservationsA.vue'),
->>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
         },
       ],
     },

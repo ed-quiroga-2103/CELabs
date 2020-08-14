@@ -8,8 +8,7 @@
           :items="hours"
           :items-per-page="5"
           class="elevation-1"
-        >
-        </v-data-table>
+        />
       </v-sheet>
     </v-col>
   </v-row>
@@ -46,7 +45,7 @@
       deldialog: false,
     }),
     mounted () {
-      this.getHours()
+      this.getUsers()
     },
     methods: {
       async getUsers () {
@@ -58,12 +57,12 @@
               console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.users.push({
-                  uniId:'',
-                  name: '',
-                  ln1: '',
-                  ln2: '',
-                  appHours: '',
-                  pendHours: '',                  
+                  uniId: res[i][3],
+                  name: res[i][0],
+                  ln1: res[i][1],
+                  ln2: res[i][2],
+                  appHours: res[i][7],
+                  pendHours: res[i][8],
                 })
               }
             })
