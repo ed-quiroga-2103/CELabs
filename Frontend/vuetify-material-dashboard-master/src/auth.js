@@ -29,9 +29,10 @@ export default {
       },
       data: data,
     }
-    axios(config)
+    return axios(config)
       .then(response => {
-      this.posts = response.data
+        alert(response.data.message)
+      return response
       // console.log(this.posts.message)
       },
       ).catch(e => {
@@ -53,7 +54,6 @@ export default {
     }
 
      return axios(config).then(response => {
-        console.log(response.data)
         return response
     })
   },
@@ -88,6 +88,7 @@ export default {
     console.log(data)
     return axios(config)
       .then(response => {
+        alert(response.data.message)
       return response
       // console.log(this.posts.message)
       },
@@ -121,6 +122,8 @@ export default {
     console.log(data)
     axios(config)
       .then(response => {
+        location.reload()
+      alert(response.data.message)
       this.posts = response.data
       // console.log(this.posts.message)
       },
@@ -143,7 +146,6 @@ getANuser () {
   }
 
    return axios(config).then(response => {
-      console.log(response.data)
       return response
   })
 },
@@ -162,7 +164,6 @@ getRuser () {
   }
 
    return axios(config).then(response => {
-      console.log(response.data)
       return response
   })
 },
@@ -185,6 +186,7 @@ getRuser () {
       console.log(data)
       axios(config)
         .then(response => {
+          alert(response.data.message)
         this.posts = response.data
         // console.log(this.posts.message)
         },
@@ -217,6 +219,7 @@ getRuser () {
     console.log(data)
     axios(config)
       .then(response => {
+        alert(response.data.message)
       this.posts = response.data
       // console.log(this.posts.message)
       },
@@ -239,7 +242,6 @@ getRuser () {
     }
 
      return axios(config).then(response => {
-        console.log(response.data)
         return response
     })
   },
@@ -310,6 +312,7 @@ getRuser () {
 
    axios(config)
       .then(response => {
+        alert(response.data.message)
       this.posts = response.data
       // console.log(this.posts.message)
       },
@@ -329,6 +332,7 @@ getRuser () {
   register (formValue) {
     const user = formValue
     return axios.post(ENDPOINT_PATH + 'user', user).then(response => {
+      alert(response.data.message)
       this.setUserLogged(response.data.token)
       return response
     },
@@ -372,6 +376,7 @@ getRuser () {
    }
     axios(config)
       .then(response => {
+      alert(response.data.message)
       this.posts = response.data
       // location.reload()
       // console.log(this.posts.message)
@@ -418,6 +423,7 @@ getRuser () {
     }
    axios(config)
       .then(response => {
+        alert(response.data.message)
       this.posts = response.data
       // console.log(this.posts.message)
       },
@@ -511,6 +517,7 @@ getRuser () {
       }
      axios(config)
         .then(response => {
+          alert(response.data.message)
         this.posts = response.data
         },
         ).catch(e => {
@@ -541,6 +548,7 @@ getRuser () {
     }
    axios(config)
       .then(response => {
+        alert(response.data.message)
       this.posts = response.data
       // console.log(this.posts.message)
       },
@@ -620,6 +628,7 @@ getRuser () {
     }
    axios(config)
       .then(response => {
+        alert(response.data.message)
       this.posts = response.data
       },
       ).catch(e => {
@@ -666,6 +675,7 @@ getRuser () {
     }
    axios(config)
       .then(response => {
+        alert(response.data.message)
       this.posts = response.data
       },
       ).catch(e => {
@@ -693,6 +703,7 @@ getRuser () {
     }
     axios(config)
       .then(response => {
+        alert(response.data.message)
       this.posts = response.data
       },
       ).catch(e => {

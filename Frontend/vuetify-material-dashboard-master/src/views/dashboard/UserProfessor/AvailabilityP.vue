@@ -140,8 +140,6 @@
           :events="events"
           :type="type"
           @click:event="showEvent"
-          @click:more="viewDay"
-          @click:date="viewDay"
         />
         <v-calendar
           v-show="!l1"
@@ -159,8 +157,6 @@
           :events="events2"
           :type="type"
           @click:event="showEvent"
-          @click:more="viewDay"
-          @click:date="viewDay"
         />
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="dialogo">
@@ -300,7 +296,7 @@
                   v-model="prof"
                   filled
                   color="white"
-                  label="User"
+                  label="Operator"
                   type="email"
                   readonly
                 />
@@ -513,7 +509,7 @@
       },
       addReservation () {
         try {
-          if (this.date && this.time && this.time2 && this.description && this.lab && this.course) {
+          if (this.date && this.time && this.time2 && this.description && this.lab && this.course && this.prof && this.course) {
             const date2 = this.ChangeDate(this.date)
             const date3 = this.ChangeDate(this.start)
             console.log(date2, date3, this.prof, this.time + ':00', this.time2 + ':00', this.course, this.description, this.lab, this.operator)
@@ -534,7 +530,6 @@
         }
       },
       async getReservations () {
-        this.events = []
         try {
           await this.$auth.getReservations().then(
             response => {
@@ -547,15 +542,60 @@
       // eslint-disable-next-line camelcase
       async postReservation (request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator) {
         try {
-          await this.$auth.postReservation(request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator)
-          setTimeout(() => { this.getReservations() }, 1000)
+          await this.$auth.postReservation(request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator).then(
+            response => {
+              // eslint-disable-next-line eqeqeq
+              var date = request_date[6] + request_date[7] + request_date[8] + request_date[9] + '-' + request_date[3] + request_date[4] + '-' + request_date[0] + request_date[1]
+              // eslint-disable-next-line eqeqeq
+              if (response.data.message == 'New reservation created!') {
+                console.log('El laboratorio:  ' + lab)
+                // eslint-disable-next-line eqeqeq
+                if (lab == 'F2-09') {
+                  this.events.push(
+                    {
+                      name: 'Reservado',
+                      description: description,
+                      start: date + ' ' + init_time.slice(0, 5),
+                      end: date + ' ' + final_time.slice(0, 5),
+                      encargado: operator,
+                      lab: lab,
+                      subject: subject,
+                      date: date,
+                    },
+                  )
+                  this.date = ' '
+                  this.time = ' '
+                  this.time2 = ' '
+                  this.description = ' '
+                  this.lab = ' '
+                  this.course = ' '
+                  this.prof = ' '
+                  this.course = ' '
+                  this.$router.push('availability')
+                } else {
+                  this.events2.push(
+                    {
+                      name: 'Reservado',
+                      description: description,
+                      start: date + ' ' + init_time.slice(0, 5),
+                      end: date + ' ' + final_time.slice(0, 5),
+                      encargado: requesting_user,
+                      lab: lab,
+                      subject: subject,
+                      date: date,
+                    },
+                  )
+                }
+              }
+            })
+          console.log(request_date)
+          this.$refs.calendar.checkChange()
         } catch (error) {
           this.error = true
           alert('Error sending events')
         }
       },
       sortReservations (temp) {
-        this.events = []
         for (var i = 0; i < temp.length; i++) {
           var dt = temp[i][0].slice(6, 10) + '-' + temp[i][0].slice(3, 5) + '-' + temp[i][0].slice(0, 2)
           // eslint-disable-next-line eqeqeq

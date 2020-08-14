@@ -133,7 +133,7 @@
         { text: 'Requested Date', value: 'RequestedDate' },
         { text: 'Subject', value: 'Subject' },
         { text: 'Description', value: 'Description' },
-        { text: 'User that Requested', value: 'User that Requested' },
+        { text: 'User that Requested', value: 'UserthatRequested' },
       ],
       an: [],
       radios: '',
@@ -170,9 +170,9 @@
                 this.an.push({
                   RequestData: res[i][0].slice(0, 10),
                   RequestedDate: res[i][1].slice(0, 10),
-                  Subject: res[i][6],
-                  Description: res[i][5] === 0 ? 'pending' : res[i][5] === 1 ? 'approved' : 'denied',
-                  UserthatRequested: res[i][5],
+                  Subject: res[i][4],
+                  Description: res[i][5] === 0 ? 'pending' : res[i][5] === 1 ? 'approved' : res[i][5] === 2 ? 'denied' : 'charging',
+                  UserthatRequested: res[i][6],
                 })
               }
               console.log(this.an)
