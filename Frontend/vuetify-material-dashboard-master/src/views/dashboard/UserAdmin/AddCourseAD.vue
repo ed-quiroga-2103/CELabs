@@ -66,7 +66,7 @@
               <v-btn
                 color="blue"
                 text
-                @click="submitNewCourse()"
+                @click="addNewCourse()"
               >
                 Add Course
               </v-btn>
@@ -122,7 +122,7 @@
       },
       addNewCourse () {
         try {
-          if (this.newCourseName !== '' & this.newCourseCode !== '' & this.newCourseGroup !== '') {
+          if (this.newCourseName && this.newCourseCode && this.newCourseGroup) {
             this.submitNewCourse()
           } else {
             alert('Please fill out all fields')

@@ -99,6 +99,11 @@ export default new Router({
           name: 'CreateUser',
           component: () => import('./views/dashboard/UserAdmin/CreateUsersAD.vue'),
         },
+        {
+          path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserAdmin/MyAccountAD.vue'),
+        },
       ],
     },
     {
