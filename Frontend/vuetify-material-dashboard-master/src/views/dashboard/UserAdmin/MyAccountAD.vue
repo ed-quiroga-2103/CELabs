@@ -75,28 +75,6 @@
           <v-spacer />
           <v-spacer />
           <v-col>
-            <v-row>
-              <h2>a</h2>
-            </v-row>
-            <v-row>
-              <h2>a</h2>
-            </v-row>
-            <v-btn
-              outlined
-              color="grey darken-2"
-              class="mr-8"
-              to="/op/myan"
-            >
-              All-Nighter Requests
-            </v-btn>
-            <v-btn
-              outlined
-              color="grey darken-2"
-              class="mr-8"
-              @click="visible2 = true"
-            >
-              Disable Account
-            </v-btn>
             <v-btn
               outlined
               color="grey darken-2"

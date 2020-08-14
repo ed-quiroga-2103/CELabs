@@ -932,8 +932,6 @@ def get_its_inventory(current_user):
 def delete_this_inventoryreport(current_user):
     data = request.get_json()
 
-    date = get_date_in_seconds(data['date'])
-
     inventories = InventoryReport.query.join(InventoryReport_Lab).join(Lab).join(User_InventoryReport).join(User).with_entities(
         InventoryReport.date,
         InventoryReport.id_report,
@@ -941,7 +939,8 @@ def delete_this_inventoryreport(current_user):
     ).all()
 
     for inventory in inventories:
-        if inventory[0] == date and inventory[2] == data['lab']:
+        print(inventory[1])
+        if inventory[1] == int(data["id_report"]):
             InventoryReport.query.filter_by(id_report=inventory[1]).delete()
             InventoryReport_Lab.query.filter_by(id_report=inventory[1]).delete()
             User_InventoryReport.query.filter_by(id_report=inventory[1]).delete()
@@ -1092,15 +1091,13 @@ def get_all_fault(current_user):
 def delete_this_faultreport(current_user):
     data = request.get_json()
 
-    date = get_datetime_in_seconds(data['date_time'])
-
     faults = FaultReport.query.join(User_FaultReport).join(User).join(FaultReport_Lab).join(Lab).with_entities(
         FaultReport.date_time,
         FaultReport.id_report
     ).all()
 
     for fault in faults:
-        if fault[0] == date:
+        if fault[1] == int(data["id_report"]):
             FaultReport.query.filter_by(id_report=fault[1]).delete()
             FaultReport_Lab.query.filter_by(id_report=fault[1]).delete()
             User_FaultReport.query.filter_by(id_report=fault[1]).delete()
@@ -1194,10 +1191,10 @@ def create_allnighter(current_user):
 
     data = request.get_json()
 
-    date = get_date_in_seconds(data['requested_date'])
+    date = get_date_in_seconds(data['request_date'])
     time = get_time_in_seconds(data['init_time'])
     
-    allnighters = AllNighter.query.join(AllNighter_Lab).join(Lab).with_entities(AllNighter.requested_date,
+    allnighters = AllNighter.query.join(AllNighter_Lab).join(Lab).with_entities(AllNighter.request_date,
     AllNighter.init_time, Lab.name).all()
 
     for allnighter in allnighters:

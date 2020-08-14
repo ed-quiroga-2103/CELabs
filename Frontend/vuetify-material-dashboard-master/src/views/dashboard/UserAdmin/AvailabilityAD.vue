@@ -553,7 +553,7 @@
     mounted () {
       this.getEvents()
       this.getReservations()
-      this.$auth.getCourses()
+      this.getCourses()
       this.$refs.calendar.checkChange()
     },
     methods: {
@@ -664,40 +664,45 @@
           await this.$auth.postEvent(description, start, end, day, repeatable, lab, date).then(
             response => {
               // eslint-disable-next-line eqeqeq
-              date = day[6] + date[7] + date[8] + date[9] + '-' + date[3] + date[4] + '-' + date[0] + date[1]
-              // eslint-disable-next-line eqeqeq
-              if (response.data.message == 'New Event created!') {
-                console.log('El laboratorio:  ' + lab)
-                console.log('La fecha es:  ' + date)
+              if (repeatable == 0) {
+                date = date[6] + date[7] + date[8] + date[9] + '-' + date[3] + date[4] + '-' + date[0] + date[1]
+                alert(response.data.message)
                 // eslint-disable-next-line eqeqeq
-                if (lab == 'F2-09') {
-                  this.events.push(
-                    {
-                      name: description,
-                      start: date + ' ' + start.slice(0, 5),
-                      end: date + ' ' + end.slice(0, 5),
-                      encargado: 'Desconocido',
-                      lab: lab,
-                      subject: 'Sin materia',
-                      date: date,
-                    },
-                  )
-                } else {
-                  this.events2.push(
-                    {
-                      name: description,
-                      start: date + ' ' + start.slice(0, 5),
-                      end: date + ' ' + end.slice(0, 5),
-                      encargado: 'Desconocido',
-                      lab: lab,
-                      subject: 'Sin materia',
-                      date: date,
-                    },
-                  )
+                if (response.data.message == 'New Event created!') {
+                  console.log('El laboratorio:  ' + lab)
+                  console.log('La fecha es:  ' + date)
+                  // eslint-disable-next-line eqeqeq
+                  if (lab == 'F2-09') {
+                    this.events.push(
+                      {
+                        name: description,
+                        start: date + ' ' + start.slice(0, 5),
+                        end: date + ' ' + end.slice(0, 5),
+                        encargado: 'Desconocido',
+                        lab: lab,
+                        subject: 'Sin materia',
+                        date: date,
+                      },
+                    )
+                  } else {
+                    this.events2.push(
+                      {
+                        name: description,
+                        start: date + ' ' + start.slice(0, 5),
+                        end: date + ' ' + end.slice(0, 5),
+                        encargado: 'Desconocido',
+                        lab: lab,
+                        subject: 'Sin materia',
+                        date: date,
+                      },
+                    )
+                  }
                 }
+              } else {
+                alert(response.data.message)
+                location.reload()
               }
             })
-          this.$refs.calendar.checkChange()
         } catch (error) {
           this.error = true
           alert('Error sending events')
@@ -800,6 +805,20 @@
               date: dt,
             })
           }
+        }
+      },
+      async getCourses () {
+        try {
+          await this.$auth.getCourses().then(
+            response => {
+              this.iCourses = []
+              var res = response.data
+              this.iCourses.name = res[2]
+              this.iCourses.code = res[0]
+              this.iCourses.group = res[1]
+            })
+        } catch (error) {
+          this.error = true
         }
       },
 
