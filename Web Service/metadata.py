@@ -231,7 +231,8 @@ conn.execute(User_Type.insert(),
         {'id_user_type':'1','user_type':'Administrator'},
         {'id_user_type':'2','user_type':'Operator'},
         {'id_user_type':'3','user_type':'Professor'},
-        {'id_user_type':'4','user_type':'Administrative'}
+        {'id_user_type':'4','user_type':'Administrative'},
+        {'id_user_type':'5','user_type':'SupportTeam'},
     ]
 )
 

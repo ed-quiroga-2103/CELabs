@@ -236,7 +236,7 @@ def create_reservation(current_user):
     teachers = User.query.with_entities(User.email,User.user_type).all()
 
     for teacher in teachers:
-        if teacher[0] == data['requesting_user'] and teacher[1] == 3:
+        if teacher[0] == data['requesting_user'] and (teacher[1] == 3 or teacher[1] == 4):
         
             current_id_reservation = str(uuid.uuid4())
 
