@@ -690,8 +690,8 @@ getRuser () {
         group: newGroup,
       },
 
-  )
-  var config = {
+    )
+    var config = {
       method: 'post',
       url: ENDPOINT_PATH + 'course',
       headers: {
@@ -756,7 +756,7 @@ getRuser () {
   delAN (id) {
     var data = JSON.stringify(
       {
-            id_worklog: id,
+        id_allnighter: id,
       },
     )
     var config = {

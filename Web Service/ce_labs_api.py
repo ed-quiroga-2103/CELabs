@@ -1317,9 +1317,6 @@ def get_all_allnighters(current_user):
 @token_required
 def delete_this_allnighter(current_user):
     data = request.get_json()
-    
-    date = get_date_in_seconds(data['requested_date'])
-    time = get_time_in_seconds(data['init_time'])
 
     allnighters = AllNighter.query.join(AllNighter_Lab).join(Lab).with_entities(AllNighter.requested_date,
     AllNighter.init_time, Lab.name, AllNighter.id_allnighter).all()
@@ -1327,7 +1324,7 @@ def delete_this_allnighter(current_user):
 
 
     for allnighter in allnighters:
-        if allnighter[0] == date and allnighter[1] == time and allnighter[2] == data['lab']:
+        if allnighter[3] == int(data["id_allnighter"]):
             AllNighter.query.filter_by(id_allnighter=allnighter[3]).delete()
             AllNighter_Lab.query.filter_by(id_allnighter=allnighter[3]).delete()
             User_AllNighter.query.filter_by(id_allnighter=allnighter[3]).delete()

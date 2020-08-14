@@ -182,16 +182,14 @@
         }
       },
       deletDialog (itemid) {
-        this.currdel.id = itemid
+        this.currdel = itemid.id
         this.deldialog = true
       },
       async delitem () {
         try {
-          await this.$auth.delAN(this.currdel).then(
-            response => {
-              var res = response.data
-              console.log(res)
-            })
+          this.deldialog = false
+          await this.$auth.delAN(this.currdel)
+          setTimeout(() => { this.getANusery() }, 1000)
         } catch (error) {
           this.error = true
         }
