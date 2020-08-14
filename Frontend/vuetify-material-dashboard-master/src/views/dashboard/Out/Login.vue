@@ -20,7 +20,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-toolbar-title>Log In</v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
               <FormulateForm
@@ -90,8 +90,20 @@
       },
       async login () {
         try {
-          await this.$auth.login(this.formValues.username, this.formValues.password)
-          this.$router.push('/start')
+          await this.$auth.login(this.formValues.username, this.formValues.password).then(
+            response => {
+              console.log(response.data.user_type)
+              // eslint-disable-next-line eqeqeq
+              if (response.data.user_type === 2) {
+                this.$router.push('/op')
+              } else if (response.data.user_type === 1) {
+                this.$router.push('/adm')
+              } else if (response.data.user_type === 3) {
+                this.$router.push('/prof')
+              } else if (response.data.user_type === 4) {
+                this.$router.push('/pa')
+              }
+            })
         } catch (error) {
           this.error = true
           alert('The email or password is incorrect')

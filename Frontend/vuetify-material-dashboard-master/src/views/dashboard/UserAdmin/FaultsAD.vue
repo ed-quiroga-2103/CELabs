@@ -1,24 +1,6 @@
 <template>
   <v-row>
     <v-col>
-      <v-toolbar
-        flat
-        color="white"
-      >
-        <v-spacer />
-        <v-spacer />
-        <v-btn
-          outlined
-          color="grey darken-2"
-          @click="faultReport = true"
-        >
-          Report Fault
-        </v-btn>
-        <v-menu
-          bottom
-          right
-        />
-      </v-toolbar>
       <div id="app">
         <v-app id="inspire">
           <v-data-table
@@ -89,48 +71,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="faultReport">
-            <v-card>
-              <v-container>
-                <v-form>
-                  <v-radio-group
-                    v-model="radios"
-                    :mandatory="false"
-                  >
-                    <v-radio
-                      label="F2-09"
-                      value="F2-09"
-                    />
-                    <v-radio
-                      label="F2-10"
-                      value="F2-10"
-                    />
-                  </v-radio-group>
-                  <v-text-field
-                    id="IDNo"
-                    v-model="Idnumb"
-                    label="IDNo"
-                    name="ID No."
-                  />
-                  <v-textarea
-                    v-model="textarea"
-                    solo
-                    name="input-7-4"
-                    label="Fault description"
-                  />
-                </v-form>
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn
-                    color="primary"
-                    @click="addFault()"
-                  >
-                    Submit
-                  </v-btn>
-                </v-card-actions>
-              </v-container>
-            </v-card>
-          </v-dialog>
         </v-app>
       </div>
     </v-col>
@@ -156,13 +96,9 @@
         { text: '', value: 'data-table-expand', sortable: false },
       ],
       reports: [],
-      radios: '',
-      Idnumb: '',
-      textarea: '',
       changeDialog: false,
       changeitem: [],
       row: '',
-      faultReport: false,
     }),
     mounted () {
       this.getFaultReports()
@@ -208,7 +144,7 @@
                   reportT: res[i][0].slice(10, 16),
                   labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
                   faultypartID: res[i][1],
-                  status: res[i][3] === 1 ? 'pending' : res[i][3] === 2 ? 'Completed' : 'In process',
+                  status: res[i][3] === 1 ? 'Pending' : res[i][3] === 2 ? 'Completed' : 'In process',
                   reportNo: res[i][5],
                 })
               }

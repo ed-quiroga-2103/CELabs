@@ -11,9 +11,9 @@
           <v-btn
             outlined
             color="grey darken-2"
-            @click="faultReport = true"
+            to="/op/allnighter"
           >
-            Report Fault
+            Request All-Nighter
           </v-btn>
           <v-menu
             bottom
@@ -22,35 +22,56 @@
         </v-toolbar>
       </v-sheet>
       <!--------------PUT the log here------------------------------------------------------>
-      <div id="app">
-        <v-app id="inspire">
-          <v-data-table
-            :headers="headers"
-            :items="reports"
-            :single-expand="true"
-            :expanded.sync="expanded"
-            :items-per-page="15"
-            item-key="reportNo"
-            show-expand
-            class="elevation-1"
-          >
-            <template v-slot:top>
-              <v-toolbar
-                color="primary"
-                flat
-              >
-                <v-spacer />
-              </v-toolbar>
-            </template>
-            <template v-slot:expanded-item="{ headers, item }">
-              <td :colspan="headers.length">
-                {{ item.description }}
-              </td>
-            </template>
-          </v-data-table>
-        </v-app>
-      </div>
       <v-sheet height="600">
+        <v-data-table
+          :headers="headers"
+          :items="an"
+          :items-per-page="5"
+          class="elevation-1"
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-icon
+              v-if="item.CurrentState === 'pending'"
+              small
+              class="mr-2"
+              @click="deletDialog(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+        </v-data-table>
+        <v-dialog
+          v-model="deldialog"
+          width="500"
+          height="300"
+        >
+          <v-card>
+            <v-card-title class="headline grey lighten-2">
+              Delete confirmation.
+            </v-card-title>
+            <v-card-text>
+              Are you sure you wish to delete this report?
+            </v-card-text>
+            <v-divider />
+            <v-card-actions>
+              <v-btn
+                color="primary"
+                text
+                @click="delitem()"
+              >
+                Yes
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                color="primary"
+                text
+                @click="deldialog = false"
+              >
+                No
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="faultReport">
           <v-card>
@@ -105,24 +126,25 @@
       expanded: [],
       headers: [
         {
-          text: 'Report Number',
+          text: 'Date of Request',
           align: 'start',
-          value: 'reportNo',
+          value: 'DateofRequest',
         },
-        { text: 'Report Date', value: 'reportD' },
-        { text: 'Report Time', value: 'reportT' },
-        { text: 'Laboratory Number', value: 'labNo' },
-        { text: 'ID(Faulty part)', value: 'faultypartID' },
-        { text: '', value: 'data-table-expand', sortable: false },
+        { text: 'Requested Date', value: 'RequestedDate' },
+        { text: 'Responsible', value: 'Responsible' },
+        { text: 'Current State', value: 'CurrentState' },
+        { text: 'Delete', value: 'actions', sortable: false },
       ],
-      reports: [],
+      an: [],
       radios: '',
+      currdel: [],
+      deldialog: false,
       Idnumb: '',
       textarea: '',
       faultReport: false,
     }),
     mounted () {
-      this.getFaultReports()
+      this.getANuser()
     },
     methods: {
       addFault () {
@@ -136,41 +158,38 @@
 
         }
       },
-      async submitFault () {
-        this.faultReport = false
+      async getANuser () {
         try {
-          await this.$auth.submitFault(this.radios, this.Idnumb, this.textarea)
-          setTimeout(() => { this.getFaultReports() }, 1000)
-        } catch (error) {
-          this.error = true
-          alert('Error submiting report')
-        }
-        this.reportValues = {
-          radios: '',
-          Idnumb: '',
-          textarea: '',
-        }
-      },
-      async getFaultReports () {
-        try {
-          this.reports = []
-          await this.$auth.getFaultReports().then(
+          console.log('hola')
+          this.an = []
+          await this.$auth.getANuser().then(
             response => {
               var res = response.data
               console.log(res)
               for (var i = 0; i < res.length; i++) {
-                if (res[i][3] !== 2) {
-                  this.reports.push({
-                    description: res[i][2],
-                    reportD: res[i][0].slice(0, 10),
-                    reportT: res[i][0].slice(10, 16),
-                    labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
-                    faultypartID: res[i][1],
-                    reportNo: res[i][5],
-                  })
-                }
+                this.an.push({
+                  DateofRequest: res[i][0].slice(0, 10),
+                  RequestedDate: res[i][1].slice(0, 10),
+                  Responsible: res[i][6],
+                  CurrentState: res[i][5] === 0 ? 'pending' : res[i][5] === 1 ? 'approved' : 'denied',
+                  id: res[i][8],
+                })
               }
+              console.log(this.an)
             })
+        } catch (error) {
+          this.error = true
+        }
+      },
+      deletDialog (itemid) {
+        this.currdel = itemid.id
+        this.deldialog = true
+      },
+      async delitem () {
+        try {
+          this.deldialog = false
+          await this.$auth.delAN(this.currdel)
+          setTimeout(() => { this.getANusery() }, 1000)
         } catch (error) {
           this.error = true
         }

@@ -18,3 +18,16 @@ AllNighter:
     "requested_date":"13/12/2020",
     "lab": "F2-09"
    }
+
+Reservation:
+{
+    "description": "Espe",
+    "subject": "Subject",
+    "requesting_user":"Prof",
+    "operator": "Op",
+    "init_time": "12:12:12",
+    "final_time": "13:00:00",
+    "request_date":"12/12/2020", 
+    "requested_date":"13/12/2020",
+    "lab": "F2-09"
+   }

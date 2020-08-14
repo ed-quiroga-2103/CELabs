@@ -101,14 +101,14 @@
           to: '/components/icons',
         },
         {
+          icon: 'My account',
+          title: 'dashboard',
+          to: "/pages/user",
+        },
+        {
           title: 'My hours',
           icon: 'mdi-map-marker',
           to: '/maps/google-maps',
-        },
-        {
-          title: 'My account',
-          icon: 'mdi-bell',
-          to: '/components/notifications',
         },
       ],
       notifications: [

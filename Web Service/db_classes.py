@@ -126,6 +126,7 @@ class InventoryReport(db.Model):
     number_projectors = db.Column(db.Integer, nullable = False)
     number_chairs = db.Column(db.Integer, nullable = False)
     number_fire_extinguishers = db.Column(db.Integer, nullable = False)
+    description = db.Column(db.String(80), nullable = False)
 
 class User_InventoryReport(db.Model):
     __tablename__ = "user_inventoryreport"
@@ -145,6 +146,16 @@ class AllNighter(db.Model):
     last_mod_date = db.Column(db.BigInteger, nullable = False)
     subject = db.Column(db.String(50), nullable = False)
     state = db.Column(db.Integer, nullable = False)
+
+class AllNighter_Asistance(db.Model):
+    _tablename_ = 'allnighter_asistance'
+    id_allnighter_asistance = db.Column(db.Integer, primary_key = True)
+    id_allnighter = db.Column(db.Integer, db.ForeignKey('allnighter.id_allnighter'), nullable = False)
+    name = db.Column(db.String(50), nullable = False)
+    lastname1 = db.Column(db.String(50), nullable = False)
+    lastname2 = db.Column(db.String(50), nullable = False)
+    university_id = db.Column(db.String, nullable = False)
+    
 
 class AllNighter_Lab(db.Model):
     __tablename__ = 'allnighter_lab'
@@ -206,5 +217,6 @@ class Evaluation(db.Model):
     date_time = db.Column(db.Text, nullable = False)
     score = db.Column(db.BigInteger, nullable = False)
     comment = db.Column(db.String(50), nullable = False)
+    comment2 = db.Column(db.String(50), nullable = False)
 
 print("The database classes were successfully loaded")
