@@ -256,10 +256,10 @@ def create_reservation(current_user):
     now = datetime.datetime.now()
     
     data = request.get_json()
-    date = get_date_in_seconds(data['requested_date'])
+    date = get_date_in_seconds(data['request_date'])
     #time = get_time_in_seconds(data['init_time'])
-    print(data)
-    reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
+    #print(data)
+    reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.request_date,
     Reservation.init_time, Lab.name, Reservation.final_time).all()
 
     #------------------------------Verficacion para evitar que choque con un evento------------------------------------
