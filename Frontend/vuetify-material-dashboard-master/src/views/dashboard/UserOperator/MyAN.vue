@@ -31,10 +31,10 @@
         >
           <template v-slot:item.actions="{ item }">
             <v-icon
-              v-if="item.delete === 1"
+              v-if="item.CurrentState === 'pending'"
               small
               class="mr-2"
-              @click="delet(item)"
+              @click="deletDialog(item)"
             >
               mdi-delete
             </v-icon>
@@ -133,7 +133,7 @@
         { text: 'Requested Date', value: 'RequestedDate' },
         { text: 'Responsible', value: 'Responsible' },
         { text: 'Current State', value: 'CurrentState' },
-        { text: 'Delete', value: 'Delete', sortable: false },
+        { text: 'Delete', value: 'actions', sortable: false },
       ],
       an: [],
       radios: '',
@@ -172,7 +172,6 @@
                   RequestedDate: res[i][1].slice(0, 10),
                   Responsible: res[i][6],
                   CurrentState: res[i][5] === 0 ? 'pending' : res[i][5] === 1 ? 'approved' : 'denied',
-                  Delete: res[i][5],
                 })
               }
               console.log(this.an)
@@ -181,9 +180,13 @@
           this.error = true
         }
       },
+      deletDialog (itemid) {
+        this.currdel = itemid
+        this.deldialog = true
+      },
       async delitem () {
         try {
-          await this.$auth.delHourReport(this.currdel).then(
+          await this.$auth.delAN(this.currdel).then(
             response => {
               var res = response.data
               console.log(res)
