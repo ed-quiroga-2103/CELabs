@@ -115,8 +115,8 @@ def create_user():
 
         new_operator = User_Operator(
             id_user = identifier.id_user,
-            approved_hours = 50,
-            pending_hours = 0
+            approved_hours = 0,
+            pending_hours = 50
         )
 
         db.session.add(new_operator)
@@ -134,10 +134,12 @@ def login():
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
+        print("no auth")
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     user = User.query.filter_by(email=auth.username).first()
     if not user:
+        print("no user")
         return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     if user.password == auth.password and user.active == 1:
@@ -148,7 +150,7 @@ def login():
 
 
         return jsonify({'token' : token.decode('UTF-8'), 'user_type': user.user_type})
-
+    print("not active")
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
 
@@ -165,6 +167,27 @@ def get_this_user(current_user):
     information.append(current_user.email)
     information.append(current_user.phone_number)
     information.append(current_user.university_id)
+
+    return jsonify(information), 200
+
+@app.route('/user/hours', methods=['GET'])
+@token_required
+def get_this_user_hours(current_user):
+
+    information = []
+
+    information.append(current_user.name)
+    information.append(current_user.lastname1)
+    information.append(current_user.lastname2)
+    information.append(current_user.id_number)
+    information.append(current_user.email)
+    information.append(current_user.phone_number)
+    information.append(current_user.university_id)
+
+    current_hours = db.session.query(User_Operator).filter_by(id_user = current_user.id_user).first()
+
+    information.append(current_hours.pending_hours)
+    information.append(current_hours.approved_hours)
 
     return jsonify(information), 200
 
@@ -209,7 +232,7 @@ def create_reservation(current_user):
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
     Reservation.init_time, Lab.name, Reservation.final_time).all()
 
-#------------------------------Verficacion para evitar que choque con un evento------------------------------------
+    #------------------------------Verficacion para evitar que choque con un evento------------------------------------
     events = Event.query.with_entities(Event.init_time, Event.final_time, Event.date,Event.week_day,Event.id_lab).all()
 
     current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
@@ -225,7 +248,7 @@ def create_reservation(current_user):
         if event[3] == None:
             if event[2] == date and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time']) and event[4] == current_lab.id_lab:
                 return jsonify({'message': 'There´s a event already in that date and time'}), 401
-#-------------------------------------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------------------------------
 
     for reservation in reservations:
         if reservation[0] == date and reservation[2] == data['lab'] and time_verification(get_time_from_seconds(reservation[1]),get_time_from_seconds(reservation[3]),data['init_time']):
@@ -537,13 +560,16 @@ def get_all_worklog(current_user):
         User_Operator.pending_hours,
         User_Operator.approved_hours,
         Worklog.id_worklog
-    )
+    ).all()
+
 
     result = []
 
+    print(worklogs)
+
     for worklog in worklogs:
         new_worklog = []
-
+        
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
         new_worklog.append(get_time_from_seconds(worklog[2]))
@@ -631,7 +657,6 @@ def get_pending_worklog(current_user):
     return jsonify(result), 200
 
 
-
 @app.route('/worklog', methods= ['DELETE'])
 @token_required
 def delete_this_worklog(current_user):
@@ -705,11 +730,31 @@ def edit_state_worklog(current_user):
         Worklog.date_time,
         Worklog.init_time,
         Worklog.id_worklog,
+        Worklog.final_time,
         User.id_user
     ).all()
+    print("yoyoyo")
+
 
     for worklog in worklogs:
         if worklog[2] == int(id_modified):
+
+            if new_data['status'] == 'Completed':
+
+                init_secs = worklog[1] 
+                final_time = worklog[3]
+
+                total_secs = final_time - init_secs
+                total_mins = total_secs/60
+                total_hours = int(total_mins/60)
+
+                current_hours = db.session.query(User_Operator).filter_by(id_user = worklog[4]).first()
+
+                current_hours.pending_hours = current_hours.pending_hours - total_hours 
+                current_hours.approved_hours = current_hours.approved_hours + total_hours
+
+                db.session.commit()            
+
 
             current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
 
@@ -1315,7 +1360,8 @@ def create_evaluation():
         public_id_evaluation = current_id_eval,
         date_time = get_datetime_in_seconds(now.strftime("%d/%m/%Y %H:%M:%S")),
         comment = data['comment'],
-        score = int(data['score'])
+        score = int(data['score']),
+        comment2 = ""
     )
 
     db.session.add(new_evaluation)
@@ -1366,7 +1412,7 @@ def create_event(current_user):
     if no_days and is_repeatable == '1':
         return jsonify({'message': 'Repeatable events must include a week days!'}), 401
     
-#-------------------------------VERiFICATION DATES--------------------------------------------
+    #-------------------------------VERiFICATION DATES--------------------------------------------
     
     events = Event.query.with_entities(Event.init_time, Event.final_time, Event.date,Event.week_day,Event.id_lab).all()
 
@@ -1406,7 +1452,7 @@ def create_event(current_user):
                     if event[2] == get_date_in_seconds(day_req) and time_verification(get_time_from_seconds(event[0]),get_time_from_seconds(event[1]),data['init_time'])and event[4] == current_lab.id_lab:
                         return jsonify({'message': 'There´s a event already in that date and time'}), 401
 
-#----------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------------------------------
     current_id_event = str(uuid.uuid4())
 
     current_lab = Lab.query.filter(Lab.name.like(data['lab'])).first()
