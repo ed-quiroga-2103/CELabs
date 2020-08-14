@@ -40,14 +40,6 @@
           >
             <span class="mr-1">Availability</span>
           </v-btn>
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="reservations"
-          >
-            <span class="mr-1">Reservations</span>
-          </v-btn>
 
           <v-btn
             class="ml-1"

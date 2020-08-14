@@ -102,6 +102,8 @@
                 this.$router.push('/prof')
               } else if (response.data.user_type === 4) {
                 this.$router.push('/pa')
+              } else if (response.data.user_type === 5) {
+                this.$router.push('/ST')
               }
             })
         } catch (error) {

@@ -327,7 +327,7 @@
                   shiftDate: res[i][0].slice(0, 10),
                   shiftStart: res[i][1].slice(0, 5),
                   shiftEnd: res[i][2].slice(0, 5),
-                  id: res[i][11],
+                  id: res[i][12],
                   workDescription: res[i][3],
                   state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
                   delete: res[i][4],

@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + LUIS_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -109,7 +109,7 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
 
-    if int(data["user_type"]) == 2:
+    if int(data["user_type"]) == 2 or int(data["user_type"]) == 5:
 
         identifier = User.query.filter_by(email = data["email"]).first()
 
@@ -146,7 +146,7 @@ def login():
         if user.name == 'Op':
             token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, app.config['SECRET_KEY'])
         else:
-            token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+            token = jwt.encode({'public_id_user' : user.public_id_user, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=180)}, app.config['SECRET_KEY'])
 
 
         return jsonify({'token' : token.decode('UTF-8'), 'user_type': user.user_type})

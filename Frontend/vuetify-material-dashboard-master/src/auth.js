@@ -339,6 +339,14 @@ getRuser () {
     },
       )
   },
+  registerAD (formValue) {
+    const user = formValue
+    return axios.post(ENDPOINT_PATH + 'user', user).then(response => {
+      alert(response.data.message)
+      return response
+    },
+      )
+  },
   // Function to call login on API
   login (u, p) {
     return axios.post(ENDPOINT_PATH + 'login', {

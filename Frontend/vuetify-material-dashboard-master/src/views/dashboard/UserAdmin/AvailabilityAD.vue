@@ -307,6 +307,8 @@
                   :items="items4"
                   label="Item Name"
                   placeholder="Choose the days"
+                  hint="If the event is less than two days use the event section"
+                  persistent-hint
                   item-text="name"
                   item-value="id"
                   :return-object="false"

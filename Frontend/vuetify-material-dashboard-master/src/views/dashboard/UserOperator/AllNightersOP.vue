@@ -206,7 +206,7 @@
                     v-if="modal"
                     v-model="time"
                     min="21:00"
-                    max="23:00"
+                    max="24:00"
                     full-width
                   >
                     <v-spacer />
@@ -247,8 +247,7 @@
                     v-if="modal2"
                     v-model="time2"
                     full-width
-                    min="00:00"
-                    max="6:00"
+                    min="21:00"
                   >
                     <v-spacer />
                     <v-btn

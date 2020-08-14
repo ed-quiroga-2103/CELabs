@@ -113,12 +113,18 @@ export default new Router({
     },
     {
       path: '/ST',
+      redirect: 'availability',
       component: IndexST,
       children: [
         {
-          path: '',
-          name: 'dashboard3',
-          component: () => import('./views/dashboard/Dashboard.vue'),
+          path: 'allnighter',
+          name: 'allnighter4',
+          component: () => import('./views/dashboard/UserSupportTeam/AllNightersST.vue'),
+        },
+        {
+          path: 'availability',
+          name: 'availability4',
+          component: () => import('./views/dashboard/UserSupportTeam/AvailabilityST.vue'),
         },
         {
           path: 'Inventory',
