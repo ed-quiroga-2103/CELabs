@@ -13,6 +13,11 @@
             show-expand
             class="elevation-1"
           >
+            <template v-slot:expanded-item="{ headers, item }">
+              <td :colspan="headers.length">
+                {{ item.description }}
+              </td>
+            </template>
             <template v-slot:item.actions="{ item }">
               <v-icon
                 small
@@ -88,7 +93,7 @@
         { text: 'ID(Faulty part)', value: 'faultypartID' },
         { text: 'Status', value: 'status' },
         { text: 'Change Status', value: 'actions', sortable: false },
-        { text: '', value: 'data-table-expand' },
+        { text: '', value: 'data-table-expand', sortable: false },
       ],
       reports: [],
       changeDialog: false,

@@ -317,19 +317,23 @@
       },
       async getHours () {
         try {
-          await this.$auth.getHours().then(
+          await this.$auth.getLoggedHours().then(
             response => {
               var res = response.data
               this.hours = []
+              console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.hours.push({
                   shiftDate: res[i][0].slice(0, 10),
                   shiftStart: res[i][1].slice(0, 5),
                   shiftEnd: res[i][2].slice(0, 5),
+                  id: res[i][11],
                   workDescription: res[i][3],
                   state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
                   delete: res[i][4],
                 })
+                this.assignedH = res[0][10]
+                this.complH = res[0][9]
               }
             })
         } catch (error) {
@@ -345,8 +349,6 @@
               for (var i = 0; i < res.length; i++) {
                 this.operator = res[0]
                 this.uniId = res[3]
-                this.assignedH = res[1]
-                this.complH = res[2]
               }
             })
         } catch (error) {
@@ -355,12 +357,14 @@
       },
       delet (item) {
         this.currdel = item
+        console.log('This is the id' + this.currdel.id)
         this.deldialog = true
         console.log(item)
       },
       async delitem () {
         try {
-          await this.$auth.delHourReport(this.currdel)
+          this.deldialog = false
+          await this.$auth.delHourReport(this.currdel.id)
           setTimeout(() => { this.getHours() }, 1000)
         } catch (error) {
           this.error = true

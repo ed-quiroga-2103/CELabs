@@ -397,6 +397,23 @@ export default {
         return response
     })
   },
+  getLoggedHours () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'worklog/user',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+        return response
+    })
+  },
   getUserHours () {
     var data = ''
     var config = {
@@ -417,9 +434,7 @@ export default {
   delHourReport (id) {
       var data = JSON.stringify(
         {
-          old: {
               id_worklog: id,
-          },
         },
       )
       var config = {

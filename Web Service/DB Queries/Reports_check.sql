@@ -8,7 +8,7 @@
 
 ------------------------------- Worklog Check--------------------------
 
--- SELECT * FROM Worklog;
+SELECT * FROM Worklog;
 
 -- SELECT * FROM User_Worklog;
 

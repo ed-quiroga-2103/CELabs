@@ -27,7 +27,6 @@
       <div
         class="mx-3"
       />
-
       <div
         id="BarraCentral"
       >
@@ -57,7 +56,6 @@
         >
           <span class="mr-1">Faults</span>
         </v-btn>
-
         <v-btn
           class="ml-1"
           min-width="0"

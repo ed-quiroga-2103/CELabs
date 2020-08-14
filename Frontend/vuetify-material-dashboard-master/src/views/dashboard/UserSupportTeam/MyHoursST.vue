@@ -304,7 +304,7 @@
         console.log(date, time, time2, description)
         try {
           await this.$auth.submitHours(date, time, time2, description)
-          setTimeout(() => { this.getUserHours() }, 1000)
+          setTimeout(() => { this.getHours() }, 1000)
         } catch (error) {
           this.error = true
           alert('Error submiting report')
@@ -320,6 +320,7 @@
           await this.$auth.getUserHours().then(
             response => {
               var res = response.data
+              console.log(res)
               this.hours = []
               for (var i = 0; i < res.length; i++) {
                 this.hours.push({
@@ -327,6 +328,7 @@
                   shiftStart: res[i][1].slice(0, 5),
                   shiftEnd: res[i][2].slice(0, 5),
                   workDescription: res[i][3],
+                  id: res[i][12],
                   state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
                   delete: res[i][4],
                 })
@@ -360,8 +362,9 @@
       },
       async delitem () {
         try {
-          await this.$auth.delHourReport(this.currdel)
-          setTimeout(() => { this.getUserHours() }, 1000)
+          this.deldialog = false
+          await this.$auth.delHourReport(this.currdel.id)
+          setTimeout(() => { this.getHours() }, 1000)
         } catch (error) {
           this.error = true
         }

@@ -102,11 +102,8 @@
       async changeHours (id, newStatus) {
         console.log(id, newStatus)
         try {
-          await this.$auth.changeHourReport(id, newStatus).then(
-            response => {
-              var res = response.data
-              console.log(res)
-            })
+          await this.$auth.changeHourReport(id, newStatus)
+          setTimeout(() => { this.getHours() }, 1000)
         } catch (error) {
           this.error = true
         }
