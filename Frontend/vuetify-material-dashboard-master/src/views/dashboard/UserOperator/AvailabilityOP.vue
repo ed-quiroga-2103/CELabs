@@ -457,6 +457,7 @@
       this.$refs.calendar.checkChange()
       this.getPerfil()
       this.getCourses()
+      this.getEvents()
     },
     methods: {
       allowedDates: val => parseInt(val.split('-')[2], 10) % 2 === 0,
@@ -640,6 +641,17 @@
               this.iCourses.name = res[2]
               this.iCourses.code = res[0]
               this.iCourses.group = res[1]
+            })
+        } catch (error) {
+          this.error = true
+        }
+      },
+      async getEvents () {
+        this.events = []
+        try {
+          await this.$auth.getEvents().then(
+            response => {
+              this.sortEvents(response.data)
             })
         } catch (error) {
           this.error = true
