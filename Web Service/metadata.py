@@ -164,6 +164,7 @@ Reservation_Lab = Table(
 
 User_Operator = Table(
     'User_Operator', meta,
+    Column('id_user_operator', Integer, primary_key = True),
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
     Column('approved_hours', Integer, nullable = False),
     Column('pending_hours', Integer, nullable = False)
@@ -267,6 +268,12 @@ conn.execute(FaultStatus.insert(),
         {'id_status': 1, 'status':'Pending'},
         {'id_status': 2, 'status':'Completed'},
         {'id_status': 3, 'status':'In process'}  
+    ]
+)
+
+conn.execute(User_Operator.insert(),
+    [
+        {'id_user':1, 'approved_hours': 0, 'pending_hours': 50}
     ]
 )
 

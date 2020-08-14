@@ -116,7 +116,7 @@ def create_user():
         new_operator = User_Operator(
             id_user = identifier.id_user,
             approved_hours = 0,
-            pending_hours = 0
+            pending_hours = 50
         )
 
         db.session.add(new_operator)
@@ -491,13 +491,15 @@ def get_all_worklog(current_user):
         User_Operator.pending_hours,
         User_Operator.approved_hours,
         Worklog.id_worklog
-    )
+    ).all()
+
 
     result = []
 
+    print(worklogs)
+
     for worklog in worklogs:
         new_worklog = []
-
         
         new_worklog.append(get_datetime_from_seconds(worklog[0]))
         new_worklog.append(get_time_from_seconds(worklog[1]))
@@ -659,11 +661,32 @@ def edit_state_worklog(current_user):
     worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
         Worklog.date_time,
         Worklog.init_time,
-        Worklog.id_worklog
+        Worklog.id_worklog,
+        Worklog.final_time,
+        User.id_user
     ).all()
+    print("yoyoyo")
+
 
     for worklog in worklogs:
         if worklog[2] == int(id_modified):
+
+            if new_data['status'] == 'Completed':
+
+                init_secs = worklog[1] 
+                final_time = worklog[3]
+
+                total_secs = final_time - init_secs
+                total_mins = total_secs/60
+                total_hours = int(total_mins/60)
+
+                current_hours = db.session.query(User_Operator).filter_by(id_user = worklog[4]).first()
+
+                current_hours.pending_hours = current_hours.pending_hours - total_hours 
+                current_hours.approved_hours = current_hours.approved_hours + total_hours
+
+                db.session.commit()            
+
 
             current_worklog = db.session.query(Worklog).filter_by(id_worklog = worklog[2]).first()
 

@@ -454,10 +454,11 @@ def test_delete_event(self):
     self.assertEqual('<Response [200]>', str(r))
 
 
+
 # ------------ Tests ------------------
 
 class TestStringMethods(unittest.TestCase):
-
+    
     def test_good_login(self):
 
         r = requests.post('http://127.0.0.1:5001/login', 
