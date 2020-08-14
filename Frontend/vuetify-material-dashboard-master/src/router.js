@@ -102,7 +102,7 @@ export default new Router({
         {
           path: 'myaccount',
           name: 'myac',
-          component: () => import('./views/dashboard/UserAdmin/MyaccountAD.vue'),
+          component: () => import('./views/dashboard/UserAdmin/MyAccountAD.vue'),
         },
       ],
     },

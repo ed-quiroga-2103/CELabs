@@ -38,8 +38,8 @@
           >
             <v-img
               class="white--text align-end"
-              height="200px"
-              src="https://cdn.pixabay.com/photo/2020/05/24/08/40/machine-5213060_1280.jpg"
+              height="20px"
+              src=""
             />
             <v-text-field
               v-model="newCourseName"
