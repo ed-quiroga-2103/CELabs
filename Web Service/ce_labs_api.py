@@ -1097,7 +1097,7 @@ def delete_this_faultreport(current_user):
     ).all()
 
     for fault in faults:
-        if fault[1] == date["id_report"]:
+        if fault[1] == int(data["id_report"]):
             FaultReport.query.filter_by(id_report=fault[1]).delete()
             FaultReport_Lab.query.filter_by(id_report=fault[1]).delete()
             User_FaultReport.query.filter_by(id_report=fault[1]).delete()
