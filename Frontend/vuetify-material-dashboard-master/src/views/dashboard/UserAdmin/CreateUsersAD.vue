@@ -20,7 +20,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Sign up</v-toolbar-title>
+                <v-toolbar-title>Login form</v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
               <FormulateForm
@@ -89,13 +89,13 @@
                     type="select"
                     name="user_type"
                     label="User type"
-                    :options="{3: 'Professor', 4: 'Administrative', 1:'Administrador', 2:'Operador'}"
+                    :options="{3: 'Professor', 4: 'Administrative', 1:'Administrador', 2: 'Operador'}"
                   />
                   <v-spacer />
                   <FormulateInput
                     type="submit"
                     class="btn btn-primary"
-                    label="Sign in"
+                    label="Create User"
                   />
                 </v-card-text>
               </FormulateForm>
@@ -149,21 +149,18 @@
         try {
           await this.$auth.register(this.formValues).then(
             response => {
-              alert(this.response.data)
-              console.log(this.formValues.user_type)
-              if (this.formValues.user_type === 2) {
+              if (response.data.user_type === 2) {
                 this.$router.push('/op')
-              } else if (this.formValues.user_type === 1) {
+              } else if (response.data.user_type.String === 1) {
                 this.$router.push('/adm')
-              } else if (this.formValues.user_type === 3) {
+              } else if (response.data.user_type === 3) {
                 this.$router.push('/prof')
-              } else if (this.formValues.user_type === 4) {
+              } else if (response.data.user_type === 4) {
                 this.$router.push('/pa')
               }
-            }).catch(e => {
-            console.error(e.data.message)
-          })
+            })
         } catch (error) {
+          alert('Already exists an account associated with the email')
         }
       },
     },

@@ -113,7 +113,7 @@
         { text: 'Report Time', value: 'reportT' },
         { text: 'Laboratory Number', value: 'labNo' },
         { text: 'ID(Faulty part)', value: 'faultypartID' },
-        { text: '', value: 'data-table-expand' },
+        { text: '', value: 'data-table-expand', sortable: false },
       ],
       reports: [],
       radios: '',
@@ -159,14 +159,16 @@
               var res = response.data
               console.log(res)
               for (var i = 0; i < res.length; i++) {
-                this.reports.push({
-                  description: res[i][2],
-                  reportD: res[i][0].slice(0, 10),
-                  reportT: res[i][0].slice(10, 16),
-                  labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
-                  faultypartID: res[i][1],
-                  reportNo: res[i][5],
-                })
+                if (res[i][3] !== 2) {
+                  this.reports.push({
+                    description: res[i][2],
+                    reportD: res[i][0].slice(0, 10),
+                    reportT: res[i][0].slice(10, 16),
+                    labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
+                    faultypartID: res[i][1],
+                    reportNo: res[i][5],
+                  })
+                }
               }
             })
         } catch (error) {

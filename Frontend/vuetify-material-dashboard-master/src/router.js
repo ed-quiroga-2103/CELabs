@@ -5,6 +5,7 @@ import IndexAD from '@/views/dashboard/IndexAD.vue'
 import IndexLogin from '@/views/dashboard/IndexLogin.vue'
 import IndexP from '@/views/dashboard/IndexP.vue'
 import IndexA from '@/views/dashboard/IndexA.vue'
+import IndexST from '@/views/dashboard/IndexST.vue'
 import IndexSat from '@/views/dashboard/IndexSat.vue'
 Vue.use(Router)
 
@@ -18,17 +19,17 @@ export default new Router({
       children: [
         {
           path: 'allnighter',
-          name: 'allnighter2',
+          name: 'allnighter',
           component: () => import('./views/dashboard/UserOperator/AllNightersOP.vue'),
         },
         {
           path: 'myan',
-          name: 'myan2',
+          name: 'myan',
           component: () => import('./views/dashboard/UserOperator/MyAN.vue'),
         },
         {
           path: 'availability',
-          name: 'availability1',
+          name: 'availability',
           component: () => import('./views/dashboard/UserOperator/AvailabilityOP.vue'),
         },
         {
@@ -60,7 +61,7 @@ export default new Router({
       children: [
         {
           path: 'dashboard',
-          name: 'dashboard',
+          name: 'dashboard2',
           component: () => import('./views/dashboard/Dashboard.vue'),
         },
         {
@@ -70,18 +71,84 @@ export default new Router({
         },
         {
           path: 'OPHours',
-          name: 'OPHours',
+          name: 'OPHours2',
           component: () => import('./views/dashboard/UserAdmin/OperatorHours.vue'),
         },
         {
           path: 'Inventory',
-          name: 'Inventory',
+          name: 'Inventory2',
           component: () => import('./views/dashboard/UserAdmin/InventoryReportAD.vue'),
         },
         {
           path: 'Faults',
-          name: 'Faults',
+          name: 'Faults2',
           component: () => import('./views/dashboard/UserAdmin/FaultsAD.vue'),
+        },
+        {
+          path: 'Operators',
+          name: 'Operators2',
+          component: () => import('./views/dashboard/UserAdmin/Operators.vue'),
+        },
+        {
+          path: 'AddCourse',
+          name: 'AddCourse2',
+          component: () => import('./views/dashboard/UserAdmin/AddCourseAD.vue'),
+        },
+        {
+          path: 'CreateUser',
+          name: 'CreateUser2',
+          component: () => import('./views/dashboard/UserAdmin/CreateUsersAD.vue'),
+        },
+        {
+          path: 'myaccount',
+          name: 'myac',
+          component: () => import('./views/dashboard/UserAdmin/MyaccountAD.vue'),
+        },
+      ],
+    },
+    {
+      path: '/ST',
+      component: IndexST,
+      children: [
+        {
+          path: '',
+          name: 'dashboard3',
+          component: () => import('./views/dashboard/Dashboard.vue'),
+        },
+        {
+          path: 'Inventory',
+          name: 'Inventory3',
+          component: () => import('./views/dashboard/UserSupportTeam/InventoryReportST.vue'),
+        },
+        {
+          path: 'Faults',
+          name: 'Faults3',
+          component: () => import('./views/dashboard/UserSupportTeam/FaultsST.vue'),
+        },
+        {
+          path: 'CreateUser',
+          name: 'CreateUser3',
+          component: () => import('./views/dashboard/UserSupportTeam/CreateOperator.vue'),
+        },
+        {
+          path: 'myhours',
+          name: 'myhours3',
+          component: () => import('./views/dashboard/UserSupportTeam/MyHoursST.vue'),
+        },
+        {
+          path: 'aproveHours',
+          name: 'aproveHours3',
+          component: () => import('./views/dashboard/UserSupportTeam/ApproveHoursST.vue'),
+        },
+        {
+          path: 'Operators',
+          name: 'Operators3',
+          component: () => import('./views/dashboard/UserSupportTeam/OperatorsST.vue'),
+        },
+        {
+          path: 'myaccount',
+          name: 'myaccount3',
+          component: () => import('./views/dashboard/UserSupportTeam/MyAccountST.vue'),
         },
       ],
     },
@@ -92,17 +159,22 @@ export default new Router({
       children: [
         {
           path: 'availability',
-          name: 'availability3',
+          name: 'availability4',
           component: () => import('./views/dashboard/UserProfessor/AvailabilityP.vue'),
         },
         {
           path: 'myaccount',
-          name: 'myaccount2',
+          name: 'myaccount4',
+          component: () => import('./views/dashboard/UserProfessor/MyAccountP.vue'),
+        },
+        {
+          path: 'myaccount2',
+          name: 'myaccount42',
           component: () => import('./views/dashboard/UserProfessor/MyAccountP.vue'),
         },
         {
           path: 'myreservations',
-          name: 'myres',
+          name: 'myres4',
           component: () => import('./views/dashboard/UserProfessor/MyReservationsP.vue'),
         },
       ],
@@ -114,12 +186,17 @@ export default new Router({
       children: [
         {
           path: 'availability',
-          name: 'availability4',
+          name: 'availability5',
           component: () => import('./views/dashboard/UserAdministrative/AvailabilityA.vue'),
         },
         {
+          path: 'myaccount',
+          name: 'myaccount5',
+          component: () => import('./views/dashboard/UserAdministrative/MyAccountA.vue'),
+        },
+        {
           path: 'myreservations',
-          name: 'myres2',
+          name: 'myres5',
           component: () => import('./views/dashboard/UserAdministrative/MyReservationsA.vue'),
         },
       ],
