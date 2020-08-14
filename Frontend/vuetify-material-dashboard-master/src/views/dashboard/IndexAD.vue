@@ -44,15 +44,6 @@
             class="ml-1"
             min-width="0"
             text
-            to="reservations"
-          >
-            <span class="mr-1">Reservations</span>
-          </v-btn>
-
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
             to="/"
           >
             <span class="mr-1">All-Nighters</span>
@@ -114,7 +105,7 @@
         sclass="ml-1"
         min-width="0"
         text
-        to="/AD/myaccount"
+        to="myaccount"
       >
         <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>
