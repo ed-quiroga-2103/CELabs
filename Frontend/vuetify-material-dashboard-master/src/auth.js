@@ -261,24 +261,6 @@ getRuser () {
           return response
       })
     },
-        // Function to get Courses
-        getCourses () {
-          var data = ''
-          var config = {
-          method: 'get',
-          url: ENDPOINT_PATH + 'course',
-          headers: {
-              'x-access-token': this.getUserLogged(),
-              Authorization: 'Basic QWRtaW46MTIzNDU=',
-              'Content-Type': 'application/json',
-          },
-              data: data,
-          }
-           return axios(config).then(response => {
-              console.log(response.data)
-              return response
-          })
-        },
   //  Function to get AllNighters
   getAN () {
     var data = ''
@@ -644,6 +626,23 @@ getRuser () {
       console.error(e.data.message)
     })
   },
+  getCourses () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'course',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+     return axios(config).then(response => {
+        console.log(response.data)
+        return response
+    })
+  },
   changeFaultReport (id, newstatus) {
     var data = JSON.stringify(
       {
@@ -666,6 +665,33 @@ getRuser () {
       data: data,
     }
    axios(config)
+      .then(response => {
+      this.posts = response.data
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+    })
+  },
+  submitNewCourse (newName, newCode, newGroup) {
+    var data = JSON.stringify(
+      {
+        code: newCode,
+        name: newName,
+        group: newGroup,
+      },
+
+  )
+  var config = {
+      method: 'post',
+      url: ENDPOINT_PATH + 'course',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+    }
+    axios(config)
       .then(response => {
       this.posts = response.data
       },

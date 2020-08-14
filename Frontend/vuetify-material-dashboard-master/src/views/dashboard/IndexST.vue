@@ -88,6 +88,14 @@
         >
           <span class="mr-1">Aprove hours</span>
         </v-btn>
+        <v-btn
+          class="ml-1"
+          min-width="0"
+          text
+          to="/ST/Operators"
+        >
+          <span class="mr-1">Operator Hours</span>
+        </v-btn>
       </div>
       <v-spacer />
       <v-spacer />

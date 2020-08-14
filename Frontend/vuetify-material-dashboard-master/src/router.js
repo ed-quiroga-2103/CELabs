@@ -90,6 +90,11 @@ export default new Router({
           component: () => import('./views/dashboard/UserAdmin/Operators.vue'),
         },
         {
+          path: 'AddCourse',
+          name: 'AddCourse',
+          component: () => import('./views/dashboard/UserAdmin/AddCourseAD.vue'),
+        },
+        {
           path: 'CreateUser',
           name: 'CreateUser',
           component: () => import('./views/dashboard/UserAdmin/CreateUsersAD.vue'),
@@ -129,6 +134,11 @@ export default new Router({
           path: 'aproveHours',
           name: 'aproveHours',
           component: () => import('./views/dashboard/UserSupportTeam/ApproveHoursST.vue'),
+        },
+        {
+          path: 'Operators',
+          name: 'Operators',
+          component: () => import('./views/dashboard/UserSupportTeam/OperatorsST.vue'),
         },
         {
           path: 'myaccount',

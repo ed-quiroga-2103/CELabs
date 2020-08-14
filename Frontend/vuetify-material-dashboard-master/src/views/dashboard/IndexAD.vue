@@ -98,6 +98,14 @@
           >
             <span class="mr-1">Operator Hours</span>
           </v-btn>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="/adm/addCourse"
+          >
+            <span class="mr-1">Add Course</span>
+          </v-btn>
         </v-row>
       </div>
       <v-spacer />
