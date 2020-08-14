@@ -60,17 +60,9 @@
           class="ml-1"
           min-width="0"
           text
-          to="/"
+          to="/ST/CreateUser"
         >
-          <span class="mr-1">Dashboard</span>
-        </v-btn>
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/pages/user"
-        >
-          <span class="mr-1">My account</span>
+          <span class="mr-1">Create Operator</span>
         </v-btn>
         <v-btn
           class="ml-1"
@@ -88,6 +80,14 @@
         >
           <span class="mr-1">My hours</span>
         </v-btn>
+        <v-btn
+          class="ml-1"
+          min-width="0"
+          text
+          to="/ST/aprovehours"
+        >
+          <span class="mr-1">Aprove hours</span>
+        </v-btn>
       </div>
       <v-spacer />
       <v-spacer />
@@ -95,7 +95,7 @@
         sclass="ml-1"
         min-width="0"
         text
-        to="/op/myaccount"
+        to="/ST/myaccount"
       >
         <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>

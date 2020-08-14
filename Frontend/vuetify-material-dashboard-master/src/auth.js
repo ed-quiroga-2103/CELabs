@@ -475,6 +475,23 @@ getANuser () {
         return response
     })
   },
+  getLoggedUserHours () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'user/hours',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+
+     return axios(config).then(response => {
+        return response
+    })
+  },
   delHourReport (id) {
       var data = JSON.stringify(
         {
@@ -552,6 +569,22 @@ getANuser () {
     var config = {
     method: 'get',
     url: ENDPOINT_PATH + 'user',
+    headers: {
+        'x-access-token': this.getUserLogged(),
+        Authorization: 'Basic QWRtaW46MTIzNDU=',
+        'Content-Type': 'application/json',
+    },
+        data: data,
+    }
+     return axios(config).then(response => {
+        return response
+    })
+  },
+  getUsers () {
+    var data = ''
+    var config = {
+    method: 'get',
+    url: ENDPOINT_PATH + 'users',
     headers: {
         'x-access-token': this.getUserLogged(),
         Authorization: 'Basic QWRtaW46MTIzNDU=',

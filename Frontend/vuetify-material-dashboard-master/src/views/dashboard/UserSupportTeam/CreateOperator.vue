@@ -85,12 +85,6 @@
                     label="Password"
                     validation="required|max:16|min:8"
                   />
-                  <FormulateInput
-                    type="select"
-                    name="user_type"
-                    label="User type"
-                    :options="{3: 'Professor', 4: 'Administrative', 1:'Administrador', 2: 'Operador'}"
-                  />
                   <v-spacer />
                   <FormulateInput
                     type="submit"
@@ -122,7 +116,7 @@
         email: '',
         phone_number: '',
         university_id: '',
-        user_type: '',
+        user_type: 'Operador',
       },
     }),
     created () {},

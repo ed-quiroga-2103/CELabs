@@ -119,15 +119,25 @@ export default new Router({
           name: 'Faults',
           component: () => import('./views/dashboard/UserSupportTeam/FaultsST.vue'),
         },
-        // {
-        //   path: 'CreateUser',
-        //   name: 'CreateUser',
-        //   component: () => import('./views/dashboard/UserSupportTeam/CreateUsersAD.vue'),
-        // },
+        {
+          path: 'CreateUser',
+          name: 'CreateUser',
+          component: () => import('./views/dashboard/UserSupportTeam/CreateOperator.vue'),
+        },
         {
           path: 'myhours',
           name: 'myhours',
           component: () => import('./views/dashboard/UserSupportTeam/MyHoursST.vue'),
+        },
+        {
+          path: 'aproveHours',
+          name: 'aproveHours',
+          component: () => import('./views/dashboard/UserSupportTeam/ApproveHoursST.vue'),
+        },
+        {
+          path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserSupportTeam/MyAccountST.vue'),
         },
       ],
     },
@@ -145,6 +155,11 @@ export default new Router({
           name: 'availability3',
           component: () => import('./views/dashboard/UserProfessor/AvailabilityP.vue'),
         },
+        {
+          path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserProfessor/MyAccountP.vue'),
+        },
       ],
     },
     {
@@ -160,6 +175,11 @@ export default new Router({
           path: 'availability',
           name: 'availability4',
           component: () => import('./views/dashboard/UserAdministrative/AvailabilityA.vue'),
+        },
+        {
+          path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserAdministrative/MyAccountA.vue'),
         },
       ],
     },

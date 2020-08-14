@@ -45,49 +45,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
-          >
-            <span class="mr-1">Report faults</span>
-          </v-btn>
-
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="/"
-          >
-            <span class="mr-1">Report faults</span>
-          </v-btn>
-
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="/"
-          >
-            <span class="mr-1">Dashboard</span>
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="/pages/user"
-          >
-            <span class="mr-1">Inventory Report</span>
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="/"
-          >
-            <span class="mr-1">My account</span>
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            min-width="0"
-            text
-            to="/"
+            to="/prof"
           >
             <span class="mr-1">My hours</span>
           </v-btn>
@@ -95,7 +53,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/pages/user"
+            to="/prof"
           >
             <span class="mr-1">My Reservations</span>
           </v-btn>
@@ -107,7 +65,7 @@
         sclass="ml-1"
         min-width="0"
         text
-        to="/op/myaccount"
+        to="/prof/myaccount"
       >
         <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>

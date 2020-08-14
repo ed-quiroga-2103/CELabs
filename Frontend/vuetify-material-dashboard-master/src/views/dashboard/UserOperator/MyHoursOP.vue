@@ -340,15 +340,15 @@
       },
       async getUser () {
         try {
-          await this.$auth.getUser().then(
+          await this.$auth.getLoggedUserHours().then(
             response => {
               var res = response.data
               console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.operator = res[0]
-                this.uniId = res[3]
-                this.assignedH = res[0][7]
-                this.complH = res[0][8]
+                this.uniId = res[6]
+                this.assignedH = res[8]
+                this.complH = res[7]
               }
             })
         } catch (error) {

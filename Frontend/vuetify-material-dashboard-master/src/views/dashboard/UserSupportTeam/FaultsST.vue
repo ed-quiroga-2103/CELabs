@@ -218,6 +218,7 @@
         }
       },
       openChangeDialog (item) {
+        this.row = item.status
         this.changeDialog = true
         this.changeitem = item
       },

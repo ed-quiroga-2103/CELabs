@@ -43,13 +43,13 @@
               <label v-text="uniId" />
             </v-row>
             <v-row>
-              <h2>Assigned Hours:</h2>
+              <h2>Completed Hours:</h2>
             </v-row>
             <v-row>
               <label v-text="assignedH" />
             </v-row>
             <v-row>
-              <h2>Hours Completed:</h2>
+              <h2>Pending Hours:</h2>
             </v-row>
             <v-row>
               <label v-text="complH" />
@@ -317,18 +317,18 @@
       },
       async getHours () {
         try {
-          await this.$auth.getUserHours().then(
+          await this.$auth.getLoggedHours().then(
             response => {
               var res = response.data
-              console.log(res)
               this.hours = []
+              console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.hours.push({
                   shiftDate: res[i][0].slice(0, 10),
                   shiftStart: res[i][1].slice(0, 5),
                   shiftEnd: res[i][2].slice(0, 5),
+                  id: res[i][11],
                   workDescription: res[i][3],
-                  id: res[i][12],
                   state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
                   delete: res[i][4],
                 })
@@ -340,15 +340,15 @@
       },
       async getUser () {
         try {
-          await this.$auth.getUser().then(
+          await this.$auth.getLoggedUserHours().then(
             response => {
               var res = response.data
               console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.operator = res[0]
-                this.uniId = res[3]
-                this.assignedH = res[1]
-                this.complH = res[2]
+                this.uniId = res[6]
+                this.assignedH = res[8]
+                this.complH = res[7]
               }
             })
         } catch (error) {
@@ -357,6 +357,7 @@
       },
       delet (item) {
         this.currdel = item
+        console.log('This is the id' + this.currdel.id)
         this.deldialog = true
         console.log(item)
       },
