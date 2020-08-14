@@ -60,6 +60,11 @@ export default new Router({
       component: IndexAD,
       children: [
         {
+          path: 'AllNighters',
+          name: 'AllNighters',
+          component: () => import('./views/dashboard/UserAdmin/AllNightersAD.vue'),
+        },
+        {
           path: 'dashboard',
           name: 'dashboard2',
           component: () => import('./views/dashboard/Dashboard.vue'),
@@ -101,7 +106,7 @@ export default new Router({
         },
         {
           path: 'myaccount',
-          name: 'myac',
+          name: 'myaccount',
           component: () => import('./views/dashboard/UserAdmin/MyAccountAD.vue'),
         },
       ],

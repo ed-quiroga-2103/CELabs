@@ -44,7 +44,16 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
+            to="reservations"
+          >
+            <span class="mr-1">Reservations</span>
+          </v-btn>
+
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="AllNighters"
           >
             <span class="mr-1">All-Nighters</span>
           </v-btn>
