@@ -36,7 +36,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/adm/availability"
+            to="availability"
           >
             <span class="mr-1">Availability</span>
           </v-btn>
@@ -44,7 +44,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/availability"
+            to="reservations"
           >
             <span class="mr-1">Reservations</span>
           </v-btn>
@@ -53,7 +53,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/"
+            to="AllNighters"
           >
             <span class="mr-1">All-Nighters</span>
           </v-btn>
@@ -62,7 +62,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/adm/Faults"
+            to="Faults"
           >
             <span class="mr-1">Faults</span>
           </v-btn>
@@ -70,7 +70,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/adm/Inventory"
+            to="Inventory"
           >
             <span class="mr-1">Inventory</span>
           </v-btn>
@@ -78,7 +78,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/adm/OPHours"
+            to="OPHours"
           >
             <span class="mr-1">Approve hours</span>
           </v-btn>
@@ -86,7 +86,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/adm/CreateUser"
+            to="CreateUser"
           >
             <span class="mr-1">Create User</span>
           </v-btn>

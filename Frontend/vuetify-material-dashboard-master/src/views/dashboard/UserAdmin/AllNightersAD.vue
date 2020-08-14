@@ -19,58 +19,26 @@
               </td>
             </template>
             <template v-slot:item.actions="{ item }">
+              <!-- v-if="item.delete === 1" -->
               <v-icon
+                v-if="item.status === 'Pending'"
                 small
                 class="mr-2"
-                @click="openChangeDialog(item)"
+                @click="declineAllNighter(item.reqID)"
               >
-                Change Status
+                mdi-check
+              </v-icon>
+              <!-- v-if="item.delete === 1" -->
+              <v-icon
+                v-if="item.status === 'Pending'"
+                small
+                class="mr-2"
+                @click="aproveAllnighter(item.reqID)"
+              >
+                mdi-close
               </v-icon>
             </template>
           </v-data-table>
-          <v-dialog
-            v-model="changeDialog"
-            max-width="500px"
-          >
-            <v-card>
-              <v-card-title>
-                <span class="headline">Change Status</span>
-              </v-card-title>
-              <v-radio-group
-                v-model="row"
-                row
-              >
-                <v-radio
-                  label="Pending"
-                  value="Pending"
-                />
-                <v-radio
-                  label="Completed"
-                  value="Completed"
-                />
-                <v-radio
-                  label="In process"
-                  value="In process"
-                />
-              </v-radio-group>
-              <v-card-actions>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="changeReport()"
-                >
-                  Save
-                </v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="changeDialog = false"
-                >
-                  Cancel
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-app>
       </div>
     </v-col>
@@ -83,69 +51,44 @@
       expanded: [],
       headers: [
         {
-          text: 'Report Number',
+          text: 'AllNighter Id',
           align: 'start',
-          value: 'reportNo',
+          value: 'reqID',
         },
-        { text: 'Report Date', value: 'reportD' },
-        { text: 'Report Time', value: 'reportT' },
-        { text: 'Laboratory Number', value: 'labNo' },
-        { text: 'ID(Faulty part)', value: 'faultypartID' },
+        { text: 'Request Date', value: 'requestD' },
+        { text: 'AllNighter Date', value: 'allnightD' },
+        { text: 'Start Time', value: 'allnightTS' },
+        { text: 'Finish Time', value: 'allnightTF' },
+        { text: 'Email', value: 'reqEmail' },
+        { text: 'Lab', value: 'labNo' },
         { text: 'Status', value: 'status' },
-        { text: 'Change Status', value: 'actions', sortable: false },
+        { text: 'Aprove', value: 'actions', sortable: false },
         { text: '', value: 'data-table-expand', sortable: false },
       ],
       reports: [],
-      changeDialog: false,
-      changeitem: [],
-      row: '',
     }),
     mounted () {
-      this.getFaultReports()
+      this.getAllNighters()
     },
     methods: {
-      addFault () {
-        try {
-          if (this.radios && this.Idnumb && this.textarea) {
-            this.submitFault()
-          } else {
-            alert('Complete all the fields')
-          }
-        } catch (error) {
-
-        }
-      },
-      async submitFault () {
-        this.faultReport = false
-        try {
-          await this.$auth.submitFault(this.radios, this.Idnumb, this.textarea)
-          setTimeout(() => { this.getFaultReports() }, 1000)
-        } catch (error) {
-          this.error = true
-          alert('Error submiting report')
-        }
-        this.reportValues = {
-          radios: '',
-          Idnumb: '',
-          textarea: '',
-        }
-      },
-      async getFaultReports () {
+      async getAllNighters () {
         try {
           this.reports = []
-          await this.$auth.getFaultReports().then(
+          await this.$auth.getAllNighters().then(
             response => {
               var res = response.data
               console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.reports.push({
-                  description: res[i][2],
-                  reportD: res[i][0].slice(0, 10),
-                  reportT: res[i][0].slice(10, 16),
-                  labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
-                  faultypartID: res[i][1],
-                  status: res[i][3] === 1 ? 'Pending' : res[i][3] === 2 ? 'Completed' : 'In process',
-                  reportNo: res[i][5],
+                  allnightD: res[i][0],
+                  requestD: res[i][1],
+                  allnightTS: res[i][2],
+                  allnightTF: res[i][3],
+                  description: res[i][4],
+                  status: res[i][5] === 0 ? 'Pending' : res[i][5] === 1 ? 'Approved' : 'Denied',
+                  reqEmail: res[i][6],
+                  labNo: res[i][7],
+                  reqID: res[i][8],
                 })
               }
             })
@@ -153,18 +96,18 @@
           this.error = true
         }
       },
-      openChangeDialog (item) {
-        this.row = item.status
-        this.changeDialog = true
-        this.changeitem = item
+      aproveAllnighter (id) {
+        this.changeAllNighterStatus(id, 'Denied')
       },
-      async changeReport () {
-        console.log(this.row)
-        console.log(this.changeitem)
+      declineAllNighter (id) {
+        this.changeAllNighterStatus(id, 'Approved')
+      },
+      async changeAllNighterStatus (id, newStatus) {
+        console.log(newStatus)
         this.changeDialog = false
         try {
-          await this.$auth.changeFaultReport(this.changeitem.reportNo, this.row)
-          setTimeout(() => { this.getFaultReports() }, 1000)
+          await this.$auth.changeAllNighterStatus(id, newStatus)
+          setTimeout(() => { this.getAllNighters() }, 1000)
         } catch (error) {
           this.error = true
         }

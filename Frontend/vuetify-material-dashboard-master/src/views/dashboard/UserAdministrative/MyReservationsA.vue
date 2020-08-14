@@ -11,9 +11,9 @@
           <v-btn
             outlined
             color="grey darken-2"
-            to="/op/allnighter"
+            to="availability"
           >
-            Request All-Nighter
+            Request Reservation
           </v-btn>
           <v-menu
             bottom
@@ -128,12 +128,12 @@
         {
           text: 'Date of Request',
           align: 'start',
-          value: 'DateofRequest',
+          value: 'RequestData',
         },
         { text: 'Requested Date', value: 'RequestedDate' },
-        { text: 'Responsible', value: 'Responsible' },
-        { text: 'Current State', value: 'CurrentState' },
-        { text: 'Delete', value: 'Delete', sortable: false },
+        { text: 'Subject', value: 'Subject' },
+        { text: 'Description', value: 'Description' },
+        { text: 'User that Requested', value: 'UserthatRequested' },
       ],
       an: [],
       radios: '',
@@ -144,7 +144,7 @@
       faultReport: false,
     }),
     mounted () {
-      this.getANuser()
+      this.getRuser()
     },
     methods: {
       addFault () {
@@ -158,21 +158,21 @@
 
         }
       },
-      async getANuser () {
+      async getRuser () {
         try {
           console.log('hola')
           this.an = []
-          await this.$auth.getANuser().then(
+          await this.$auth.getRuser().then(
             response => {
               var res = response.data
               console.log(res)
               for (var i = 0; i < res.length; i++) {
                 this.an.push({
-                  DateofRequest: res[i][0].slice(0, 10),
+                  RequestData: res[i][0].slice(0, 10),
                   RequestedDate: res[i][1].slice(0, 10),
-                  Responsible: res[i][6],
-                  CurrentState: res[i][5] === 0 ? 'pending' : res[i][5] === 1 ? 'approved' : 'denied',
-                  Delete: res[i][5],
+                  Subject: res[i][4],
+                  Description: res[i][5] === 0 ? 'pending' : res[i][5] === 1 ? 'approved' : res[i][5] === 2 ? 'denied' : 'charging',
+                  UserthatRequested: res[i][6],
                 })
               }
               console.log(this.an)

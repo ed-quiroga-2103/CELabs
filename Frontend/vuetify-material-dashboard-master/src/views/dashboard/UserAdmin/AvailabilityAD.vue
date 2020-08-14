@@ -59,7 +59,7 @@
             color="grey darken-2"
             @click="dialogo = true"
           >
-            Reservation
+            Event
           </v-btn>
           <v-btn
             class="mr-4"
@@ -67,7 +67,7 @@
             color="grey darken-2"
             @click="dialogo2 = true"
           >
-            Course
+            Event Repeatable
           </v-btn>
           <v-btn
             outlined
@@ -552,6 +552,8 @@
     },
     mounted () {
       this.getEvents()
+      this.getReservations()
+      this.$auth.getCourses()
       this.$refs.calendar.checkChange()
     },
     methods: {
@@ -659,13 +661,43 @@
       },
       async postEvent (description, start, end, day, repeatable, lab, date) {
         try {
-          for (var i = 0; i < this.events.length; i++) {
-            if (this.events[i].start === this.start) {
-
-            }
-          }
-          await this.$auth.postEvent(description, start, end, day, repeatable, lab, date)
-          setTimeout(() => { this.getEvents() }, 1000)
+          await this.$auth.postEvent(description, start, end, day, repeatable, lab, date).then(
+            response => {
+              // eslint-disable-next-line eqeqeq
+              date = day[6] + date[7] + date[8] + date[9] + '-' + date[3] + date[4] + '-' + date[0] + date[1]
+              // eslint-disable-next-line eqeqeq
+              if (response.data.message == 'New Event created!') {
+                console.log('El laboratorio:  ' + lab)
+                console.log('La fecha es:  ' + date)
+                // eslint-disable-next-line eqeqeq
+                if (lab == 'F2-09') {
+                  this.events.push(
+                    {
+                      name: description,
+                      start: date + ' ' + start.slice(0, 5),
+                      end: date + ' ' + end.slice(0, 5),
+                      encargado: 'Desconocido',
+                      lab: lab,
+                      subject: 'Sin materia',
+                      date: date,
+                    },
+                  )
+                } else {
+                  this.events2.push(
+                    {
+                      name: description,
+                      start: date + ' ' + start.slice(0, 5),
+                      end: date + ' ' + end.slice(0, 5),
+                      encargado: 'Desconocido',
+                      lab: lab,
+                      subject: 'Sin materia',
+                      date: date,
+                    },
+                  )
+                }
+              }
+            })
+          this.$refs.calendar.checkChange()
         } catch (error) {
           this.error = true
           alert('Error sending events')
@@ -679,8 +711,7 @@
             // eslint-disable-next-line eqeqeq
             if (temp[i][6] == 'F2-09') {
               this.events.push({
-                name: 'Reservado',
-                description: temp[i][4],
+                name: temp[i][4],
                 start: dt + ' ' + temp[i][0].slice(0, 5),
                 end: dt + ' ' + temp[i][1].slice(0, 5),
                 week_day: temp[i][3],
@@ -729,6 +760,45 @@
                 })
               }
             }
+          }
+        }
+      },
+      async getReservations () {
+        try {
+          await this.$auth.getReservations().then(
+            response => {
+              this.sortReservations(response.data)
+            })
+        } catch (error) {
+          this.error = true
+        }
+      },
+      sortReservations (temp) {
+        for (var i = 0; i < temp.length; i++) {
+          var dt = temp[i][0].slice(6, 10) + '-' + temp[i][0].slice(3, 5) + '-' + temp[i][0].slice(0, 2)
+          // eslint-disable-next-line eqeqeq
+          if (temp[i][8] == 'F2-09') {
+            this.events.push({
+              name: 'Reservado',
+              description: temp[i][5],
+              start: dt + ' ' + temp[i][2].slice(0, 5),
+              end: dt + ' ' + temp[i][3].slice(0, 5),
+              encargado: temp[i][7],
+              lab: temp[i][8],
+              subject: temp[i][4],
+              date: dt,
+            })
+          } else {
+            this.events2.push({
+              name: 'Reservado',
+              description: temp[i][5],
+              start: dt + ' ' + temp[i][2].slice(0, 5),
+              end: dt + ' ' + temp[i][3].slice(0, 5),
+              encargado: temp[i][7],
+              lab: temp[i][8],
+              subject: temp[i][4],
+              date: dt,
+            })
           }
         }
       },

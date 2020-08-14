@@ -282,12 +282,12 @@ def create_reservation(current_user):
 
     for reservation in reservations:
         if reservation[0] == date and reservation[2] == data['lab'] and time_verification(get_time_from_seconds(reservation[1]),get_time_from_seconds(reservation[3]),data['init_time']):
-            return jsonify({'message':'Theres already a reservation with that date and time'}), 401
+            return jsonify({'message':'Theres already a reservation with that date and time'}), 200
 
     teachers = User.query.with_entities(User.email,User.user_type).all()
 
     for teacher in teachers:
-        if teacher[0] == data['requesting_user'] and teacher[1] == 3 and data["operator"] != "cualquiera@gmail.com":
+        if teacher[0] == data['requesting_user'] and (teacher[1] == 3 or teacher[1] == 4) and data["operator"] != "cualquiera@gmail.com":
         
             current_id_reservation = str(uuid.uuid4())
 
@@ -336,7 +336,7 @@ def create_reservation(current_user):
             
             return response, 200
         
-        if teacher[0] == data['requesting_user'] and teacher[1] == 3 and data["operator"] == "cualquiera@gmail.com":
+        if teacher[0] == data['requesting_user'] and (teacher[1] == 3 or teacher[1] == 4) and data["operator"] == "cualquiera@gmail.com":
         
             current_id_reservation = str(uuid.uuid4())
 

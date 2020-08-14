@@ -3,18 +3,10 @@ from sqlalchemy import ForeignKey
 import uuid
 from constants import *
 
-
-<<<<<<< HEAD
 file = open(LUIS_DB, 'w+')
 file.close()
 
 engine = create_engine('sqlite:///' + LUIS_DB)
-=======
-file = open(RACSO_DB, 'w+')
-file.close()
-
-engine = create_engine('sqlite:///' + RACSO_DB)
->>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
 meta = MetaData()
 
 
@@ -238,7 +230,8 @@ conn.execute(User_Type.insert(),
         {'id_user_type':'1','user_type':'Administrator'},
         {'id_user_type':'2','user_type':'Operator'},
         {'id_user_type':'3','user_type':'Professor'},
-        {'id_user_type':'4','user_type':'Administrative'}
+        {'id_user_type':'4','user_type':'Administrative'},
+        {'id_user_type':'5','user_type':'SupportTeam'}
     ]
 )
 
