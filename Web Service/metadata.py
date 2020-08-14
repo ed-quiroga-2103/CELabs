@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(KIMBERLY_DB, 'w+')
+file = open(RACSO_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + KIMBERLY_DB)
+engine = create_engine('sqlite:///' + RACSO_DB)
 meta = MetaData()
 
 
@@ -46,7 +46,7 @@ Reservation = Table(
     Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
-    Column('operator', Integer, ForeignKey('User.id_user'), nullable = False),
+    Column('operator', Integer, ForeignKey('User.id_user'), nullable = True),
 )
 
 AllNighter = Table(
@@ -164,6 +164,7 @@ Reservation_Lab = Table(
 
 User_Operator = Table(
     'User_Operator', meta,
+    Column('id_user_operator', Integer, primary_key = True),
     Column('id_user', Integer, ForeignKey('User.id_user'), nullable = False),
     Column('approved_hours', Integer, nullable = False),
     Column('pending_hours', Integer, nullable = False)
@@ -251,7 +252,9 @@ conn.execute(User.insert(),
         {'id_user': 1, 'public_id_user': str(uuid.uuid4()), 'name': 'Op', 'lastname1': 'Op', 'lastname2':'Op', 'id_number':'Op',
         'password':'Op', 'email':'Op', 'phone_number':'Op', 'active': 1, 'university_id':'Op', 'user_type':2},
         {'id_user': 2, 'public_id_user': str(uuid.uuid4()), 'name': 'Prof', 'lastname1': 'Prof', 'lastname2':'Prof', 'id_number':'Prof',
-        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':3}
+        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':3},
+        {'id_user': 3, 'public_id_user': str(uuid.uuid4()), 'name': 'Admin', 'lastname1': 'Admin', 'lastname2':'Admin', 'id_number':'Admin',
+        'password':'adminpassword', 'email':'useradmin@xtec.com', 'phone_number':'Admin', 'active': 1, 'university_id':'Admin', 'user_type':1}
     ]
 )
 
@@ -267,6 +270,12 @@ conn.execute(FaultStatus.insert(),
         {'id_status': 1, 'status':'Pending'},
         {'id_status': 2, 'status':'Completed'},
         {'id_status': 3, 'status':'In process'}  
+    ]
+)
+
+conn.execute(User_Operator.insert(),
+    [
+        {'id_user':1, 'approved_hours': 0, 'pending_hours': 50}
     ]
 )
 
