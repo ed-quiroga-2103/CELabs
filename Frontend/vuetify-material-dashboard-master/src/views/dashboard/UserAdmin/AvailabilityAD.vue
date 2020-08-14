@@ -553,7 +553,7 @@
     mounted () {
       this.getEvents()
       this.getReservations()
-      this.$auth.getCourses()
+      this.getCourses()
       this.$refs.calendar.checkChange()
     },
     methods: {
@@ -805,6 +805,20 @@
               date: dt,
             })
           }
+        }
+      },
+      async getCourses () {
+        try {
+          await this.$auth.getCourses().then(
+            response => {
+              this.iCourses = []
+              var res = response.data
+              this.iCourses.name = res[2]
+              this.iCourses.code = res[0]
+              this.iCourses.group = res[1]
+            })
+        } catch (error) {
+          this.error = true
         }
       },
 
