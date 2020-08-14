@@ -591,9 +591,6 @@ def get_pending_worklog(current_user):
 def delete_this_worklog(current_user):
     data = request.get_json()
 
-    date = get_date_in_seconds(data['date_time'])
-    time = get_time_in_seconds(data['init_time'])
-
     worklogs = Worklog.query.join(User_Worklog).join(User).with_entities(
         Worklog.date_time,
         Worklog.init_time,
@@ -601,7 +598,7 @@ def delete_this_worklog(current_user):
     ).all()
 
     for worklog in worklogs:
-        if worklog[0] == date and worklog[1] == time:
+        if worklog[2] == int(data["id_worklog"]):
             Worklog.query.filter_by(id_worklog=worklog[2]).delete()
             User_Worklog.query.filter_by(id_worklog=worklog[2]).delete()
             db.session.commit()
