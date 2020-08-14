@@ -170,6 +170,27 @@ def get_this_user(current_user):
 
     return jsonify(information), 200
 
+@app.route('/user/hours', methods=['GET'])
+@token_required
+def get_this_user_hours(current_user):
+
+    information = []
+
+    information.append(current_user.name)
+    information.append(current_user.lastname1)
+    information.append(current_user.lastname2)
+    information.append(current_user.id_number)
+    information.append(current_user.email)
+    information.append(current_user.phone_number)
+    information.append(current_user.university_id)
+
+    current_hours = db.session.query(User_Operator).filter_by(id_user = current_user.id_user).first()
+
+    information.append(current_hours.pending_hours)
+    information.append(current_hours.approved_hours)
+
+    return jsonify(information), 200
+
 
 @app.route('/user/disable', methods=['PUT'])
 @token_required
