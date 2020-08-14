@@ -85,7 +85,7 @@
               outlined
               color="grey darken-2"
               class="mr-8"
-              @click="Reporthour = true"
+              to="/op/myan"
             >
               All-Nighter Requests
             </v-btn>
@@ -93,7 +93,7 @@
               outlined
               color="grey darken-2"
               class="mr-8"
-              @click="Reporthour = true"
+              @click="visible2 = true"
             >
               Disable Account
             </v-btn>
@@ -187,6 +187,41 @@
         <v-spacer />
       </v-card>
     </v-dialog>
+    <template>
+      <v-row justify="center">
+        <v-dialog
+          v-model="visible2"
+          persistent
+          max-width="290"
+        >
+          <v-card>
+            <v-card-title class="headline">
+              Are you shure you want to delete your account?
+            </v-card-title>
+            <v-card-text>This action doesn't delete your activity</v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="
+                  visible2 = false
+                  putDelete()"
+              >
+                Delete
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="visible2 = false"
+              >
+                Cancel
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
+    </template>
   </v-row>
 </template>
 
@@ -207,6 +242,7 @@
       ],
       formValues: {},
       visible: false,
+      visible2: false,
       hours: [],
       user: 'Kimberly',
       apellido1: 'Calderón',
@@ -300,6 +336,15 @@
           radios: '',
           Idnumb: '',
           textarea: '',
+        }
+      },
+      async putDelete () {
+        try {
+          await this.$auth.putDelete()
+          this.$router.push('/')
+        } catch (error) {
+          this.error = true
+          alert('Error submiting report')
         }
       },
     },
