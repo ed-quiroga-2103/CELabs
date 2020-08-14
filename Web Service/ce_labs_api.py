@@ -959,7 +959,6 @@ def edit_this_inventoryreport(current_user):
     data = raw_data['old']
     new_data = raw_data['new']
 
-    date = get_datetime_in_seconds(data['date_time'])
 
     inventories = InventoryReport.query.join(InventoryReport_Lab).join(Lab).join(User_InventoryReport).join(User).with_entities(
         InventoryReport.date,
@@ -968,7 +967,7 @@ def edit_this_inventoryreport(current_user):
     ).all()
 
     for inventory in inventories:
-        if inventory[0] == date and inventory[2] == data['lab']:
+        if inventory[1] == int(data["id_report"]):
 
             #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
             #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
@@ -1116,8 +1115,6 @@ def edit_this_faultreport(current_user):
     data = raw_data['old']
     new_data = raw_data['new']
 
-    date = get_datetime_in_seconds(data['date_time'])
-
     faults = FaultReport.query.join(FaultReport_Lab).join(Lab).join(User_FaultReport).join(User).with_entities(
         FaultReport.date_time,
         FaultReport.id_report,
@@ -1125,7 +1122,7 @@ def edit_this_faultreport(current_user):
     ).all()
 
     for fault in faults:
-        if fault[0] == date and fault[2] == data['lab']:
+        if fault[1] == int(data["id_report"]):
 
             #Luego se saca un query con la sesion y se filtra por id para encontrar el objeto dentro de la base
             #Esto porque el primer objeto (variable reservation) solamente incluye los datos y no tiene relacion directa con la base
