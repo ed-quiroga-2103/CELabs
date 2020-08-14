@@ -205,7 +205,7 @@ def create_reservation(current_user):
     data = request.get_json()
     date = get_date_in_seconds(data['requested_date'])
     #time = get_time_in_seconds(data['init_time'])
-    
+    print(data)
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
     Reservation.init_time, Lab.name, Reservation.final_time).all()
 
@@ -235,7 +235,7 @@ def create_reservation(current_user):
 
     for teacher in teachers:
         if teacher[0] == data['requesting_user'] and teacher[1] == 3:
-        
+            print(data['requesting_user'])
             current_id_reservation = str(uuid.uuid4())
 
             operator = User.query.filter(User.email.like(data['operator'])).first()

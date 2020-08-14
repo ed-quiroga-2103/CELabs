@@ -140,8 +140,6 @@
           :events="events"
           :type="type"
           @click:event="showEvent"
-          @click:more="viewDay"
-          @click:date="viewDay"
         />
         <v-calendar
           v-show="!l1"
@@ -159,8 +157,6 @@
           :events="events2"
           :type="type"
           @click:event="showEvent"
-          @click:more="viewDay"
-          @click:date="viewDay"
         />
         <!--------------Add event------------------------------------------------------>
         <v-dialog v-model="dialogo">
@@ -522,6 +518,7 @@
       addReservation () {
         try {
           if (this.date && this.time && this.time2 && this.description && this.lab && this.course) {
+            console.log('EL proesor es: ' + this.prof)
             const date2 = this.ChangeDate(this.date)
             const date3 = this.ChangeDate(this.start)
             console.log(date2, date3, this.prof, this.time + ':00', this.time2 + ':00', this.course, this.description, this.lab, this.operator)
@@ -542,7 +539,6 @@
         }
       },
       async getReservations () {
-        this.events = []
         try {
           await this.$auth.getReservations().then(
             response => {
@@ -563,7 +559,6 @@
         }
       },
       sortReservations (temp) {
-        this.events = []
         for (var i = 0; i < temp.length; i++) {
           var dt = temp[i][0].slice(6, 10) + '-' + temp[i][0].slice(3, 5) + '-' + temp[i][0].slice(0, 2)
           // eslint-disable-next-line eqeqeq

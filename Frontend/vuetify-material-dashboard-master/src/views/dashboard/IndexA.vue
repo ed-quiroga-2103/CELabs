@@ -37,7 +37,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="prof/availability"
+            to="availability"
           >
             <span class="mr-1">Availability</span>
           </v-btn>
@@ -46,7 +46,7 @@
             class="ml-1"
             min-width="0"
             text
-            to="/pages/user"
+            to="myreservations"
           >
             <span class="mr-1">My Reservations</span>
           </v-btn>
@@ -58,7 +58,7 @@
         sclass="ml-1"
         min-width="0"
         text
-        to="/op/myaccount"
+        to="myaccount"
       >
         <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>
