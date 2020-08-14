@@ -472,6 +472,7 @@
               console.log(response.data)
               this.sortEvents(response.data)
             })
+          setTimeout(() => { this.getAN() }, 1000)
         } catch (error) {
           this.error = true
         }

@@ -147,6 +147,25 @@ getANuser () {
       return response
   })
 },
+// Function reservations from specific user
+getRuser () {
+  var data = ''
+  var config = {
+  method: 'get',
+  url: ENDPOINT_PATH + 'reservation/user',
+  headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+  },
+      data: data,
+  }
+
+   return axios(config).then(response => {
+      console.log(response.data)
+      return response
+  })
+},
     // Function to delete account
     putDelete () {
       var data = {
