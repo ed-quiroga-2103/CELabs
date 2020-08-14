@@ -287,7 +287,7 @@ def create_reservation(current_user):
     teachers = User.query.with_entities(User.email,User.user_type).all()
 
     for teacher in teachers:
-        if teacher[0] == data['requesting_user'] and teacher[1] == 3 and data["operator"] != "cualquiera@gmail.com":
+        if teacher[0] == data['requesting_user'] and (teacher[1] == 3 or teacher[1] == 4) and data["operator"] != "cualquiera@gmail.com":
         
             current_id_reservation = str(uuid.uuid4())
 
@@ -336,7 +336,7 @@ def create_reservation(current_user):
             
             return response, 200
         
-        if teacher[0] == data['requesting_user'] and teacher[1] == 3 and data["operator"] == "cualquiera@gmail.com":
+        if teacher[0] == data['requesting_user'] and (teacher[1] == 3 or teacher[1] == 4) and data["operator"] == "cualquiera@gmail.com":
         
             current_id_reservation = str(uuid.uuid4())
 
