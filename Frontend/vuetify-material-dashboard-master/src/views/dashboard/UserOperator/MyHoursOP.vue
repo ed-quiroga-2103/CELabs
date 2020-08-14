@@ -43,13 +43,13 @@
               <label v-text="uniId" />
             </v-row>
             <v-row>
-              <h2>Assigned Hours:</h2>
+              <h2>Completed Hours:</h2>
             </v-row>
             <v-row>
               <label v-text="assignedH" />
             </v-row>
             <v-row>
-              <h2>Hours Completed:</h2>
+              <h2>Pending Hours:</h2>
             </v-row>
             <v-row>
               <label v-text="complH" />
@@ -332,8 +332,6 @@
                   state: res[i][4] === 1 ? 'pending' : res[i][4] === 2 ? 'approved' : 'not approved',
                   delete: res[i][4],
                 })
-                this.assignedH = res[0][10]
-                this.complH = res[0][9]
               }
             })
         } catch (error) {
@@ -349,6 +347,8 @@
               for (var i = 0; i < res.length; i++) {
                 this.operator = res[0]
                 this.uniId = res[3]
+                this.assignedH = res[0][7]
+                this.complH = res[0][8]
               }
             })
         } catch (error) {
