@@ -149,13 +149,15 @@
         try {
           await this.$auth.register(this.formValues).then(
             response => {
-              if (response.data.user_type === 2) {
+              alert(this.response.data)
+              console.log(this.formValues.user_type)
+              if (this.formValues.user_type === 2) {
                 this.$router.push('/op')
-              } else if (response.data.user_type.String === 1) {
+              } else if (this.formValues.user_type === 1) {
                 this.$router.push('/adm')
-              } else if (response.data.user_type === 3) {
+              } else if (this.formValues.user_type === 3) {
                 this.$router.push('/prof')
-              } else if (response.data.user_type === 4) {
+              } else if (this.formValues.user_type === 4) {
                 this.$router.push('/pa')
               }
             }).catch(e => {

@@ -37,14 +37,19 @@
             class="ml-1"
             min-width="0"
             text
-            to="prof/availability"
+            to="availability"
           >
             <span class="mr-1">Availability</span>
           </v-btn>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
           <v-btn
             class="ml-1"
             min-width="0"
             text
+<<<<<<< HEAD
             to="/prof"
           >
             <span class="mr-1">My hours</span>
@@ -54,6 +59,9 @@
             min-width="0"
             text
             to="/prof"
+=======
+            to="myreservations"
+>>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
           >
             <span class="mr-1">My Reservations</span>
           </v-btn>
@@ -65,7 +73,11 @@
         sclass="ml-1"
         min-width="0"
         text
+<<<<<<< HEAD
         to="/prof/myaccount"
+=======
+        to="myaccount"
+>>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
       >
         <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>
@@ -100,9 +112,9 @@
     }),
     methods: {
       deleteUserLogged () {
+        console.log('Eliminando....')
         this.$auth.deleteUserLogged()
       },
     },
-
   }
 </script>

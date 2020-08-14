@@ -4,10 +4,17 @@ import uuid
 from constants import *
 
 
+<<<<<<< HEAD
 file = open(LUIS_DB, 'w+')
 file.close()
 
 engine = create_engine('sqlite:///' + LUIS_DB)
+=======
+file = open(RACSO_DB, 'w+')
+file.close()
+
+engine = create_engine('sqlite:///' + RACSO_DB)
+>>>>>>> 31538249825ac716604895fbbb3f1d7e194f4a80
 meta = MetaData()
 
 
@@ -46,7 +53,7 @@ Reservation = Table(
     Column('last_mod_date', BigInteger, nullable = False),
     Column('subject', String(50), nullable = False),
     Column('description', Text(50), nullable = False),
-    Column('operator', Integer, ForeignKey('User.id_user'), nullable = False),
+    Column('operator', Integer, ForeignKey('User.id_user'), nullable = True),
 )
 
 AllNighter = Table(
@@ -252,7 +259,9 @@ conn.execute(User.insert(),
         {'id_user': 1, 'public_id_user': str(uuid.uuid4()), 'name': 'Op', 'lastname1': 'Op', 'lastname2':'Op', 'id_number':'Op',
         'password':'Op', 'email':'Op', 'phone_number':'Op', 'active': 1, 'university_id':'Op', 'user_type':2},
         {'id_user': 2, 'public_id_user': str(uuid.uuid4()), 'name': 'Prof', 'lastname1': 'Prof', 'lastname2':'Prof', 'id_number':'Prof',
-        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':3}
+        'password':'Prof', 'email':'Prof', 'phone_number':'Prof', 'active': 1, 'university_id':'Prof', 'user_type':3},
+        {'id_user': 3, 'public_id_user': str(uuid.uuid4()), 'name': 'Admin', 'lastname1': 'Admin', 'lastname2':'Admin', 'id_number':'Admin',
+        'password':'adminpassword', 'email':'useradmin@xtec.com', 'phone_number':'Admin', 'active': 1, 'university_id':'Admin', 'user_type':1}
     ]
 )
 
