@@ -86,9 +86,9 @@ export default {
       data: data,
     }
     console.log(data)
-    axios(config)
+    return axios(config)
       .then(response => {
-      this.posts = response.data
+      return response
       // console.log(this.posts.message)
       },
       ).catch(e => {

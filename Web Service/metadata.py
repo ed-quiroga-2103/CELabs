@@ -4,10 +4,10 @@ import uuid
 from constants import *
 
 
-file = open(RACSO_DB, 'w+')
+file = open(KIMBERLY_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + RACSO_DB)
+engine = create_engine('sqlite:///' + KIMBERLY_DB)
 meta = MetaData()
 
 

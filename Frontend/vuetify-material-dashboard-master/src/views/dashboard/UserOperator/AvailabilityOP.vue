@@ -518,7 +518,6 @@
       addReservation () {
         try {
           if (this.date && this.time && this.time2 && this.description && this.lab && this.course) {
-            console.log('EL proesor es: ' + this.prof)
             const date2 = this.ChangeDate(this.date)
             const date3 = this.ChangeDate(this.start)
             console.log(date2, date3, this.prof, this.time + ':00', this.time2 + ':00', this.course, this.description, this.lab, this.operator)
@@ -551,8 +550,46 @@
       // eslint-disable-next-line camelcase
       async postReservation (request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator) {
         try {
-          await this.$auth.postReservation(request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator)
-          setTimeout(() => { this.getReservations() }, 1000)
+          await this.$auth.postReservation(request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator).then(
+            response => {
+              // eslint-disable-next-line eqeqeq
+              alert(response.data.message)
+              var date = request_date[6] + request_date[7] + request_date[8] + request_date[9] + '-' + request_date[3] + request_date[4] + '-' + request_date[0] + request_date[1]
+              // eslint-disable-next-line eqeqeq
+              if (response.data.message == 'New reservation created!') {
+                console.log('El laboratorio:  ' + lab)
+                // eslint-disable-next-line eqeqeq
+                if (lab == 'F2-09') {
+                  this.events.push(
+                    {
+                      name: 'Reservado',
+                      description: description,
+                      start: date + ' ' + init_time.slice(0, 5),
+                      end: date + ' ' + final_time.slice(0, 5),
+                      encargado: requesting_user,
+                      lab: lab,
+                      subject: subject,
+                      date: date,
+                    },
+                  )
+                } else {
+                  this.events2.push(
+                    {
+                      name: 'Reservado',
+                      description: description,
+                      start: date + ' ' + init_time.slice(0, 5),
+                      end: date + ' ' + final_time.slice(0, 5),
+                      encargado: requesting_user,
+                      lab: lab,
+                      subject: subject,
+                      date: date,
+                    },
+                  )
+                }
+              }
+            })
+          console.log(request_date)
+          this.$refs.calendar.checkChange()
         } catch (error) {
           this.error = true
           alert('Error sending events')

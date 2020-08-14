@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -226,10 +226,10 @@ def create_reservation(current_user):
     now = datetime.datetime.now()
     
     data = request.get_json()
-    date = get_date_in_seconds(data['requested_date'])
+    date = get_date_in_seconds(data['request_date'])
     #time = get_time_in_seconds(data['init_time'])
     print(data)
-    reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.requested_date,
+    reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.request_date,
     Reservation.init_time, Lab.name, Reservation.final_time).all()
 
     #------------------------------Verficacion para evitar que choque con un evento------------------------------------
@@ -252,7 +252,7 @@ def create_reservation(current_user):
 
     for reservation in reservations:
         if reservation[0] == date and reservation[2] == data['lab'] and time_verification(get_time_from_seconds(reservation[1]),get_time_from_seconds(reservation[3]),data['init_time']):
-            return jsonify({'message':'Theres already a reservation with that date and time'}), 401
+            return jsonify({'message':'Theres already a reservation with that date and time'}), 200
 
     teachers = User.query.with_entities(User.email,User.user_type).all()
 
