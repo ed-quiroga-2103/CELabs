@@ -3,10 +3,10 @@ from sqlalchemy import ForeignKey
 import uuid
 from constants import *
 
-file = open(KIMBERLY_DB, 'w+')
+file = open(RACSO_DB, 'w+')
 file.close()
 
-engine = create_engine('sqlite:///' + KIMBERLY_DB)
+engine = create_engine('sqlite:///' + RACSO_DB)
 meta = MetaData()
 
 

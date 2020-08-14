@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -1194,10 +1194,10 @@ def create_allnighter(current_user):
 
     data = request.get_json()
 
-    date = get_date_in_seconds(data['requested_date'])
+    date = get_date_in_seconds(data['request_date'])
     time = get_time_in_seconds(data['init_time'])
     
-    allnighters = AllNighter.query.join(AllNighter_Lab).join(Lab).with_entities(AllNighter.requested_date,
+    allnighters = AllNighter.query.join(AllNighter_Lab).join(Lab).with_entities(AllNighter.request_date,
     AllNighter.init_time, Lab.name).all()
 
     for allnighter in allnighters:
