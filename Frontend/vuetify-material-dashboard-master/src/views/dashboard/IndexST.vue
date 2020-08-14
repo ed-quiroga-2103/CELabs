@@ -27,7 +27,6 @@
       <div
         class="mx-3"
       />
-
       <div
         id="BarraCentral"
       >
@@ -53,32 +52,23 @@
           class="ml-1"
           min-width="0"
           text
-          to="/"
+          to="/ST/faults"
         >
-          <span class="mr-1">Report faults</span>
-        </v-btn>
-
-        <v-btn
-          class="ml-1"
-          min-width="0"
-          text
-          to="/"
-        >
-          <span class="mr-1">Dashboard</span>
+          <span class="mr-1">Faults</span>
         </v-btn>
         <v-btn
           class="ml-1"
           min-width="0"
           text
-          to="/pages/user"
+          to="/ST/CreateUser"
         >
-          <span class="mr-1">My account</span>
+          <span class="mr-1">Create Operator</span>
         </v-btn>
         <v-btn
           class="ml-1"
           min-width="0"
           text
-          to="/"
+          to="/ST/Inventory"
         >
           <span class="mr-1">Inventory Report</span>
         </v-btn>
@@ -86,9 +76,25 @@
           class="ml-1"
           min-width="0"
           text
-          to="/pages/user"
+          to="/ST/myhours"
         >
           <span class="mr-1">My hours</span>
+        </v-btn>
+        <v-btn
+          class="ml-1"
+          min-width="0"
+          text
+          to="/ST/aprovehours"
+        >
+          <span class="mr-1">Aprove hours</span>
+        </v-btn>
+        <v-btn
+          class="ml-1"
+          min-width="0"
+          text
+          to="/ST/Operators"
+        >
+          <span class="mr-1">Operator Hours</span>
         </v-btn>
       </div>
       <v-spacer />
@@ -97,7 +103,7 @@
         sclass="ml-1"
         min-width="0"
         text
-        to="/op/myaccount"
+        to="/ST/myaccount"
       >
         <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>

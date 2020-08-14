@@ -8,15 +8,15 @@
 
 ------------------------------- Worklog Check--------------------------
 
- SELECT * FROM Worklog;
+-- SELECT * FROM Worklog;
 
- SELECT * FROM User_Worklog;
+-- SELECT * FROM User_Worklog;
 
- SELECT * FROM WorklogStatus;
+-- SELECT * FROM WorklogStatus;
 
- SELECT * FROM User_Operator;
+-- SELECT * FROM User_Operator;
 
- SELECT * FROM User;
+-- SELECT * FROM User;
 
 ------------------------------Fault Report Check-----------------------
 
@@ -37,8 +37,8 @@
 
 -- SELECT * FROM Course;
 
---SELECT * FROM Reservation;
+SELECT * FROM Reservation;
 
---SELECT * FROM Reservation_Lab;
+SELECT * FROM Reservation_Lab;
 
---SELECT * FROM User_Reservation;
+SELECT * FROM User_Reservation;

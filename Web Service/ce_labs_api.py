@@ -218,6 +218,36 @@ def edit_this_user(current_user):
 
     return jsonify({'message' : 'Your account has been modified !'}), 200
 
+
+@app.route('/operators', methods=['GET'])
+@token_required
+def get_this_operator(current_user):
+
+    operators = User_Operator.query.join(User).with_entities(
+        User.name,
+        User.lastname1,
+        User.lastname2,
+        User.id_number,
+        User.email,
+        User.phone_number,
+        User.university_id,
+        User_Operator.approved_hours,
+        User_Operator.pending_hours
+        ).all()
+    
+    result = []
+
+    for operator in operators:
+        new_operator = []
+
+        for data in operator:
+            new_operator.append(data)
+
+        result.append(new_operator)
+
+    return jsonify(result), 200
+
+
 # ------------------------- Reservations -------------------------
 
 @app.route('/reservation', methods=['POST'])
@@ -228,7 +258,7 @@ def create_reservation(current_user):
     data = request.get_json()
     date = get_date_in_seconds(data['request_date'])
     #time = get_time_in_seconds(data['init_time'])
-    print(data)
+    #print(data)
     reservations = Reservation.query.join(Reservation_Lab).join(Lab).with_entities(Reservation.request_date,
     Reservation.init_time, Lab.name, Reservation.final_time).all()
 

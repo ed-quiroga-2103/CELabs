@@ -82,6 +82,30 @@
           >
             <span class="mr-1">Approve hours</span>
           </v-btn>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="/adm/CreateUser"
+          >
+            <span class="mr-1">Create User</span>
+          </v-btn>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="/adm/Operators"
+          >
+            <span class="mr-1">Operator Hours</span>
+          </v-btn>
+          <v-btn
+            class="ml-1"
+            min-width="0"
+            text
+            to="/adm/addCourse"
+          >
+            <span class="mr-1">Add Course</span>
+          </v-btn>
         </v-row>
       </div>
       <v-spacer />
@@ -90,7 +114,7 @@
         sclass="ml-1"
         min-width="0"
         text
-        to="/op/myaccount"
+        to="/AD/myaccount"
       >
         <span class="mr-1">My account</span>
         <v-icon>mdi-account</v-icon>

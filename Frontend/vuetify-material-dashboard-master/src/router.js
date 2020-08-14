@@ -5,6 +5,7 @@ import IndexAD from '@/views/dashboard/IndexAD.vue'
 import IndexLogin from '@/views/dashboard/IndexLogin.vue'
 import IndexP from '@/views/dashboard/IndexP.vue'
 import IndexA from '@/views/dashboard/IndexA.vue'
+import IndexST from '@/views/dashboard/IndexST.vue'
 import IndexSat from '@/views/dashboard/IndexSat.vue'
 Vue.use(Router)
 
@@ -83,6 +84,67 @@ export default new Router({
           name: 'Faults',
           component: () => import('./views/dashboard/UserAdmin/FaultsAD.vue'),
         },
+        {
+          path: 'Operators',
+          name: 'Operators',
+          component: () => import('./views/dashboard/UserAdmin/Operators.vue'),
+        },
+        {
+          path: 'AddCourse',
+          name: 'AddCourse',
+          component: () => import('./views/dashboard/UserAdmin/AddCourseAD.vue'),
+        },
+        {
+          path: 'CreateUser',
+          name: 'CreateUser',
+          component: () => import('./views/dashboard/UserAdmin/CreateUsersAD.vue'),
+        },
+      ],
+    },
+    {
+      path: '/ST',
+      component: IndexST,
+      children: [
+        {
+          path: '',
+          name: 'dashboard',
+          component: () => import('./views/dashboard/Dashboard.vue'),
+        },
+        {
+          path: 'Inventory',
+          name: 'Inventory',
+          component: () => import('./views/dashboard/UserSupportTeam/InventoryReportST.vue'),
+        },
+        {
+          path: 'Faults',
+          name: 'Faults',
+          component: () => import('./views/dashboard/UserSupportTeam/FaultsST.vue'),
+        },
+        {
+          path: 'CreateUser',
+          name: 'CreateUser',
+          component: () => import('./views/dashboard/UserSupportTeam/CreateOperator.vue'),
+        },
+        {
+          path: 'myhours',
+          name: 'myhours',
+          component: () => import('./views/dashboard/UserSupportTeam/MyHoursST.vue'),
+        },
+        {
+          path: 'aproveHours',
+          name: 'aproveHours',
+          component: () => import('./views/dashboard/UserSupportTeam/ApproveHoursST.vue'),
+        },
+        {
+          path: 'Operators',
+          name: 'Operators',
+          component: () => import('./views/dashboard/UserSupportTeam/OperatorsST.vue'),
+        },
+        {
+          path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserSupportTeam/MyAccountST.vue'),
+        },
       ],
     },
     {
@@ -97,6 +159,11 @@ export default new Router({
         },
         {
           path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserProfessor/MyAccountP.vue'),
+        },
+        {
+          path: 'myaccount2',
           name: 'myaccount2',
           component: () => import('./views/dashboard/UserProfessor/MyAccountP.vue'),
         },
@@ -116,6 +183,11 @@ export default new Router({
           path: 'availability',
           name: 'availability4',
           component: () => import('./views/dashboard/UserAdministrative/AvailabilityA.vue'),
+        },
+        {
+          path: 'myaccount',
+          name: 'myaccount',
+          component: () => import('./views/dashboard/UserAdministrative/MyAccountA.vue'),
         },
         {
           path: 'myreservations',

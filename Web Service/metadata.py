@@ -3,7 +3,6 @@ from sqlalchemy import ForeignKey
 import uuid
 from constants import *
 
-
 file = open(KIMBERLY_DB, 'w+')
 file.close()
 

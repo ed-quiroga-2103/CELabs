@@ -13,6 +13,11 @@
             show-expand
             class="elevation-1"
           >
+            <template v-slot:expanded-item="{ headers, item }">
+              <td :colspan="headers.length">
+                {{ item.description }}
+              </td>
+            </template>
             <template v-slot:item.actions="{ item }">
               <v-icon
                 small
@@ -88,7 +93,7 @@
         { text: 'ID(Faulty part)', value: 'faultypartID' },
         { text: 'Status', value: 'status' },
         { text: 'Change Status', value: 'actions', sortable: false },
-        { text: '', value: 'data-table-expand' },
+        { text: '', value: 'data-table-expand', sortable: false },
       ],
       reports: [],
       changeDialog: false,
@@ -139,7 +144,7 @@
                   reportT: res[i][0].slice(10, 16),
                   labNo: res[i][4] === 1 ? 'F2-09' : 'F2-10',
                   faultypartID: res[i][1],
-                  status: res[i][3] === 1 ? 'pending' : res[i][3] === 2 ? 'Completed' : 'In process',
+                  status: res[i][3] === 1 ? 'Pending' : res[i][3] === 2 ? 'Completed' : 'In process',
                   reportNo: res[i][5],
                 })
               }
@@ -149,6 +154,7 @@
         }
       },
       openChangeDialog (item) {
+        this.row = item.status
         this.changeDialog = true
         this.changeitem = item
       },
