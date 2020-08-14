@@ -15,7 +15,7 @@ from repetable import *
 app = Flask(__name__)
 cors = CORS(app)
 app.config['SECRET_KEY'] = "CELabs"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + RACSO_DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + KIMBERLY_DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ALLOW_HEADERS'] = 'Content-Type'
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
@@ -282,7 +282,7 @@ def create_reservation(current_user):
 
     for reservation in reservations:
         if reservation[0] == date and reservation[2] == data['lab'] and time_verification(get_time_from_seconds(reservation[1]),get_time_from_seconds(reservation[3]),data['init_time']):
-            return jsonify({'message':'Theres already a reservation with that date and time'}), 200
+            return jsonify({'message':'Theres already a reservation with that date and time'}), 401
 
     teachers = User.query.with_entities(User.email,User.user_type).all()
 

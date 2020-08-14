@@ -1,335 +1,649 @@
+/* eslint-disable no-unused-vars */
 <template>
   <v-row class="">
     <v-col>
-      <template>
-        <v-card
-          class="mx-auto"
-          color="#607D8B"
-          dark
-          max-width="400"
-        >
-          <v-card-title class="d-flex justify-content-center">
-            <v-icon
-              large
-              left
-            >
-              mdi-account
-            </v-icon>
-            <span class="title font-weight-light ">Account Information</span>
-          </v-card-title>
-
-          <v-card-text class="headline font-weight-bold ">
-            <v-row>
-              <h2>Name:</h2>
-            </v-row>
-            <v-row>
-              <label v-text="user" />
-            </v-row>
-            <v-row>
-              <h2>Last name:</h2>
-            </v-row>
-            <v-row>
-              <label v-text="apellido1" />
-            </v-row>
-            <v-row>
-              <h2>Second last name:</h2>
-            </v-row>
-            <v-row>
-              <label v-text="apellido2" />
-            </v-row>
-            <v-row>
-              <h2>ID number:</h2>
-            </v-row>
-            <v-row>
-              <label v-text="Idnumb" />
-            </v-row>
-            <v-row>
-              <h2>ID University IDr:</h2>
-            </v-row>
-            <v-row>
-              <label v-text="Iduni" />
-            </v-row>
-            <v-row>
-              <h2>Email:</h2>
-            </v-row>
-            <v-row>
-              <label v-text="email" />
-            </v-row>
-            <v-row>
-              <h2>Phone number:</h2>
-            </v-row>
-            <v-row>
-              <label v-text="numero" />
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </template>
-    </v-col>
-    <v-col>
-      <v-sheet height="200">
+      <v-sheet height="64">
         <v-toolbar
           flat
           color="white"
         >
-          <v-col />
+          <v-row align="center">
+            <v-col
+              class="ml-8 mr-8"
+              cols="8"
+              sm="6"
+            >
+              <v-btn-toggle
+                rounded
+              >
+                <v-btn @click="l1 = true">
+                  F2-09
+                </v-btn>
+                <v-btn @click="l1 = false">
+                  F2-10
+                </v-btn>
+              </v-btn-toggle>
+            </v-col>
+          </v-row>
+          <v-spacer />
+          <v-btn
+            fab
+            text
+            smalls
+            color="grey darken-2"
+            @click="prev"
+          >
+            <v-icon small>
+              mdi-chevron-left
+            </v-icon>
+          </v-btn>
+          <v-toolbar-title v-if="$refs.calendar">
+            {{ $refs.calendar.title }}
+          </v-toolbar-title>
+          <v-btn
+            fab
+            text
+            small
+            color="grey darken-2"
+            @click="next"
+          >
+            <v-icon small>
+              mdi-chevron-right
+            </v-icon>
+          </v-btn>
           <v-spacer />
           <v-spacer />
-          <v-col>
-            <v-btn
-              outlined
-              color="grey darken-2"
-              class="mr-8"
-              @click="visible2 = true"
+          <v-btn
+            class="mr-4"
+            outlined
+            color="grey darken-2"
+            @click="dialogo = true"
+          >
+            Reservation
+          </v-btn>
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="setToday"
+          >
+            Today
+          </v-btn>
+          <v-menu
+            ref="startMenu"
+            v-model="startMenu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            :return-value.sync="start"
+            transition="scale-transition"
+            min-width="290px"
+            offset-y
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                text
+                dense
+                readonly
+                outlined
+                hide-details
+                color="grey darken-2"
+                v-on="on"
+              >
+                <v-icon x-large>
+                  {{ calendarmonth }}
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-date-picker
+              v-model="start"
+              no-title
+              scrollable
             >
-              Disable Account
-            </v-btn>
-            <v-btn
-              outlined
-              color="grey darken-2"
-              class="mr-8"
-              @click="visible= true"
-            >
-              Edit
-            </v-btn>
-            <v-menu
-              bottom
-              right
-            />
-          </v-col>
-        </v-toolbar>
-      </v-sheet>
-    </v-col>
-    <v-dialog
-      v-model="visible"
-    >
-      <v-card
-        class="elevation-12"
-      >
-        <v-toolbar
-          color="primary"
-          dark
-          flat
-        >
-          <v-toolbar-title>Edit personal information</v-toolbar-title>
-          <v-spacer />
-        </v-toolbar>
-        <FormulateForm
-          v-model="formValues"
-          @submit="handleSubmit()"
-        >
-          <v-card-text ml="10">
-            <FormulateInput
-              class="input-group-alternative mb-3"
-              type="text"
-              name="name"
-              label="Name"
-            />
-            <FormulateInput
-              class="input-group-alternative mb-3"
-              type="text"
-              name="apellido1"
-              label="First Last Name"
-            />
-            <FormulateInput
-              class="input-group-alternative mb-3"
-              type="text"
-              name="apellido2"
-              label="Second Last Name"
-            />
-            <FormulateInput
-              class="input-group-alternative mb-3"
-              type="text"
-              name="idnumb"
-              label="Id Number"
-              validation="number"
-            />
-            <FormulateInput
-              class="input-group-alternative mb-3"
-              type="text"
-              name="numero"
-              label="Phone Number"
-              validation="number"
-            />
-            <FormulateInput
-              class="input-group-alternative mb-3"
-              type="text"
-              name="iduni"
-              label="University ID"
-              validation="number"
-            />
-            <v-spacer />
-            <FormulateInput
-              type="submit"
-              class="btn btn-primary"
-              label="Save"
-            />
-            <v-btn
-              @click="visible = false"
-            >
-              Cancel
-            </v-btn>
-          </v-card-text>
-        </FormulateForm>
-        <v-spacer />
-      </v-card>
-    </v-dialog>
-    <template>
-      <v-row justify="center">
-        <v-dialog
-          v-model="visible2"
-          persistent
-          max-width="290"
-        >
-          <v-card>
-            <v-card-title class="headline">
-              Are you shure you want to delete your account?
-            </v-card-title>
-            <v-card-text>This action doesn't delete your activity</v-card-text>
-            <v-card-actions>
               <v-spacer />
               <v-btn
-                color="blue darken-1"
                 text
-                @click="
-                  visible2 = false
-                  putDelete()"
-              >
-                Delete
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="visible2 = false"
+                color="primary"
+                @click="startMenu = false"
               >
                 Cancel
               </v-btn>
-            </v-card-actions>
+              <v-btn
+                text
+                color="primary"
+                @click="$refs.startMenu.save(start)"
+              >
+                OK
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
+          <v-menu
+            bottom
+            right
+          />
+        </v-toolbar>
+      </v-sheet>
+      <v-sheet height="600">
+        <v-calendar
+          v-show="l1"
+          ref="calendar"
+          v-model="start"
+          color="primary"
+          :short-weekdays="shortWeekdays"
+          :interval-count="intervals.count"
+          :first-interval="intervals.first"
+          :interval-minutes="intervals.minutes"
+          :weekdays="weekdays"
+          :min-weeks="1"
+          :max-days="1"
+          :start="start"
+          :events="events"
+          :type="type"
+          @click:event="showEvent"
+        />
+        <v-calendar
+          v-show="!l1"
+          ref="calendar"
+          v-model="start"
+          color="primary"
+          :short-weekdays="shortWeekdays"
+          :interval-count="intervals.count"
+          :first-interval="intervals.first"
+          :interval-minutes="intervals.minutes"
+          :weekdays="weekdays"
+          :min-weeks="1"
+          :max-days="1"
+          :start="start"
+          :events="events2"
+          :type="type"
+          @click:event="showEvent"
+        />
+        <!--------------Add event------------------------------------------------------>
+        <v-dialog v-model="dialogo">
+          <v-card>
+            <v-container>
+              <v-form @submit.prevent="addReservation">
+                <template>
+                  <v-row align="center">
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="start"
+                        type="date"
+                        :allowed-dates="allowedDates"
+                        label="Date of the request"
+                        readonly
+                      >
+                        >
+                      </v-text-field>
+                      <v-text-field
+                        v-model="date"
+                        :allowed-dates="allowedDates"
+                        type="date"
+                        label="Requested date"
+                        min="start"
+                        max="2020-12-20"
+                      >
+                        >
+                      </v-text-field>
+                      <!-----------------------START---------------------------------------------->
+                      <v-dialog
+                        ref="dialog"
+                        v-model="modal"
+                        :return-value.sync="time"
+                        persistent
+                        width="290px"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="time"
+                            label="Begins at"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          />
+                        </template>
+                        <v-time-picker
+                          v-if="modal"
+                          v-model="time"
+                          min="7:30"
+                          max="21:59"
+                          full-width
+                        >
+                          <v-spacer />
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="modal = false"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.dialog.save(time)"
+                          >
+                            OK
+                          </v-btn>
+                        </v-time-picker>
+                      </v-dialog>
+                      <!----------------------END------------------------------------------------->
+                      <v-dialog
+                        ref="dialog2"
+                        v-model="modal2"
+                        :return-value.sync="time2"
+                        persistent
+                        width="290px"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="time2"
+                            label="Ends at"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          />
+                        </template>
+                        <v-time-picker
+                          v-if="modal2"
+                          v-model="time2"
+                          full-width
+                          min="7:30"
+                          max="21:59"
+                        >
+                          <v-spacer />
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="modal2 = false"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.dialog2.save(time2)"
+                          >
+                            OK
+                          </v-btn>
+                        </v-time-picker>
+                      </v-dialog>
+                      <!------------------------------------>
+                      <v-combobox
+                        v-model="course"
+                        :items="iCourses"
+                        label="Course"
+                        placeholder="Choose a course of the list"
+                        item-text="name"
+                        item-value="code"
+                        :return-object="false"
+                      />
+                      <v-select
+                        v-model="lab"
+                        :items="items"
+                        :menu-props="{ top: true, offsetY: true}"
+                        label="Laboratory"
+                      />
+                    </v-col>
+                  </v-row>
+                </template>
+
+                <v-textarea
+                  v-model="description"
+                  counter
+                  label="Justification"
+                />
+                <v-text-field
+                  v-model="prof"
+                  filled
+                  color="white"
+                  label="Operator"
+                  type="email"
+                  readonly
+                />
+                <v-btn
+                  type="submit"
+                  color="primary"
+                  class="mr-4"
+                  @click.stop="dialogo = false"
+                >
+                  Add
+                </v-btn>
+              </v-form>
+            </v-container>
           </v-card>
         </v-dialog>
-      </v-row>
-    </template>
+
+        <v-menu
+          v-model="selectedOpen"
+          :close-on-content-click="false"
+          :activator="selectedElement"
+          offset-x
+        >
+          <v-card
+            color="grey lighten-4"
+            min-width="350px"
+            flat
+          >
+            <v-toolbar
+              color="blue"
+              dark
+            >
+              <v-toolbar-title v-html="selectedEvent.name" />
+              <v-spacer />
+            </v-toolbar>
+            <v-card-text>
+              <v-list
+                two-line
+                subheader
+              >
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>Start: </v-list-item-title>
+                    <v-list-item-subtitle v-html="selectedEvent.start" />
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>End: </v-list-item-title>
+                    <v-list-item-subtitle v-html="selectedEvent.end" />
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+              <span v-html="selectedEvent.details" />
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                text
+                color="secondary"
+                @click="selectedOpen = false"
+              >
+                OK
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-menu>
+      </v-sheet>
+    </v-col>
   </v-row>
 </template>
+
 <script>
+  import { mdiCalendarMonth } from '@mdi/js'
+  const weekdaysDefault = [1, 2, 3, 4, 5, 6]
   export default {
     data: () => ({
-      headers: [
-        {
-          text: 'Shift Date',
-          align: 'start',
-          value: 'shiftDate',
-        },
-        { text: 'Shift start time', value: 'shiftStart' },
-        { text: 'Shift end time', value: 'shiftEnd' },
-        { text: 'Description of work performed', value: 'workDescription' },
-        { text: 'State', value: 'state' },
-        { text: 'Delete', value: 'delete' },
+      item: 1,
+      iCourses: [
+        { name: 'Especificación y Diseño de Software', code: 'CE-0001', group: ' ' },
+        { name: 'Introducción a la programación', code: 'CE-0002', group: ' ' },
       ],
-      formValues: {},
-      visible: false,
-      visible2: false,
-      hours: [],
-      user: 'Kimberly',
-      apellido1: 'Calderón',
-      apellido2: 'Prado',
-      Idnumb: '28',
-      Iduni: '3',
+      d_weeks: '',
+      items4: [
+        { id: 'L', name: 'Monday' },
+        { id: 'K', name: 'Tuesday' },
+        { id: 'M', name: 'Wednesday' },
+        { id: 'J', name: 'Thursday' },
+        { id: 'V', name: 'Friday' },
+        { id: 'S', name: 'Saturday' },
+      ],
+      form: {
+        id: null,
+        name: '',
+        name2: '',
+      },
+      rules: {
+        email: v => !!(v || '').match(/@/) || 'Please enter a valid email',
+        required: v => !!v || 'This field is required',
+      },
+      l1: false,
+      calendarmonth: mdiCalendarMonth,
+      intervals: {
+        first: 14,
+        minutes: 30,
+        count: 29,
+        height: 48,
+      },
+      weekdays: weekdaysDefault,
+      startMenu: false,
+      items: ['F2-09', 'F2-10'],
       description: '',
-      email: 'kimberlycalderonprado@gmail.com',
-      numero: '87764320',
+      description2: '',
+      operador: 'cualquiera@gmail.com',
+      prof: ' ',
+      lab: '',
+      lab2: '',
+      course: '',
+      week_day: ' ',
+      is_repeatable: 0,
+      date: '',
+      date2: '',
+      date1: '',
+      shortWeekdays: false,
       time2: null,
       time: null,
+      time3: null,
+      time4: null,
       modal: false,
       modal2: false,
+      start: new Date().toISOString().substr(0, 10),
+      type: 'week',
       end: null,
-      hourReport: false,
-      date: '',
+      name: null,
+      details: null,
+      color: '#197602',
+      dialogo: false,
+      dialogo2: false,
+      selectedEvent: {},
+      selectedElement: null,
+      selectedOpen: false,
+      currentlyEditing: null,
+      events: [],
+      events2: [],
     }),
+    watch: {
+      events (nuevoValor, valorAnterior) {
+        console.log("Los eventos pasaron de '%s' a '%s'", valorAnterior, nuevoValor)
+      },
+    },
     mounted () {
+      this.getReservations()
+      this.$refs.calendar.checkChange()
       this.getPerfil()
+      this.getCourses()
     },
     methods: {
-      ChangeDate (date) {
-        var date2 = date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3]
-        return date2
+      allowedDates: val => parseInt(val.split('-')[2], 10) % 2 === 0,
+      viewDay ({ date }) {
+        this.start = date
+        this.type = 'day'
       },
-      addHours () {
+      setToday () {
+        this.start = new Date().toISOString().substr(0, 10)
+      },
+      prev () {
+        this.$refs.calendar.prev()
+      },
+      next () {
+        this.$refs.calendar.next()
+      },
+      showEvent ({ nativeEvent, event }) {
+        const open = () => {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          setTimeout(() => {
+            // eslint-disable-next-line no-return-assign
+            return this.selectedOpen = true
+          }, 10)
+        }
+        if (this.selectedOpen) {
+          this.selectedOpen = false
+          setTimeout(open, 10)
+        } else {
+          open()
+        }
+        nativeEvent.stopPropagation()
+      },
+      showEvent2 ({ nativeEvent, event }) {
+        const open = () => {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          setTimeout(() => {
+            // eslint-disable-next-line no-return-assign
+            return this.selectedOpen = true
+          }, 10)
+        }
+        if (this.selectedOpen) {
+          this.selectedOpen = false
+          setTimeout(open, 10)
+        } else {
+          open()
+        }
+        nativeEvent.stopPropagation()
+      },
+      ChangeDate (date) {
+        date = date[8] + date[9] + '/' + date[5] + date[6] + '/' + date[0] + date[1] + date[2] + date[3]
+        return date
+      },
+      addReservation () {
         try {
-          if (this.description && this.time && this.time2 && this.date) {
-            var date2 = this.ChangeDate(this.date)
-            this.submitHours(date2,
-                             this.time + ':00',
-                             this.time2 + ':00',
-                             this.description)
+          if (this.date && this.time && this.time2 && this.description && this.lab && this.course && this.prof && this.course) {
+            const date2 = this.ChangeDate(this.date)
+            const date3 = this.ChangeDate(this.start)
+            console.log(date2, date3, this.prof, this.time + ':00', this.time2 + ':00', this.course, this.description, this.lab, this.operator)
+            this.postReservation(date2,
+                                 date3,
+                                 this.prof,
+                                 this.time + ':00',
+                                 this.time2 + ':00',
+                                 this.course,
+                                 this.description,
+                                 this.lab,
+                                 this.operador)
           } else {
             alert('Complete all the fields')
           }
         } catch (error) {
-
         }
       },
-      async submitHours (date, time, time2, description) {
+      async getReservations () {
         try {
-          await this.$auth.submitHours(date, time, time2, description)
+          await this.$auth.getReservations().then(
+            response => {
+              this.sortReservations(response.data)
+            })
         } catch (error) {
           this.error = true
-          alert('Error submiting report')
         }
-        this.reportValues = {
-          radios: '',
-          Idnumb: '',
-          textarea: '',
+      },
+      // eslint-disable-next-line camelcase
+      async postReservation (request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator) {
+        try {
+          await this.$auth.postReservation(request_date, requested_date, requesting_user, init_time, final_time, subject, description, lab, operator).then(
+            response => {
+              // eslint-disable-next-line eqeqeq
+              var date = request_date[6] + request_date[7] + request_date[8] + request_date[9] + '-' + request_date[3] + request_date[4] + '-' + request_date[0] + request_date[1]
+              // eslint-disable-next-line eqeqeq
+              if (response.data.message == 'New reservation created!') {
+                console.log('El laboratorio:  ' + lab)
+                // eslint-disable-next-line eqeqeq
+                if (lab == 'F2-09') {
+                  this.events.push(
+                    {
+                      name: 'Reservado',
+                      description: description,
+                      start: date + ' ' + init_time.slice(0, 5),
+                      end: date + ' ' + final_time.slice(0, 5),
+                      encargado: operator,
+                      lab: lab,
+                      subject: subject,
+                      date: date,
+                    },
+                  )
+                  this.date = ' '
+                  this.time = ' '
+                  this.time2 = ' '
+                  this.description = ' '
+                  this.lab = ' '
+                  this.course = ' '
+                  this.prof = ' '
+                  this.course = ' '
+                  this.$router.push('availability')
+                } else {
+                  this.events2.push(
+                    {
+                      name: 'Reservado',
+                      description: description,
+                      start: date + ' ' + init_time.slice(0, 5),
+                      end: date + ' ' + final_time.slice(0, 5),
+                      encargado: requesting_user,
+                      lab: lab,
+                      subject: subject,
+                      date: date,
+                    },
+                  )
+                }
+              }
+            })
+          console.log(request_date)
+          this.$refs.calendar.checkChange()
+        } catch (error) {
+          this.error = true
+          alert('Error sending events')
+        }
+      },
+      sortReservations (temp) {
+        for (var i = 0; i < temp.length; i++) {
+          var dt = temp[i][0].slice(6, 10) + '-' + temp[i][0].slice(3, 5) + '-' + temp[i][0].slice(0, 2)
+          // eslint-disable-next-line eqeqeq
+          if (temp[i][8] == 'F2-09') {
+            this.events.push({
+              name: 'Reservado',
+              description: temp[i][5],
+              start: dt + ' ' + temp[i][2].slice(0, 5),
+              end: dt + ' ' + temp[i][3].slice(0, 5),
+              encargado: temp[i][7],
+              lab: temp[i][8],
+              subject: temp[i][4],
+              date: dt,
+            })
+          } else {
+            this.events2.push({
+              name: 'Reservado',
+              description: temp[i][5],
+              start: dt + ' ' + temp[i][2].slice(0, 5),
+              end: dt + ' ' + temp[i][3].slice(0, 5),
+              encargado: temp[i][7],
+              lab: temp[i][8],
+              subject: temp[i][4],
+              date: dt,
+            })
+          }
         }
       },
       async getPerfil () {
         try {
           await this.$auth.getPerfil().then(
             response => {
-              console.log(response)
               var res = response.data
-              this.user = res[0]
-              this.apellido1 = res[1]
-              this.apellido2 = res[2]
-              this.Idnumb = res[3]
-              this.Iduni = res[6]
-              this.numero = res[5]
-              this.email = res[4]
-              this.formValues =
-                {
-                  name: this.user,
-                  apellido1: this.apellido1,
-                  apellido2: this.apellido2,
-                  idnumb: this.Idnumb,
-                  iduni: this.Iduni,
-                  numero: this.numero,
-                  email2: this.email,
-                }
+              this.prof = res[4]
+              console.log(res[4])
             })
         } catch (error) {
           this.error = true
         }
       },
-      async handleSubmit () {
-        console.log(this.formValues)
+      async getCourses () {
         try {
-          await this.$auth.putPerfil(this.formValues.name, this.formValues.apellido1, this.formValues.apellido2, this.formValues.idnumb, this.formValues.numero, this.formValues.iduni)
+          await this.$auth.getCourses().then(
+            response => {
+              this.iCourses = []
+              var res = response.data
+              this.iCourses.name = res[2]
+              this.iCourses.code = res[0]
+              this.iCourses.group = res[1]
+            })
         } catch (error) {
           this.error = true
-          alert('Error submiting report')
-        }
-        this.reportValues = {
-          radios: '',
-          Idnumb: '',
-          textarea: '',
-        }
-      },
-      async putDelete () {
-        try {
-          await this.$auth.putDelete()
-          this.$router.push('/')
-        } catch (error) {
-          this.error = true
-          alert('Error submiting report')
         }
       },
     },
@@ -338,18 +652,5 @@
 <style scoped>
 .controls {
   position: relative;
-}
-.css
-h1 {
-  color: #6c2eb9;
-  font-weight: normal;
-  font-size: 20px;
-  font-family: Arial;
-  text-transform: uppercase;
-}
-h2 {
-  color: #40C4FF;
-  font-size: 15px;
-  text-transform: uppercase;
 }
 </style>
