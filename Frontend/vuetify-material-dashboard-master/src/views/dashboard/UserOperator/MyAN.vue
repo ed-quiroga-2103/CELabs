@@ -172,6 +172,7 @@
                   RequestedDate: res[i][1].slice(0, 10),
                   Responsible: res[i][6],
                   CurrentState: res[i][5] === 0 ? 'pending' : res[i][5] === 1 ? 'approved' : 'denied',
+                  id: res[i][8],
                 })
               }
               console.log(this.an)
@@ -181,7 +182,7 @@
         }
       },
       deletDialog (itemid) {
-        this.currdel = itemid
+        this.currdel.id = itemid
         this.deldialog = true
       },
       async delitem () {
