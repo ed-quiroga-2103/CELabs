@@ -242,6 +242,7 @@ getRuser () {
     }
 
      return axios(config).then(response => {
+       console.log(response.data)
         return response
     })
   },
@@ -690,8 +691,8 @@ getRuser () {
         group: newGroup,
       },
 
-  )
-  var config = {
+    )
+    var config = {
       method: 'post',
       url: ENDPOINT_PATH + 'course',
       headers: {
@@ -753,6 +754,31 @@ getRuser () {
       console.error(e.data.message)
     })
   },
+  delAN (id) {
+    var data = JSON.stringify(
+      {
+        id_allnighter: id,
+      },
+    )
+    var config = {
+      method: 'DELETE',
+      url: ENDPOINT_PATH + '/allnighter',
+      headers: {
+      'x-access-token': this.getUserLogged(),
+      Authorization: 'Basic QWRtaW46MTIzNDU=',
+      'Content-Type': 'application/json',
+      },
+      data: data,
+    }
+   axios(config)
+      .then(response => {
+        alert(response.data.message)
+      this.posts = response.data
+      },
+      ).catch(e => {
+      console.error(e.data.message)
+    })
+},
   deleteUserLogged () {
     // eslint-disable-next-line no-undef
     Cookies.remove('userLogged')

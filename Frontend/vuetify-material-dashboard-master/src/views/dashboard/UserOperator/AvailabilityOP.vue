@@ -355,6 +355,12 @@
                     <v-list-item-subtitle v-html="selectedEvent.end" />
                   </v-list-item-content>
                 </v-list-item>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>Encargado: </v-list-item-title>
+                    <v-list-item-subtitle v-html="selectedEvent.encargado" />
+                  </v-list-item-content>
+                </v-list-item>
               </v-list>
               <span v-html="selectedEvent.details" />
             </v-card-text>
@@ -374,6 +380,14 @@
   </v-row>
 </template>
 
+name: 'Reservado',
+              description: temp[i][5],
+              start: dt + ' ' + temp[i][2].slice(0, 5),
+              end: dt + ' ' + temp[i][3].slice(0, 5),
+              encargado: temp[i][7],
+              lab: temp[i][8],
+              subject: temp[i][4],
+              date:
 <script>
   import { mdiCalendarMonth } from '@mdi/js'
   const weekdaysDefault = [1, 2, 3, 4, 5, 6]
@@ -412,11 +426,11 @@
       },
       weekdays: weekdaysDefault,
       startMenu: false,
-      items: ['F2-09', 'F2-10'],
+      items: ['F2-10', 'F2-09'],
       description: '',
       description2: '',
       operador: 'operador@gmail.com',
-      prof: ' ',
+      prof: '',
       lab: '',
       lab2: '',
       course: '',
@@ -454,10 +468,10 @@
     },
     mounted () {
       this.getReservations()
+      this.getEvents()
       this.$refs.calendar.checkChange()
       this.getPerfil()
       this.getCourses()
-      this.getEvents()
     },
     methods: {
       allowedDates: val => parseInt(val.split('-')[2], 10) % 2 === 0,
@@ -550,39 +564,8 @@
             response => {
               // eslint-disable-next-line eqeqeq
               alert(response.data.message)
-              var date = request_date[6] + request_date[7] + request_date[8] + request_date[9] + '-' + request_date[3] + request_date[4] + '-' + request_date[0] + request_date[1]
+              location.reload()
               // eslint-disable-next-line eqeqeq
-              if (response.data.message == 'New reservation created!') {
-                console.log('El laboratorio:  ' + lab)
-                // eslint-disable-next-line eqeqeq
-                if (lab == 'F2-09') {
-                  this.events.push(
-                    {
-                      name: 'Reservado',
-                      description: description,
-                      start: date + ' ' + init_time.slice(0, 5),
-                      end: date + ' ' + final_time.slice(0, 5),
-                      encargado: requesting_user,
-                      lab: lab,
-                      subject: subject,
-                      date: date,
-                    },
-                  )
-                } else {
-                  this.events2.push(
-                    {
-                      name: 'Reservado',
-                      description: description,
-                      start: date + ' ' + init_time.slice(0, 5),
-                      end: date + ' ' + final_time.slice(0, 5),
-                      encargado: requesting_user,
-                      lab: lab,
-                      subject: subject,
-                      date: date,
-                    },
-                  )
-                }
-              }
             })
           console.log(request_date)
           this.$refs.calendar.checkChange()
@@ -636,11 +619,19 @@
         try {
           await this.$auth.getCourses().then(
             response => {
-              this.iCourses = []
               var res = response.data
-              this.iCourses.name = res[2]
-              this.iCourses.code = res[0]
-              this.iCourses.group = res[1]
+              for (var i = 0; i < res.length; i++) {
+                this.iCourses = []
+                console.log(response.data)
+                this.iCourses.push(
+                  {
+                    name: res[i][2],
+                    code: res[i][0],
+                    group: res[i][1],
+                  },
+                )
+                console.log(this.iCourses)
+              }
             })
         } catch (error) {
           this.error = true

@@ -370,7 +370,6 @@
 <script>
   import { mdiCalendarMonth } from '@mdi/js'
   const weekdaysDefault = [1, 2, 3, 4, 5, 6]
-
   export default {
     data: () => ({
       item: 1,
@@ -482,7 +481,6 @@
         } else {
           open()
         }
-
         nativeEvent.stopPropagation()
       },
       showEvent2 ({ nativeEvent, event }) {
@@ -500,7 +498,6 @@
         } else {
           open()
         }
-
         nativeEvent.stopPropagation()
       },
       ChangeDate (date) {
@@ -526,7 +523,6 @@
             alert('Complete all the fields')
           }
         } catch (error) {
-
         }
       },
       async getReservations () {

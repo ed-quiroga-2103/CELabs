@@ -205,8 +205,8 @@
                   <v-time-picker
                     v-if="modal"
                     v-model="time"
-                    min="7:30"
-                    max="21:59"
+                    min="21:00"
+                    max="23:00"
                     full-width
                   >
                     <v-spacer />
@@ -247,8 +247,8 @@
                     v-if="modal2"
                     v-model="time2"
                     full-width
-                    min="7:30"
-                    max="21:59"
+                    min="00:00"
+                    max="6:00"
                   >
                     <v-spacer />
                     <v-btn
@@ -456,7 +456,7 @@
               this.lab,
               this.time + ':00',
               this.time2 + ':00')
-            this.getAN()
+            location.reload()
             this.$refs.calendar.checkChange()
           } else {
             alert('Complete all the fields')
@@ -472,7 +472,6 @@
               console.log(response.data)
               this.sortEvents(response.data)
             })
-          setTimeout(() => { this.getAN() }, 1000)
         } catch (error) {
           this.error = true
         }
@@ -488,7 +487,6 @@
         }
       },
       sortEvents (temp) {
-        this.events = []
         for (var i = 0; i < temp.length; i++) {
           var dt = temp[i][0].slice(6, 10) + '-' + temp[i][0].slice(3, 5) + '-' + temp[i][0].slice(0, 2)
           var dted = temp[i][1].slice(6, 10) + '-' + temp[i][1].slice(3, 5) + '-' + temp[i][1].slice(0, 2)
@@ -496,8 +494,8 @@
           if (temp[i][7] == 'F2-09') {
             this.events.push({
               name: temp[i][4],
-              start: dt + ' ' + temp[i][2].slice(0, 5),
-              end: dt + ' ' + temp[i][3].slice(0, 5),
+              start: dt + ' ' + temp[i][3].slice(0, 5),
+              end: dt + ' ' + temp[i][2].slice(0, 5),
               lab: temp[i][7],
               request_date: dt,
               requested_date: dted,
